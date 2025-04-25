@@ -1,12 +1,6 @@
 import type { Numberish } from 'dnum'
 
 export interface TechnicalSignal<Data, Result, Options> {
-  update: {
-    (...dataset: Data[]): void
-    (dataset: Data[]): void
-  }
-  result: (options?: Partial<Options>) => Result
-  dataset: Data[]
   defaultOptions: Options
   (dataset: Data[], options?: Partial<Options>): Result
 }

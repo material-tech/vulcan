@@ -31,5 +31,3 @@ Most common technical indicators are targeted for support, some are still being 
 - [ ] MA
 
 </details>
-
-

@@ -18,24 +18,6 @@ describe('createSignal', () => {
     expect(signal.defaultOptions).toEqual({ foo: 'bar' })
   })
 
-  it('should update inner dataset', () => {
-    const signal = createSignal(() => void 0)
-
-    expect(signal.dataset).toEqual([])
-    signal.update(1, 2, 3)
-    expect(signal.dataset).toEqual([1, 2, 3])
-    signal.update([4, 5, 6])
-    expect(signal.dataset).toEqual([1, 2, 3, 4, 5, 6])
-  })
-
-  it('should return result', () => {
-    const signal = createSignal(v => v)
-
-    expect(signal.result()).toEqual([])
-    signal.update(1, 2, 3)
-    expect(signal.result()).toEqual([1, 2, 3])
-  })
-
   it('should return result by call directly', () => {
     const signal = createSignal(v => v)
 
