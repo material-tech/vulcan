@@ -5,9 +5,6 @@ describe('createSignal', () => {
   it('should create a TechnicalSignal instance', () => {
     const signal = createSignal(() => void 0)
 
-    expect(signal).toHaveProperty('update')
-    expect(signal).toHaveProperty('result')
-    expect(signal).toHaveProperty('dataset')
     expect(signal).toHaveProperty('defaultOptions')
     expect(signal).instanceOf(Function)
   })

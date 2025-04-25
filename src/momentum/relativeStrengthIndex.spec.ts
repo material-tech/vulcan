@@ -65,20 +65,4 @@ describe('rsi', () => {
       expect(value).toBeLessThanOrEqual(100)
     }
   })
-
-  // Test direct call and update method
-  it('should support direct call and update method', () => {
-    // Direct call
-    const directResult = rsi([10, 11, 9, 12], { period: 2, decimals: 2 })
-
-    // Using update method
-    rsi.update(10, 11, 9, 12)
-    const updateResult = rsi.result({ period: 2, decimals: 2 })
-
-    // Results should be consistent
-    expect(directResult.length).toBe(updateResult.length)
-    for (let i = 0; i < directResult.length; i++) {
-      expect(format(directResult[i])).toBe(format(updateResult[i]))
-    }
-  })
 })

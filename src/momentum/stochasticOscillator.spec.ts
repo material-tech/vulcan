@@ -34,4 +34,18 @@ describe('stochastic oscillator (STOCH)', () => {
     expect(actual.k.map(v => format(v, { digits: 2 }))).toStrictEqual(expectedK)
     expect(actual.d.map(v => format(v, { digits: 2 }))).toStrictEqual(expectedD)
   })
+
+  it('should be able get k and d with slowing period', () => {
+    const expectedK = ["38.79", "46.83", "58.11", "73.31", "87.63", "91.88", "76.8", "55.02", "40.27", "47.31", "61.8", "75.05", "85.44", "83.63", "76.57", "75.8", "74.25", "80.16", "72.91", "75.83",]
+    const expectedD = ["38.79", "42.81", "52.47", "65.71", "80.47", "89.76", "84.34", "65.91", "47.65", "43.79", "54.56", "68.42", "80.24", "84.54", "80.1", "76.18", "75.02", "77.2", "76.53", "74.37",]
+
+    const actual = stoch(klineData, { 
+      kPeriod: 12,
+      dPeriod: 2,
+      slowingPeriod: 3,
+    })
+    expect(actual.k.map(v => format(v, { digits: 2 }))).toStrictEqual(expectedK)
+    expect(actual.d.map(v => format(v, { digits: 2 }))).toStrictEqual(expectedD)
+
+  })
 })
