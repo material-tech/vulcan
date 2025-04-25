@@ -49,8 +49,8 @@ export const stoch = createSignal((data: KlineData[], { kPeriod, slowingPeriod, 
   )
 
   // 应用平滑度处理
-  const kValue = slowingPeriod > 1 
-    ? sma(rawK, { period: slowingPeriod, decimals }) 
+  const kValue = slowingPeriod > 1
+    ? sma(rawK, { period: slowingPeriod, decimals })
     : rawK
 
   const dValue = sma(kValue, { period: dPeriod, decimals })

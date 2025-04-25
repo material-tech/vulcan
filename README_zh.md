@@ -7,7 +7,6 @@
 - 完全的 TypeScript 支持
 - 不限制 decimals 库的使用，内部使用 [`dnum`](https://github.com/bpierre/dnum) 库通过 `[value: bigint, decimals: number]` 的元组形式表示带精度的数值，无需引入额外的库即可快速接入如 `big.js`,`bignumber.js`等。
 
-
 ### 使用
 
 ```ts
@@ -37,7 +36,7 @@ const result = rsi(data, { period: 4, decimals: 18 })
 - [ ] Moving Average Convergence Divergence (MACD)
 - [x] Moving Max (MMAX)
 - [x] Moving Min (MMIN)
-- [ ] Moving Sum (MSUM)
+- [x] Moving Sum (MSUM)
 - [ ] Parabolic SAR (PSAR)
 - [ ] Qstick
 - [ ] Random Index (KDJ)
