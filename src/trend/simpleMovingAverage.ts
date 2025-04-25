@@ -4,11 +4,11 @@ import { createSignal } from '../base'
 
 export interface SMAOptions {
   /**
-   * 周期
+   * period
    */
   period: number
   /**
-   * 如果未指定，则所有数字的默认小数位数
+   * default decimals
    */
   decimals: number
 }

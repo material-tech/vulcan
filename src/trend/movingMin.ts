@@ -8,7 +8,7 @@ export interface MovingMinOptions {
    */
   period: number
   /**
-   * default decimals for all number if not specified
+   * default decimals
    */
   decimals: number
 }
