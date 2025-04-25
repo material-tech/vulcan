@@ -1,0 +1,84 @@
+import type { Numberish } from 'dnum'
+import { add, div, eq, from, gt, mul, sub } from 'dnum'
+import { createSignal } from '../base'
+import { rma } from '../trend/rollingMovingAverage'
+
+export interface RSIOptions {
+  period: number
+  decimals: number
+}
+
+export const defaultRSIOptions: RSIOptions = {
+  period: 14,
+  decimals: 18,
+}
+
+/**
+ * Relative Strength Index (RSI). It is a momentum indicator that measures the magnitude of
+ * recent price changes to evaluate overbought and oversold conditions
+ * using the given window period.
+ *
+ * RS = Average Gain / Average Loss
+ *
+ * RSI = 100 - (100 / (1 + RS))
+ */
+export const rsi = createSignal(
+  (closings: Numberish[], { period, decimals }) => {
+    // Convert input data to Dnum type
+    const prices = closings.map(item => from(item, decimals))
+
+    // Initialize arrays for gains and losses
+    const gains = Array.from({ length: prices.length }, () => from(0, decimals))
+    const losses = Array.from({ length: prices.length }, () => from(0, decimals))
+
+    // Calculate price changes and separate gains and losses
+    for (let i = 1; i < prices.length; i++) {
+      const change = sub(prices[i], prices[i - 1])
+
+      if (gt(change, 0)) {
+        // Gain
+        gains[i] = change
+      }
+      else {
+        // Loss, take absolute value
+        losses[i] = mul(change, from(-1, decimals))
+      }
+    }
+
+    // Calculate average gains and losses using rma
+    const avgGains = rma(gains, { period, decimals })
+    const avgLosses = rma(losses, { period, decimals })
+
+    // Calculate RSI
+    const result = Array.from({ length: prices.length }, () => from(0, decimals))
+
+    for (let i = 0; i < prices.length; i++) {
+      // The first element is always 0 because there is no previous price point to calculate the change
+      if (i === 0) {
+        result[i] = from(0, decimals)
+      }
+      // Other elements are processed using the normal RSI calculation method
+      else if (eq(avgLosses[i], 0)) {
+        // If average loss is zero, RSI is 100
+        result[i] = from(100, decimals)
+      }
+      else {
+        // Calculate RS = average gain / average loss
+        const rs = div(avgGains[i], avgLosses[i])
+        // RSI = 100 - (100 / (1 + RS))
+        result[i] = sub(
+          from(100, decimals),
+          div(
+            from(100, decimals),
+            add(from(1, decimals), rs),
+          ),
+        )
+      }
+    }
+
+    return result
+  },
+  defaultRSIOptions,
+)
+
+export { rsi as relativeStrengthIndex }
