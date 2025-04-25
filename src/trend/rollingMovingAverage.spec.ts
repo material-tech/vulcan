@@ -2,9 +2,8 @@ import { format } from 'dnum'
 import { describe, expect, it } from 'vitest'
 import { rma } from './rollingMovingAverage'
 
-describe('rma', () => {
-  // Test RMA calculation for a simple sequence of numbers
-  it('should correctly calculate RMA for simple numbers', () => {
+describe('rollingMovingAverage', () => {
+  it('should be able to calculate rolling moving average', () => {
     const values = [10, 20, 30, 40, 50]
     const period = 3
     const result = rma(values, { period, decimals: 0 })
