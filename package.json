@@ -1,12 +1,16 @@
 {
   "name": "indicator-x",
   "type": "module",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "packageManager": "pnpm@10.9.0",
-  "description": "",
-  "author": "",
+  "description": "A library for technical indicators",
+  "author": "enpitsulin <enpitsulin@gmail.com>",
   "license": "MIT",
-  "keywords": [],
+  "keywords": [
+    "signal",
+    "indicator",
+    "technical-indicator"
+  ],
   "exports": {
     ".": {
       "import": "./dist/index.mjs",
