@@ -19,7 +19,11 @@ export interface KlineData {
   /** Close price */
   c: Numberish
   /** Volume */
-  v?: Numberish
+  v: Numberish
   /** Timestamp */
   timestamp?: number | Date
 }
+
+export type RequiredProperties<T, K extends keyof T> = {
+  [P in K]-?: T[P]
+} & Omit<T, K>

@@ -1,5 +1,5 @@
 import type { Rounding } from 'dnum'
-import type { KlineData } from '../types'
+import type { KlineData, RequiredProperties } from '../types'
 import { add, div, from, sub } from 'dnum'
 import { createSignal } from '../base'
 import { mapOperator } from '../helpers/operator'
@@ -20,7 +20,7 @@ export const defaultAwesomeOscillatorOptions: AwesomeOscillatorOptions = {
 }
 
 export const ao = createSignal((
-  data: Pick<KlineData, 'h' | 'l'>[],
+  data: RequiredProperties<KlineData, 'h' | 'l'>[],
   { fastPeriod, slowPeriod, decimals, rounding },
 ) => {
   const lows = data.map(item => from(item.l, decimals))

@@ -1,5 +1,5 @@
 import type { Dnum, Rounding } from 'dnum'
-import type { KlineData } from '../types'
+import type { KlineData, RequiredProperties } from '../types'
 import { div, from, mul, sub } from 'dnum'
 import { createSignal } from '../base'
 import { mapOperator } from '../helpers/operator'
@@ -30,7 +30,7 @@ export interface StochResult {
   d: Dnum[]
 }
 
-export const stoch = createSignal((data: KlineData[], { kPeriod, slowingPeriod, dPeriod, decimals, rounding }) => {
+export const stoch = createSignal((data: RequiredProperties<KlineData, 'h' | 'l' | 'c'>[], { kPeriod, slowingPeriod, dPeriod, decimals, rounding }) => {
   const highs = data.map(item => from(item.h, decimals))
   const lows = data.map(item => from(item.l, decimals))
   const closings = data.map(item => from(item.c, decimals))
