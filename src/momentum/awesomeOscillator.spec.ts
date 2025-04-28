@@ -1,0 +1,30 @@
+import { format } from 'dnum'
+import { describe, expect, it } from 'vitest'
+import { ao } from './awesomeOscillator'
+
+describe('awesomeOscillator (AO)', () => {
+  const data = [
+    { h: 10, l: 1 },
+    { h: 11, l: 2 },
+    { h: 12, l: 3 },
+    { h: 13, l: 4 },
+    { h: 14, l: 5 },
+    { h: 15, l: 6 },
+    { h: 16, l: 7 },
+    { h: 17, l: 8 },
+  ]
+
+  it('should correctly calculate basic AO values', () => {
+    const expected = ['0', '0', '0', '0', '0', '0.5', '1', '1.5']
+
+    const result = ao(data)
+    expect(result.map(format)).toStrictEqual(expected)
+  })
+
+  it('should correctly calculate basic AO values with options', () => {
+    const expected = ['0', '0', '0.5', '1', '1.5', '2', '2.5', '3']
+
+    const result = ao(data, { fastPeriod: 2, slowPeriod: 20 })
+    expect(result.map(format)).toStrictEqual(expected)
+  })
+})
