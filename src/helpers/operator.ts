@@ -3,7 +3,7 @@ import { isDnum } from 'dnum'
 
 function assertItemLength(arr: Numberish[], arr2: Numberish[]) {
   if (arr.length !== arr2.length) {
-    throw new Error('operateBy array length must be equal to data length')
+    throw new Error('two array length must be equal')
   }
 }
 
