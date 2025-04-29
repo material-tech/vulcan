@@ -1,9 +1,12 @@
 import type { Dnum } from 'dnum'
-import { toNumber } from 'dnum'
+import { isDnum, toNumber } from 'dnum'
 import { expect } from 'vitest'
 
 expect.extend({
   toMatchNumberArray(received: Dnum[], expected: number[], options?: { digits?: number }) {
+    if (received.some(v => !isDnum(v))) {
+      throw new Error('Received value is not a Dnum')
+    }
     const { isNot, utils } = this
     const receivedNumbers = received.map(v => toNumber(v, { digits: options?.digits }))
     const pass = this.equals(receivedNumbers, expected)
@@ -15,6 +18,9 @@ expect.extend({
     }
   },
   toMatchNumber(received: Dnum, expected: number, options?: { digits?: number }) {
+    if (!isDnum(received)) {
+      throw new Error('Received value is not a Dnum')
+    }
     const { isNot, utils } = this
     const receivedNumber = toNumber(received, { digits: options?.digits })
     return {
