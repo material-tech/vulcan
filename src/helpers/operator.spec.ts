@@ -55,4 +55,9 @@ describe('operator', () => {
   it('should throw error when the length of the two arrays are not equal', () => {
     expect(() => mapOperator(operators.add)([1, 2, 3], [1, 2])).toThrow()
   })
+
+  it('should able set options', () => {
+    const result = mapOperator(operators.add)([1, 2, 3], [1, 2, 3], 4)
+    expect(result).toStrictEqual([[20000n, 4], [40000n, 4], [60000n, 4]])
+  })
 })
