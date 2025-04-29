@@ -7,15 +7,10 @@ export interface MovingMaxOptions {
    * period
    */
   period: number
-  /**
-   * default decimals
-   */
-  decimals: number
 }
 
 export const defaultMovingMaxOptions: MovingMaxOptions = {
   period: 4,
-  decimals: 18,
 }
 
 /**

@@ -1,21 +1,17 @@
-import type { Numberish, Rounding } from 'dnum'
+import type { Numberish } from 'dnum'
 import { createSignal } from '../base'
 import { sma } from './simpleMovingAverage'
 
 export interface TriangularMovingAverageOptions {
   period: number
-  decimals: number
-  rounding: Rounding
 }
 
 export const defaultTriangularMovingAverageOptions: TriangularMovingAverageOptions = {
   period: 4,
-  decimals: 18,
-  rounding: 'ROUND_HALF',
 }
 
 export const trima = createSignal(
-  (values: Numberish[], { period, decimals, rounding }) => {
+  (values: Numberish[], { period }) => {
     let n1 = 0
     let n2 = 0
 
@@ -28,7 +24,7 @@ export const trima = createSignal(
       n2 = n1
     }
 
-    const result = sma(sma(values, { period: n2, decimals, rounding }), { period: n1, decimals, rounding })
+    const result = sma(sma(values, { period: n2 }), { period: n1 })
 
     return result
   },

@@ -1,17 +1,13 @@
-import type { Numberish, Rounding } from 'dnum'
+import type { Numberish } from 'dnum'
 import { add, from, mul } from 'dnum'
 import { createSignal } from '../base'
 
 export interface ExponentialMovingAverageOptions {
   period: number
-  decimals: number
-  rounding: Rounding
 }
 
 export const defaultExponentialMovingAverageOptions: ExponentialMovingAverageOptions = {
   period: 12,
-  decimals: 18,
-  rounding: 'ROUND_HALF',
 }
 
 export const ema = createSignal(

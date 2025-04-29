@@ -1,4 +1,3 @@
-import type { Rounding } from 'dnum'
 import type { KlineData, RequiredProperties } from '../types'
 import { add, div, from, sub } from 'dnum'
 import { createSignal } from '../base'
@@ -8,15 +7,11 @@ import { sma } from '../trend/simpleMovingAverage'
 export interface AwesomeOscillatorOptions {
   fastPeriod: number
   slowPeriod: number
-  decimals: number
-  rounding: Rounding
 }
 
 export const defaultAwesomeOscillatorOptions: AwesomeOscillatorOptions = {
   fastPeriod: 5,
   slowPeriod: 34,
-  decimals: 18,
-  rounding: 'ROUND_HALF',
 }
 
 export const ao = createSignal((
@@ -34,8 +29,8 @@ export const ao = createSignal((
     from(2, decimals),
     { decimals, rounding },
   )
-  const fastMA = sma(medianPrice, { period: fastPeriod, decimals })
-  const slowMA = sma(medianPrice, { period: slowPeriod, decimals })
+  const fastMA = sma(medianPrice, { period: fastPeriod })
+  const slowMA = sma(medianPrice, { period: slowPeriod })
 
   return mapOperator(sub)(fastMA, slowMA)
 }, defaultAwesomeOscillatorOptions)

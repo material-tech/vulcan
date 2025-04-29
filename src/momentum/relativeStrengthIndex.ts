@@ -5,12 +5,10 @@ import { rma } from '../trend/rollingMovingAverage'
 
 export interface RSIOptions {
   period: number
-  decimals: number
 }
 
 export const defaultRSIOptions: RSIOptions = {
   period: 14,
-  decimals: 18,
 }
 
 /**
@@ -46,8 +44,8 @@ export const rsi = createSignal(
     }
 
     // Calculate average gains and losses using rma
-    const avgGains = rma(gains, { period, decimals })
-    const avgLosses = rma(losses, { period, decimals })
+    const avgGains = rma(gains, { period })
+    const avgLosses = rma(losses, { period })
 
     // Calculate RSI
     const result = Array.from({ length: prices.length }, () => from(0, decimals))

@@ -7,15 +7,10 @@ export interface MovingMinOptions {
    * period
    */
   period: number
-  /**
-   * default decimals
-   */
-  decimals: number
 }
 
 export const defaultMovingMinOptions: MovingMinOptions = {
   period: 4,
-  decimals: 18,
 }
 
 /**

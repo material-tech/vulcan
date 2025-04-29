@@ -1,4 +1,4 @@
-import type { Numberish, Rounding } from 'dnum'
+import type { Numberish } from 'dnum'
 import { add, div, from, sub } from 'dnum'
 import { createSignal } from '../base'
 
@@ -7,20 +7,10 @@ export interface SMAOptions {
    * period
    */
   period: number
-  /**
-   * default decimals
-   */
-  decimals: number
-  /**
-   * rounding
-   */
-  rounding: Rounding
 }
 
 export const defaultSMAOptions: SMAOptions = {
   period: 14,
-  decimals: 18,
-  rounding: 'ROUND_HALF',
 }
 
 /**

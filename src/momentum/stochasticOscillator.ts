@@ -1,4 +1,4 @@
-import type { Dnum, Rounding } from 'dnum'
+import type { Dnum } from 'dnum'
 import type { KlineData, RequiredProperties } from '../types'
 import { div, from, mul, sub } from 'dnum'
 import { createSignal } from '../base'
@@ -13,16 +13,12 @@ export interface StochasticOscillatorOptions {
   slowingPeriod: number
   /** The %d period  */
   dPeriod: number
-  decimals: number
-  rounding: Rounding
 }
 
 export const defaultStochasticOscillatorOptions: StochasticOscillatorOptions = {
   kPeriod: 14,
   slowingPeriod: 1,
   dPeriod: 3,
-  decimals: 18,
-  rounding: 'ROUND_HALF',
 }
 
 export interface StochResult {
@@ -35,8 +31,8 @@ export const stoch = createSignal((data: RequiredProperties<KlineData, 'h' | 'l'
   const lows = data.map(item => from(item.l, decimals))
   const closings = data.map(item => from(item.c, decimals))
 
-  const highestHigh = mmax(highs, { period: kPeriod, decimals })
-  const lowestLow = mmin(lows, { period: kPeriod, decimals })
+  const highestHigh = mmax(highs, { period: kPeriod })
+  const lowestLow = mmin(lows, { period: kPeriod })
 
   const rawK = mapOperator(mul)(
     mapOperator(div)(
@@ -50,10 +46,10 @@ export const stoch = createSignal((data: RequiredProperties<KlineData, 'h' | 'l'
 
   // 应用平滑度处理
   const kValue = slowingPeriod > 1
-    ? sma(rawK, { period: slowingPeriod, decimals })
+    ? sma(rawK, { period: slowingPeriod })
     : rawK
 
-  const dValue = sma(kValue, { period: dPeriod, decimals })
+  const dValue = sma(kValue, { period: dPeriod })
 
   return {
     k: kValue,

@@ -7,15 +7,10 @@ export interface RMAOptions {
    * period
    */
   period: number
-  /**
-   * default decimals
-   */
-  decimals: number
 }
 
 export const defaultRMAOptions: RMAOptions = {
   period: 14,
-  decimals: 18,
 }
 
 /**

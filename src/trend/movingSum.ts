@@ -4,12 +4,10 @@ import { createSignal } from '../base'
 
 export interface MovingSumOptions {
   period: number
-  decimals: number
 }
 
 export const defaultMovingSumOptions: MovingSumOptions = {
   period: 4,
-  decimals: 18,
 }
 
 /**
