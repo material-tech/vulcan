@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { createSignal } from './base'
+import { createSignal, setDecimalOptions } from './base'
 
 describe('createSignal', () => {
   it('should create a TechnicalSignal instance', () => {
@@ -12,7 +12,22 @@ describe('createSignal', () => {
   it('should get default options', () => {
     const signal = createSignal(() => void 0, { foo: 'bar' })
 
-    expect(signal.defaultOptions).toEqual({ foo: 'bar' })
+    expect(signal.defaultOptions).toEqual({
+      foo: 'bar',
+      decimals: 18,
+      rounding: 'ROUND_HALF',
+    })
+  })
+
+  it('should able to override default options', () => {
+    const signal = createSignal((_, { decimals }) => decimals)
+
+    expect(signal.defaultOptions.decimals).toEqual(18)
+    setDecimalOptions({
+      decimals: 14,
+    })
+
+    expect(signal.defaultOptions.decimals).toEqual(14)
   })
 
   it('should return result by call directly', () => {
