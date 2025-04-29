@@ -32,7 +32,7 @@ export const ao = createSignal((
   const fastMA = sma(medianPrice, { period: fastPeriod })
   const slowMA = sma(medianPrice, { period: slowPeriod })
 
-  return mapOperator(sub)(fastMA, slowMA)
+  return mapOperator(sub)(fastMA, slowMA, decimals)
 }, defaultAwesomeOscillatorOptions)
 
 export { ao as awesomeOscillator }

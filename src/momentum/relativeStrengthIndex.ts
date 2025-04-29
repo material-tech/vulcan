@@ -21,7 +21,7 @@ export const defaultRSIOptions: RSIOptions = {
  * RSI = 100 - (100 / (1 + RS))
  */
 export const rsi = createSignal(
-  (closings: Numberish[], { period, decimals }) => {
+  (closings: Numberish[], { period, decimals, rounding }) => {
     // Convert input data to Dnum type
     const prices = closings.map(item => from(item, decimals))
 
@@ -39,7 +39,7 @@ export const rsi = createSignal(
       }
       else {
         // Loss, take absolute value
-        losses[i] = mul(change, from(-1, decimals))
+        losses[i] = mul(change, from(-1, decimals), { decimals, rounding })
       }
     }
 
@@ -68,8 +68,10 @@ export const rsi = createSignal(
           from(100, decimals),
           div(
             from(100, decimals),
-            add(from(1, decimals), rs),
+            add(from(1, decimals), rs, decimals),
+            { decimals, rounding },
           ),
+          decimals,
         )
       }
     }
