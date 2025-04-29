@@ -25,9 +25,31 @@ expect.extend({
 })
 
 interface CustomMatchers<R = unknown> {
-  /** match Dnum[] with number[] */
+  /**
+   * Checks if the received `Dnum[]` matches the expected `number[]`
+   *
+   * @param expected - expected number array
+   * @param options - Optional `toNumber` options include `digits`
+   *
+   * @example
+   * ```ts
+   * expect(result).toMatchNumberArray(expected)
+   * expect(result).toMatchNumberArray(expected, { digits: 2 })
+   * ```
+   */
   toMatchNumberArray: (expected: number[], options?: { digits?: number }) => R
-  /** match Dnum with number */
+  /**
+   * Checks if the received `Dnum` matches the expected `number`
+   *
+   * @param expected - expected number
+   * @param options - Optional `toNumber` options include `digits`
+   *
+   * @example
+   * ```ts
+   * expect(result).toMatchNumber(expected)
+   * expect(result).toMatchNumber(expected, { digits: 2 })
+   * ```
+   */
   toMatchNumber: (expected: number, options?: { digits?: number }) => R
 }
 
