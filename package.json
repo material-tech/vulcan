@@ -25,7 +25,7 @@
   "scripts": {
     "build": "unbuild",
     "prepack": "unbuild",
-    "test": "vitest",
+    "test": "vitest --typecheck",
     "test:coverage": "vitest --coverage",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",

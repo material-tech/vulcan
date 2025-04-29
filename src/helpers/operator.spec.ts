@@ -1,12 +1,15 @@
-import type { Numberish } from 'dnum'
-import { abs, add, ceil, compare, floor, gt, gte, lt, lte, mul, sub } from 'dnum'
-import { describe, expect, it } from 'vitest'
+import type { Dnum, Numberish, Rounding } from 'dnum'
+import { abs, add, ceil, compare, floor, from, gt, gte, lt, lte, mul, remainder, round, setDecimals, sub, toJSON, toParts } from 'dnum'
+import { describe, expect, expectTypeOf, it } from 'vitest'
 import { mapOperator } from './operator'
 
-interface Case<Operator extends (args0: Numberish, ...args: any[]) => any = (args0: Numberish, ...args: any[]) => any> {
+interface Case<
+  Data extends Numberish = Numberish,
+  Operator extends (args0: Data, ...args: any[]) => any = (args0: Data, ...args: any[]) => any,
+> {
   name: string
   operator: Operator
-  args: [Numberish[], ...any[]]
+  args: [Data[], ...any[]]
   expected: ReturnType<Operator>[]
   matcher?: 'toEqual' | 'toMatchNumberArray'
 }
@@ -50,13 +53,22 @@ describe('operator', () => {
       expected: [0, 0, 0],
     },
     {
-      name: 'should multiply two arrays',
+      name: 'should map the multiply() to the arrays',
       operator: mul,
       args: [
         [1, 2, 3],
         [1, 2, 3],
       ],
       expected: [1, 4, 9],
+    },
+    {
+      name: 'should map the remainder() to the array',
+      operator: remainder,
+      args: [
+        [3, 2, 5],
+        [2, 2, 3],
+      ],
+      expected: [1, 0, 2],
     },
     {
       name: 'should map the ceil() to the array',
@@ -148,6 +160,73 @@ describe('operator', () => {
       matcher: 'toEqual',
       expected: [true, true, true],
     },
+    {
+      name: 'should map the round() to the array',
+      operator: round,
+      args: [
+        [1.1, 2.2],
+      ],
+      expected: [1, 2],
+    },
+    {
+      name: 'should map the toParts() to the array',
+      operator: toParts,
+      args: [
+        [
+          [11n, 1],
+          [22n, 1],
+        ],
+      ],
+      matcher: 'toEqual',
+      expected: [
+        [1n, '1'],
+        [2n, '2'],
+      ],
+    } as Case,
+    {
+      name: 'should map the from() to the array',
+      operator: from,
+      args: [
+        [1, 2, 3],
+      ],
+      matcher: 'toEqual',
+      expected: [
+        [1n, 0],
+        [2n, 0],
+        [3n, 0],
+      ],
+    },
+    {
+      name: 'should map the toJSON() to the array',
+      operator: toJSON,
+      args: [
+        [
+          [1n, 0],
+          [2n, 0],
+          [3n, 0],
+        ],
+      ],
+      matcher: 'toEqual',
+      expected: ['["1",0]', '["2",0]', '["3",0]'],
+    } as Case,
+    {
+      name: 'should map the setDecimals() to the array',
+      operator: setDecimals,
+      matcher: 'toEqual',
+      args: [
+        [
+          [1n, 0],
+          [2n, 0],
+          [3n, 0],
+        ],
+        1,
+      ],
+      expected: [
+        [10n, 1],
+        [20n, 1],
+        [30n, 1],
+      ],
+    } as Case,
   ]
 
   it.each(cases)('$name', (options) => {
@@ -156,11 +235,38 @@ describe('operator', () => {
   })
 
   it('should throw error when the length of the two arrays are not equal', () => {
-    expect(() => mapOperator(add)([1, 2, 3], [1, 2])).toThrow()
+    expect(() => mapOperator(add)([1, 2, 3], [1, 2]))
+      .toThrow('Should have two array length must be equal')
   })
 
-  it('should able set options', () => {
-    const result = mapOperator(add)([1, 2, 3], [1, 2, 3], 4)
-    expect(result).toStrictEqual([[20000n, 4], [40000n, 4], [60000n, 4]])
+  it('should throw error when the first argument is not provided', () => {
+    expect(mapOperator(add))
+      .toThrow('First argument is required')
+  })
+
+  it('should throw error when more arguments are required', () => {
+    // @ts-expect-error - test case
+    expect(() => mapOperator(add)([1, 2, 3]))
+      .toThrow('Should have at least one more argument')
+  })
+})
+
+describe('mapOperator type', () => {
+  it('should be correct type for some specific operators', () => {
+    const mapToJSON = mapOperator(toJSON)
+    type MapToJSONExpected = (dnum: Dnum[]) => string[]
+    expectTypeOf(mapToJSON).toEqualTypeOf<MapToJSONExpected>()
+
+    const mapToParts = mapOperator(toParts)
+    type MapToPartsExpected = (dnum: Dnum[], optionsOrDigits?: Parameters<typeof toParts>[1]) => [whole: bigint, fraction: string | null][]
+    expectTypeOf(mapToParts).toEqualTypeOf<MapToPartsExpected>()
+
+    const mapToSetDecimals = mapOperator(setDecimals)
+    type MapToSetDecimalsExpected = (value: Dnum[], decimals: number, options?: { rounding?: Rounding }) => Dnum[]
+    expectTypeOf(mapToSetDecimals).toEqualTypeOf<MapToSetDecimalsExpected>()
+
+    const mapFrom = mapOperator(from)
+    type MapFromExpected = (value: Numberish[], decimals?: number | true) => Dnum[]
+    expectTypeOf(mapFrom).toEqualTypeOf<MapFromExpected>()
   })
 })
