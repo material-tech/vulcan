@@ -10,7 +10,7 @@ export interface RMAOptions {
 }
 
 export const defaultRMAOptions: RMAOptions = {
-  period: 14,
+  period: 4,
 }
 
 /**
