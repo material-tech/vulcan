@@ -24,6 +24,10 @@ export interface KlineData {
   timestamp?: number | Date
 }
 
-export type RequiredProperties<T, K extends keyof T> = {
+type Prettify<T> = {
+  [K in keyof T]: T[K]
+} & {}
+
+export type RequiredProperties<T, K extends keyof T> = Prettify<{
   [P in K]-?: T[P]
-} & Omit<T, K>
+}>
