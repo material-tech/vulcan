@@ -19,6 +19,12 @@ describe('createSignal', () => {
     })
   })
 
+  it('should get empty result when dataset is empty', () => {
+    const signal = createSignal(() => void 0)
+
+    expect(signal([])).toEqual([])
+  })
+
   it('should able to override default options', () => {
     const signal = createSignal((_, { decimals }) => decimals)
 
