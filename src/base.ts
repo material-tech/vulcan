@@ -26,7 +26,7 @@ export function createSignal<Data, Result, Options extends Record<string, any>>(
   createFunc: CreateSignalFunc<Data, Result, TechnicalSignalOptions<Options>>,
   defaultOptions?: Options,
 ): TechnicalSignal<Data, Result, Options> {
-  function impl(dataset: Data[], options?: Partial<Options>) {
+  function impl(dataset: Data[], options?: Partial<TechnicalSignalOptions<Options>>) {
     if (dataset.length === 0) {
       return [] as Result
     }
