@@ -2,15 +2,15 @@ import type { Numberish } from 'dnum'
 import { add, div, from, sub } from 'dnum'
 import { createSignal } from '../base'
 
-export interface SMAOptions {
+export interface SimpleMovingAverageOptions {
   /**
    * period
    */
   period: number
 }
 
-export const defaultSMAOptions: SMAOptions = {
-  period: 14,
+export const defaultSMAOptions: SimpleMovingAverageOptions = {
+  period: 2,
 }
 
 /**
