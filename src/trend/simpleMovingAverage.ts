@@ -1,4 +1,4 @@
-import type { Numberish } from 'dnum'
+import type { Numberish, Rounding } from 'dnum'
 import { add, div, from, sub } from 'dnum'
 import { createSignal } from '../base'
 
@@ -11,36 +11,41 @@ export interface SMAOptions {
    * default decimals
    */
   decimals: number
+  /**
+   * rounding
+   */
+  rounding: Rounding
 }
 
 export const defaultSMAOptions: SMAOptions = {
   period: 14,
   decimals: 18,
+  rounding: 'ROUND_HALF',
 }
 
 /**
  * Simple Moving Average (SMA)
  */
 export const sma = createSignal(
-  (values: Numberish[], { period, decimals }) => {
+  (values: Numberish[], { period, decimals, rounding }) => {
     const result = Array.from({ length: values.length }, () => from(0, decimals))
 
     // Calculate the average for data that is less than the period
     let sum = from(0, decimals)
     for (let i = 0; i < values.length; i++) {
-      sum = add(sum, values[i])
+      sum = add(sum, values[i], decimals)
 
       if (i < period - 1) {
         // For data less than one period, calculate the average of all current values
-        result[i] = div(sum, from(i + 1, decimals))
+        result[i] = div(sum, from(i + 1, decimals), { decimals, rounding })
       }
       else {
         // For a complete period, calculate the average within the period
         if (i > period - 1) {
           // Remove the leftmost value of the window to prepare for the current calculation
-          sum = sub(sum, values[i - period])
+          sum = sub(sum, values[i - period], decimals)
         }
-        result[i] = div(sum, from(period, decimals))
+        result[i] = div(sum, from(period, decimals), { decimals, rounding })
       }
     }
 
