@@ -31,7 +31,7 @@ const result = rsi(data, { period: 4, decimals: 18 })
 - [ ] Chande Forecast Oscillator (CFO)
 - [ ] Community Channel Index (CCI)
 - [ ] Double Exponential Moving Average (DEMA)
-- [ ] Exponential Moving Average (EMA)
+- [x] Exponential Moving Average (EMA)
 - [ ] Mass Index (MI)
 - [ ] Moving Average Convergence Divergence (MACD)
 - [x] Moving Max (MMAX)
@@ -44,7 +44,7 @@ const result = rsi(data, { period: 4, decimals: 18 })
 - [x] Simple Moving Average (SMA)
 - [ ] Since Change
 - [ ] Triple Exponential Moving Average (TEMA)
-- [ ] Triangular Moving Average (TRIMA)
+- [x] Triangular Moving Average (TRIMA)
 - [ ] Triple Exponential Average (TRIX)
 - [ ] Typical Price
 - [ ] Volume Weighted Moving Average (VWMA)
@@ -52,13 +52,13 @@ const result = rsi(data, { period: 4, decimals: 18 })
 
 #### 动量指标
 
-- [ ] Awesome Oscillator (AO)
+- [x] Awesome Oscillator (AO)
 - [ ] Chaikin Oscillator (CMO)
 - [ ] Ichimoku Cloud
 - [ ] Percentage Price Oscillator (PPO)
 - [ ] Percentage Volume Oscillator (PVO)
 - [ ] Price Rate of Change (ROC)
-- [ ] Relative Strength Index (RSI)
+- [x] Relative Strength Index (RSI)
 - [x] Stochastic Oscillator (STOCH)
 - [ ] Williams R (WILLR)
 
