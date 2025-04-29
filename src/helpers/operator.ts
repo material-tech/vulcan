@@ -1,5 +1,5 @@
 import type { Numberish } from 'dnum'
-import { from, isDnum } from 'dnum'
+import { isDnum } from 'dnum'
 
 function assertItemLength(arr: Numberish[], arr2: Numberish[]) {
   if (arr.length !== arr2.length) {
@@ -7,19 +7,25 @@ function assertItemLength(arr: Numberish[], arr2: Numberish[]) {
   }
 }
 
-type PickOperatorOptions<T extends (a: Numberish, b: Numberish, ...args: any[]) => Numberish> = Parameters<T> extends [infer _, infer _, ...infer Rest] ? Rest : never
+type ArraifyNumberish<T extends any[]> = {
+  [K in keyof T]: T[K] extends Numberish ? Numberish[] : T[K]
+}
 
 export function mapOperator<
-  Operator extends (a: Numberish, b: Numberish, ...args: any[]) => Numberish,
->(operator: Operator) {
-  return <Data extends Numberish>(arr1: Data[], arr2: Data[] | Numberish, ...args: PickOperatorOptions<typeof operator>): Data[] => {
-    if (Array.isArray(arr2)) {
-      if (isDnum(arr2)) {
-        return arr1.map(item => operator(from(item), from(arr2))) as Data[]
-      }
-      assertItemLength(arr1, arr2)
-      return arr1.map((item, index) => operator(item, arr2[index], ...args)) as Data[]
+  Action extends (args0: Numberish, ...args: any[]) => any,
+>(action: Action): (...args: ArraifyNumberish<Parameters<Action>>) => ReturnType<Action>[]
+export function mapOperator<
+  Action extends (args0: Numberish, args1: Numberish, ...args: any[]) => any,
+>(action: Action): (...args: ArraifyNumberish<Parameters<Action>>) => ReturnType<Action>[]
+export function mapOperator(action: any) {
+  function impl(args0: Numberish[], ...args: any[]) {
+    const [args1, ...rest] = args
+    // (number|string|bigint)[]
+    if (Array.isArray(args1) && !isDnum(args1)) {
+      assertItemLength(args0, args1)
+      return args0.map((num, index) => action(num, args1[index], ...rest))
     }
-    return arr1.map(item => operator(from(item), from(arr2))) as Data[]
+    return args0.map(num => action(num, args1, ...rest))
   }
+  return impl
 }
