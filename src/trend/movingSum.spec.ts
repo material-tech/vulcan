@@ -1,4 +1,3 @@
-import { format } from 'dnum'
 import { describe, expect, it } from 'vitest'
 import { msum } from './movingSum'
 
@@ -8,18 +7,16 @@ describe('movingSum', () => {
   it('should be able to calculate moving sum', () => {
     const result = msum(values)
 
-    const expectedValues = ['1', '3', '6', '10', '14', '18', '22', '26', '30', '34']
+    const expectedValues = [1, 3, 6, 10, 14, 18, 22, 26, 30, 34]
 
-    expect(result.map(format))
-      .toStrictEqual(expectedValues)
+    expect(result).toMatchNumberArray(expectedValues)
   })
 
   it('should be able to calculate moving sum with period option', () => {
     const result = msum(values, { period: 7 })
 
-    const expectedValues = ['1', '3', '6', '10', '15', '21', '28', '35', '42', '49']
+    const expectedValues = [1, 3, 6, 10, 15, 21, 28, 35, 42, 49]
 
-    expect(result.map(format))
-      .toStrictEqual(expectedValues)
+    expect(result).toMatchNumberArray(expectedValues)
   })
 })

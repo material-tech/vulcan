@@ -1,4 +1,3 @@
-import { format } from 'dnum'
 import { describe, expect, it } from 'vitest'
 import { ao } from './awesomeOscillator'
 
@@ -14,17 +13,17 @@ describe('awesomeOscillator (AO)', () => {
     { h: 17, l: 8 },
   ]
 
-  it('should correctly calculate basic AO values', () => {
-    const expected = ['0', '0', '0', '0', '0', '0.5', '1', '1.5']
+  it('should correctly calculate AO values', () => {
+    const expected = [0, 0, 0, 0, 0, 0.5, 1, 1.5]
 
     const result = ao(data)
-    expect(result.map(format)).toStrictEqual(expected)
+    expect(result).toMatchNumberArray(expected)
   })
 
-  it('should correctly calculate basic AO values with options', () => {
-    const expected = ['0', '0', '0.5', '1', '1.5', '2', '2.5', '3']
+  it('should correctly calculate AO values with options', () => {
+    const expected = [0, 0, 0.5, 1, 1.5, 2, 2.5, 3]
 
     const result = ao(data, { fastPeriod: 2, slowPeriod: 20 })
-    expect(result.map(format)).toStrictEqual(expected)
+    expect(result).toMatchNumberArray(expected)
   })
 })
