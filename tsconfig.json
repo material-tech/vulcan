@@ -17,5 +17,5 @@
     "verbatimModuleSyntax": true,
     "skipLibCheck": true
   },
-  "include": ["src/**/*.ts", "vitest.d.ts"]
+  "include": ["src/**/*.ts", "vitest-setup.ts"]
 }
