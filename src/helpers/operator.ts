@@ -2,23 +2,29 @@ import type { Dnum, Numberish } from 'dnum'
 import { gt, isDnum, lt } from 'dnum'
 import { assert } from 'vitest'
 
-type ArraifyNumberish<T extends any[]> = {
-  [K in keyof T]: T[K] extends Numberish ? Numberish[] : T[K]
+type TransformOperatorParameters<T extends any[]> = {
+  [K in keyof T]: K extends '1'
+    ? T[K] extends Numberish
+      ? Numberish[] | Numberish
+      : T[K]
+    : T[K] extends Numberish
+      ? Numberish[]
+      : T[K]
 }
 
-type ArraifyDnum<T extends any[]> = {
+type TransformOperatorParametersDnum<T extends any[]> = {
   [K in keyof T]: T[K] extends Dnum ? Dnum[] : T[K]
 }
 
 export function mapOperator<
   Action extends (args0: Numberish, ...args: any[]) => any,
->(action: Action): (...args: ArraifyNumberish<Parameters<Action>>) => ReturnType<Action>[]
+>(action: Action): (...args: TransformOperatorParameters<Parameters<Action>>) => ReturnType<Action>[]
 export function mapOperator<
   Action extends (args0: Numberish, args1: Numberish, ...args: any[]) => any,
->(action: Action): (...args: ArraifyNumberish<Parameters<Action>>) => ReturnType<Action>[]
+>(action: Action): (...args: TransformOperatorParameters<Parameters<Action>>) => ReturnType<Action>[]
 export function mapOperator<
   Action extends (args0: Dnum, ...args: any[]) => any,
->(action: Action): (...args: ArraifyDnum<Parameters<Action>>) => ReturnType<Action>[]
+>(action: Action): (...args: TransformOperatorParametersDnum<Parameters<Action>>) => ReturnType<Action>[]
 export function mapOperator(action: any) {
   function impl(args0: Numberish[], ...args: any[]) {
     assert(typeof args0 !== 'undefined', 'First argument is required')

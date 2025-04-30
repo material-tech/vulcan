@@ -253,6 +253,10 @@ describe('mapOperator', () => {
 
 describe('mapOperator type', () => {
   it('should be correct type for some specific operators', () => {
+    const mapAdd = mapOperator(add)
+    type MapAddExpected = (num1arr: Numberish[], num2arr: Numberish[] | Numberish, decimals?: number) => Dnum[]
+    expectTypeOf(mapAdd).toEqualTypeOf<MapAddExpected>()
+
     const mapToJSON = mapOperator(toJSON)
     type MapToJSONExpected = (dnum: Dnum[]) => string[]
     expectTypeOf(mapToJSON).toEqualTypeOf<MapToJSONExpected>()
