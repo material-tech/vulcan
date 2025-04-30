@@ -1,6 +1,6 @@
 import type { Dnum, Numberish } from 'dnum'
 import { gt, isDnum, lt } from 'dnum'
-import { assert } from 'vitest'
+import { assert } from './assert'
 
 type TransformOperatorParameters<T extends any[]> = {
   [K in keyof T]: K extends '1'
