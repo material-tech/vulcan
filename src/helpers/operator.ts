@@ -1,11 +1,6 @@
 import type { Dnum, Numberish } from 'dnum'
-import { isDnum } from 'dnum'
-
-function assert(condition: boolean, message: string): asserts condition {
-  if (!condition) {
-    throw new Error(message)
-  }
-}
+import { gt, isDnum, lt } from 'dnum'
+import { assert } from 'vitest'
 
 type ArraifyNumberish<T extends any[]> = {
   [K in keyof T]: T[K] extends Numberish ? Numberish[] : T[K]
@@ -40,4 +35,35 @@ export function mapOperator(action: any) {
     return args0.map(num => action(num, args1, ...rest))
   }
   return impl
+}
+
+export interface PeriodCompareOptions {
+  period?: number
+  start?: number
+}
+
+export function max(
+  numbers: Numberish[],
+  { period = numbers.length, start = 0 }: PeriodCompareOptions = {},
+) {
+  const filtered = numbers.filter((_, index) => index >= start && index < start + period)
+  return filtered.reduce(
+    (max, current) => {
+      return gt(max, current) ? max : current
+    },
+    numbers.at(0) as Numberish,
+  )
+}
+
+export function min(
+  numbers: Numberish[],
+  { period = numbers.length, start = 0 }: PeriodCompareOptions = {},
+) {
+  const filtered = numbers.filter((_, index) => index >= start && index < start + period)
+  return filtered.reduce(
+    (min, current) => {
+      return lt(min, current) ? min : current
+    },
+    numbers.at(0) as Numberish,
+  )
 }

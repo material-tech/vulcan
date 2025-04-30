@@ -1,7 +1,7 @@
 import type { Dnum, Numberish, Rounding } from 'dnum'
 import { abs, add, ceil, compare, floor, from, gt, gte, lt, lte, mul, remainder, round, setDecimals, sub, toJSON, toParts } from 'dnum'
 import { describe, expect, expectTypeOf, it } from 'vitest'
-import { mapOperator } from './operator'
+import { mapOperator, max, min } from './operator'
 
 interface Case<
   Data extends Numberish = Numberish,
@@ -14,7 +14,7 @@ interface Case<
   matcher?: 'toEqual' | 'toMatchNumberArray'
 }
 
-describe('operator', () => {
+describe('mapOperator', () => {
   const cases: Case[] = [
     {
       name: 'should to add two arrays',
@@ -268,5 +268,32 @@ describe('mapOperator type', () => {
     const mapFrom = mapOperator(from)
     type MapFromExpected = (value: Numberish[], decimals?: number | true) => Dnum[]
     expectTypeOf(mapFrom).toEqualTypeOf<MapFromExpected>()
+  })
+})
+
+describe('custom operator', () => {
+  it('should max() work properly', () => {
+    const result = max([1, 2, 3])
+    expect(result).toEqual(3)
+  })
+
+  it('should max() work properly with period and start', () => {
+    const result = max([1, 2, 3], { period: 2, start: 0 })
+    expect(result).toEqual(2)
+  })
+
+  it('should max() work properly with negative start', () => {
+    const result = max([1, 2, 3], { period: 3, start: -2 })
+    expect(result).toEqual(1)
+  })
+
+  it('should min() work properly', () => {
+    const result = min([1, 2, 3])
+    expect(result).toEqual(1)
+  })
+
+  it('should min() work properly with period and start', () => {
+    const result = min([3, 2, 1], { period: 2, start: 0 })
+    expect(result).toEqual(2)
   })
 })
