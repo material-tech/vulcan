@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { ad } from './accumulationDistribution'
+import { ad } from '~/volume/accumulationDistribution'
 
 describe('accumulation distribution (A/D)', () => {
   const values = [

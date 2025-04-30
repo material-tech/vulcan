@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { cmo } from './chaikinOscillator'
+import { cmo } from '~/momentum/chaikinOscillator'
 
 describe('chaikin money flow oscillator (CMO)', () => {
   const values = [

@@ -1,7 +1,7 @@
 import type { Dnum, Numberish, Rounding } from 'dnum'
 import { abs, add, ceil, compare, floor, from, gt, gte, lt, lte, mul, remainder, round, setDecimals, sub, toJSON, toParts } from 'dnum'
 import { describe, expect, expectTypeOf, it } from 'vitest'
-import { mapOperator, max, min } from './operator'
+import { mapOperator, max, min } from '~/helpers/operator'
 
 interface Case<
   Data extends Numberish = Numberish,

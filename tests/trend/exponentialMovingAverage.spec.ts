@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { ema } from './exponentialMovingAverage'
+import { ema } from '~/trend/exponentialMovingAverage'
 
 describe('exponential moving average (ema)', () => {
   const values = [2, 4, 6, 8, 12, 14, 16, 18, 20]

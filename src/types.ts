@@ -28,7 +28,7 @@ export interface KlineData {
   /** Volume */
   v: Numberish
   /** Timestamp */
-  timestamp?: number | Date
+  timestamp?: number | Date | string
 }
 
 type Prettify<T> = {

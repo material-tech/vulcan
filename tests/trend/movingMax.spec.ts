@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { mmax } from './movingMax'
+import { mmax } from '~/trend/movingMax'
 
 describe('movingMax (mmax)', () => {
   const values = [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]

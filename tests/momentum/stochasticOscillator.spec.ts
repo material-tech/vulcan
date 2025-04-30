@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { stoch } from './stochasticOscillator'
+import { stoch } from '~/momentum/stochasticOscillator'
 
 describe('stochastic oscillator (STOCH)', () => {
   const values = [

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { ao } from './awesomeOscillator'
+import { ao } from '~/momentum/awesomeOscillator'
 
 describe('awesomeOscillator (AO)', () => {
   const data = [

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { createSignal, setDecimalOptions } from './base'
+import { createSignal, setDecimalOptions } from '../src/base'
 
 describe('createSignal', () => {
   it('should create a TechnicalSignal instance', () => {

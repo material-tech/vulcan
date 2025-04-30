@@ -3,6 +3,9 @@
     "target": "ESNext",
     "module": "Preserve",
     "moduleResolution": "Bundler",
+    "paths": {
+      "~/*": ["./src/*"]
+    },
     "resolveJsonModule": true,
     "allowImportingTsExtensions": true,
     "allowJs": true,
@@ -17,5 +20,10 @@
     "verbatimModuleSyntax": true,
     "skipLibCheck": true
   },
-  "include": ["src/**/*.ts", "vitest-setup.ts"]
+  "include": [
+    "src/**/*.ts",
+    "tests/**/*.spec.ts",
+    "tests/ohlcv.json",
+    "vitest-setup.ts"
+  ]
 }

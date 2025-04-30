@@ -43,6 +43,7 @@
     "lint-staged": "^15.5.1",
     "simple-git-hooks": "^2.13.0",
     "unbuild": "^3.5.0",
+    "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.1.2"
   },
   "simple-git-hooks": {

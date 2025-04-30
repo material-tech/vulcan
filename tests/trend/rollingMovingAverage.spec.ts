@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { rma } from './rollingMovingAverage'
+import { rma } from '~/trend/rollingMovingAverage'
 
 describe('rollingMovingAverage', () => {
   const values = [2, 4, 6, 8, 10, 12]
