@@ -1,0 +1,45 @@
+import type { KlineData, RequiredProperties } from '../types'
+import { add, div, from, mul, sub } from 'dnum'
+import { createSignal } from '../base'
+import { mapOperator } from '../helpers/operator'
+
+/**
+ * Accumulation/Distribution Indicator (A/D). Cumulative indicator
+ * that uses volume and price to assess whether a stock is
+ * being accumulated or distributed.
+ *
+ * MFM = ((Closing - Low) - (High - Closing)) / (High - Low)
+ * MFV = MFM * Period Volume
+ * AD = Previous AD + CMFV
+ */
+export const ad = createSignal(
+  (data: RequiredProperties<KlineData, 'h' | 'l' | 'c' | 'v'>[], { decimals, rounding }) => {
+    const highs = data.map(v => from(v.h, decimals))
+    const lows = data.map(v => from(v.l, decimals))
+    const closings = data.map(v => from(v.c, decimals))
+    const volumes = data.map(v => from(v.v, decimals))
+
+    /** Money Flow Multiplier */
+    const mfm = mapOperator(div)(
+      mapOperator(sub)(
+        mapOperator(sub)(closings, lows, decimals),
+        mapOperator(sub)(highs, closings, decimals),
+        decimals,
+      ),
+      mapOperator(sub)(highs, lows, decimals),
+      { decimals, rounding },
+    )
+
+    /** Money Flow Volume */
+    const mfv = mapOperator(mul)(mfm, volumes)
+
+    let prevValue = from(0, decimals)
+
+    return Array.from({ length: mfv.length }, (_, i) => {
+      const currentValue = i === 0 ? mfv[i] : add(mfv[i], prevValue, decimals)
+      return prevValue = currentValue
+    })
+  },
+)
+
+export { ad as accumulationDistribution }

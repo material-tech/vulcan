@@ -1,0 +1,32 @@
+import { describe, expect, it } from 'vitest'
+import { cmo } from './chaikinOscillator'
+
+describe('chaikin money flow oscillator (CMO)', () => {
+  const values = [
+    { h: 10, l: 1, c: 5, v: 100 },
+    { h: 11, l: 2, c: 6, v: 200 },
+    { h: 12, l: 3, c: 7, v: 300 },
+    { h: 13, l: 4, c: 8, v: 400 },
+    { h: 14, l: 5, c: 9, v: 500 },
+    { h: 15, l: 6, c: 10, v: 600 },
+    { h: 16, l: 7, c: 11, v: 700 },
+    { h: 17, l: 8, c: 12, v: 800 },
+  ]
+
+  it('should able to calculate CMO', () => {
+    const result = cmo(values)
+
+    expect(result)
+      .toMatchNumberArray([0, -7.07, -19.93, -37.52, -58.98, -83.61, -110.83, -140.17], { digits: 2 })
+  })
+
+  it('should able to calculate CMO with options', () => {
+    const result = cmo(values, {
+      fastPeriod: 2,
+      slowPeriod: 5,
+    })
+
+    expect(result)
+      .toMatchNumberArray([0, -7.41, -18.52, -31.69, -46.09, -61.27, -76.95, -92.97], { digits: 2 })
+  })
+})
