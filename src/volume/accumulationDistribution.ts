@@ -1,8 +1,8 @@
-import type { KlineData, RequiredProperties } from '../types'
+import type { KlineData, RequiredProperties } from '~/types'
 import { add, div, from, mul, sub } from 'dnum'
+import { createSignal } from '~/base'
 import { mapPick } from '~/helpers/array'
-import { createSignal } from '../base'
-import { mapOperator } from '../helpers/operator'
+import { mapOperator } from '~/helpers/operator'
 
 /**
  * Accumulation/Distribution Indicator (A/D). Cumulative indicator

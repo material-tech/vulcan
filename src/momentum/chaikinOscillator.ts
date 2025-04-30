@@ -1,9 +1,9 @@
-import type { KlineData, RequiredProperties } from '../types'
+import type { KlineData, RequiredProperties } from '~/types'
 import { sub } from 'dnum'
-import { createSignal } from '../base'
-import { mapOperator } from '../helpers/operator'
-import { ema } from '../trend/exponentialMovingAverage'
-import { ad } from '../volume/accumulationDistribution'
+import { createSignal } from '~/base'
+import { mapOperator } from '~/helpers/operator'
+import { ema } from '~/trend/exponentialMovingAverage'
+import { ad } from '~/volume/accumulationDistribution'
 
 export interface ChaikinOscillatorOptions {
   fastPeriod: number

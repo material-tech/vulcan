@@ -1,5 +1,5 @@
 import type { Numberish } from 'dnum'
-import { createSignal } from '../base'
+import { createSignal } from '~/base'
 import { sma } from './simpleMovingAverage'
 
 export interface TriangularMovingAverageOptions {

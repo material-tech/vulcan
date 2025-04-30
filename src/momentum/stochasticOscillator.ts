@@ -1,11 +1,11 @@
 import type { Dnum } from 'dnum'
-import type { KlineData, RequiredProperties } from '../types'
+import type { KlineData, RequiredProperties } from '~/types'
 import { div, from, mul, sub } from 'dnum'
+import { createSignal } from '~/base'
 import { mapPick } from '~/helpers/array'
-import { createSignal } from '../base'
-import { mapOperator } from '../helpers/operator'
-import { mmin, sma } from '../trend'
-import { mmax } from '../trend/movingMax'
+import { mapOperator } from '~/helpers/operator'
+import { mmin, sma } from '~/trend'
+import { mmax } from '~/trend/movingMax'
 
 export interface StochasticOscillatorOptions {
   /** The %k period */

@@ -1,7 +1,7 @@
 import type { Numberish } from 'dnum'
 import { add, div, eq, from, gt, mul, sub } from 'dnum'
-import { createSignal } from '../base'
-import { rma } from '../trend/rollingMovingAverage'
+import { createSignal } from '~/base'
+import { rma } from '~/trend/rollingMovingAverage'
 
 export interface RSIOptions {
   period: number

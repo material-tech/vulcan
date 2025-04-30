@@ -1,6 +1,6 @@
 import type { Numberish } from 'dnum'
 import { add, div, from, sub } from 'dnum'
-import { createSignal } from '../base'
+import { createSignal } from '~/base'
 
 export interface SimpleMovingAverageOptions {
   /**

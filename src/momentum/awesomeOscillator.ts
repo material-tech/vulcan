@@ -1,7 +1,7 @@
-import type { KlineData, RequiredProperties } from '../types'
+import type { KlineData, RequiredProperties } from '~/types'
 import { add, div, from, sub } from 'dnum'
+import { createSignal } from '~/base'
 import { mapPick } from '~/helpers/array'
-import { createSignal } from '../base'
 import { mapOperator } from '../helpers/operator'
 import { sma } from '../trend/simpleMovingAverage'
 

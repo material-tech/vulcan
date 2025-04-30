@@ -1,6 +1,6 @@
 import type { Numberish } from 'dnum'
 import { add, from, mul } from 'dnum'
-import { createSignal } from '../base'
+import { createSignal } from '~/base'
 
 export interface MovingSumOptions {
   period: number
