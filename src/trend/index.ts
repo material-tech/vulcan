@@ -1,3 +1,4 @@
+export * from './exponentialMovingAverage'
 export * from './movingMax'
 export * from './movingMin'
 export * from './movingSum'

@@ -1,3 +1,5 @@
 export * from './awesomeOscillator'
+export * from './chaikinOscillator'
+export * from './ichimokuCloud'
 export * from './relativeStrengthIndex'
 export * from './stochasticOscillator'
