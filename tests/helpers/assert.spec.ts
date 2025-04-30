@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, expectTypeOf, it } from 'vitest'
 import { assert } from '../../src/helpers/assert'
 
 describe('assert', () => {
@@ -19,6 +19,6 @@ describe('assert', () => {
   it('should work as a type assertion', () => {
     const maybeString: string | undefined = 'test'
     assert(typeof maybeString === 'string', 'Value must be a string')
-    expect(maybeString.length).toBe(4)
+    expectTypeOf(maybeString).toBeString()
   })
 })

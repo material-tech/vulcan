@@ -1,7 +1,7 @@
 import type { Numberish, Rounding } from 'dnum'
 
 export interface TechnicalSignal<Data, Result, Options extends Record<string, any>> {
-  defaultOptions: TechnicalSignalOptions<Options>
+  readonly defaultOptions: TechnicalSignalOptions<Options>
   (dataset: Data[], options?: Partial<TechnicalSignalOptions<Options>>): Result
 }
 
