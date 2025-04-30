@@ -1,5 +1,6 @@
 import type { KlineData, RequiredProperties } from '../types'
 import { add, div, from, sub } from 'dnum'
+import { mapPick } from '~/helpers/array'
 import { createSignal } from '../base'
 import { mapOperator } from '../helpers/operator'
 import { sma } from '../trend/simpleMovingAverage'
@@ -18,8 +19,8 @@ export const ao = createSignal((
   data: RequiredProperties<KlineData, 'h' | 'l'>[],
   { fastPeriod, slowPeriod, decimals, rounding },
 ) => {
-  const lows = data.map(item => from(item.l, decimals))
-  const highs = data.map(item => from(item.h, decimals))
+  const lows = mapPick(data, 'l', v => from(v, decimals))
+  const highs = mapPick(data, 'h', v => from(v, decimals))
 
   const medianPrice = mapOperator(div)(
     mapOperator(add)(

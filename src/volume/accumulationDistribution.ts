@@ -1,5 +1,6 @@
 import type { KlineData, RequiredProperties } from '../types'
 import { add, div, from, mul, sub } from 'dnum'
+import { mapPick } from '~/helpers/array'
 import { createSignal } from '../base'
 import { mapOperator } from '../helpers/operator'
 
@@ -14,10 +15,10 @@ import { mapOperator } from '../helpers/operator'
  */
 export const ad = createSignal(
   (data: RequiredProperties<KlineData, 'h' | 'l' | 'c' | 'v'>[], { decimals, rounding }) => {
-    const highs = data.map(v => from(v.h, decimals))
-    const lows = data.map(v => from(v.l, decimals))
-    const closings = data.map(v => from(v.c, decimals))
-    const volumes = data.map(v => from(v.v, decimals))
+    const highs = mapPick(data, 'h', v => from(v, decimals))
+    const lows = mapPick(data, 'l', v => from(v, decimals))
+    const closings = mapPick(data, 'c', v => from(v, decimals))
+    const volumes = mapPick(data, 'v', v => from(v, decimals))
 
     /** Money Flow Multiplier */
     const mfm = mapOperator(div)(
