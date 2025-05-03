@@ -1,5 +1,5 @@
 import type { CreateSignalFunc, TechnicalSignal, TechnicalSignalOptions } from './types'
-import defu from 'defu'
+import { defu } from 'defu'
 
 /** singleton decimal options */
 const decimalOptions = {
