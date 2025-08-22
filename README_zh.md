@@ -25,7 +25,6 @@ const result = rsi(data, { period: 4, decimals: 18 })
 
 #### 趋势指标
 
-- [ ] Absolute Price Oscillator (APO)
 - [ ] Aroon Indicator
 - [ ] Balance of Power (BOP)
 - [ ] Chande Forecast Oscillator (CFO)
@@ -52,9 +51,10 @@ const result = rsi(data, { period: 4, decimals: 18 })
 
 #### 动量指标
 
+- [x] Absolute Price Oscillator (APO)
 - [x] Awesome Oscillator (AO)
-- [ ] Chaikin Oscillator (CMO)
-- [ ] Ichimoku Cloud
+- [x] Chaikin Oscillator (CMO)
+- [x] Ichimoku Cloud
 - [ ] Percentage Price Oscillator (PPO)
 - [ ] Percentage Volume Oscillator (PVO)
 - [ ] Price Rate of Change (ROC)
