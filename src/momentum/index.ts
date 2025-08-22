@@ -1,3 +1,4 @@
+export * from './absolutePriceOscillator'
 export * from './awesomeOscillator'
 export * from './chaikinOscillator'
 export * from './ichimokuCloud'
