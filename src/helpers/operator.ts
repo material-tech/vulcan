@@ -1,5 +1,13 @@
 import type { Dnum, Numberish } from 'dnum'
-import { gt, isDnum, lt } from 'dnum'
+import {
+  add as dnumAdd,
+  divide as dnumDivide,
+  multiply as dnumMultiply,
+  subtract as dnumSubtract,
+  gt,
+  isDnum,
+  lt,
+} from 'dnum'
 import { assert } from './assert'
 
 type TransformOperatorParameters<T extends any[]> = {
@@ -73,3 +81,9 @@ export function min(
     numbers.at(0) as Numberish,
   )
 }
+
+export const add = mapOperator(dnumAdd)
+export const subtract = mapOperator(dnumSubtract)
+export const multiply = mapOperator(dnumMultiply)
+export const divide = mapOperator(dnumDivide)
+export { divide as div, multiply as mul, subtract as sub }
