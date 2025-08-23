@@ -1,9 +1,9 @@
 import type { Dnum } from 'dnum'
 import type { KlineData, RequiredProperties } from '~/types'
-import { div, from, mul, sub } from 'dnum'
+import { from } from 'dnum'
 import { createSignal } from '~/base'
 import { mapPick } from '~/helpers/array'
-import { mapOperator } from '~/helpers/operator'
+import { divide, multiply, subtract } from '~/helpers/operator'
 import { mmin, sma } from '~/trend'
 import { mmax } from '~/trend/movingMax'
 
@@ -35,10 +35,10 @@ export const stoch = createSignal((data: RequiredProperties<KlineData, 'h' | 'l'
   const highestHigh = mmax(highs, { period: kPeriod })
   const lowestLow = mmin(lows, { period: kPeriod })
 
-  const rawK = mapOperator(mul)(
-    mapOperator(div)(
-      mapOperator(sub)(closings, lowestLow, decimals),
-      mapOperator(sub)(highestHigh, lowestLow, decimals),
+  const rawK = multiply(
+    divide(
+      subtract(closings, lowestLow, decimals),
+      subtract(highestHigh, lowestLow, decimals),
       { decimals, rounding },
     ),
     100,

@@ -1,8 +1,8 @@
 import type { KlineData, RequiredProperties } from '~/types'
-import { add, div, from, sub } from 'dnum'
+import { from } from 'dnum'
 import { createSignal } from '~/base'
 import { mapPick } from '~/helpers/array'
-import { mapOperator } from '../helpers/operator'
+import { add, divide, subtract } from '../helpers/operator'
 import { sma } from '../trend/simpleMovingAverage'
 
 export interface AwesomeOscillatorOptions {
@@ -22,8 +22,8 @@ export const ao = createSignal((
   const lows = mapPick(data, 'l', v => from(v, decimals))
   const highs = mapPick(data, 'h', v => from(v, decimals))
 
-  const medianPrice = mapOperator(div)(
-    mapOperator(add)(
+  const medianPrice = divide(
+    add(
       highs,
       lows,
     ),
@@ -33,7 +33,7 @@ export const ao = createSignal((
   const fastMA = sma(medianPrice, { period: fastPeriod })
   const slowMA = sma(medianPrice, { period: slowPeriod })
 
-  return mapOperator(sub)(fastMA, slowMA, decimals)
+  return subtract(fastMA, slowMA, decimals)
 }, defaultAwesomeOscillatorOptions)
 
 export { ao as awesomeOscillator }

@@ -1,8 +1,8 @@
 import type { KlineData, RequiredProperties } from '~/types'
-import { add, div, from, mul, sub } from 'dnum'
+import { add, from } from 'dnum'
 import { createSignal } from '~/base'
 import { mapPick } from '~/helpers/array'
-import { mapOperator } from '~/helpers/operator'
+import { divide, multiply, subtract } from '~/helpers/operator'
 
 /**
  * Accumulation/Distribution Indicator (A/D). Cumulative indicator
@@ -21,18 +21,18 @@ export const ad = createSignal(
     const volumes = mapPick(data, 'v', v => from(v, decimals))
 
     /** Money Flow Multiplier */
-    const mfm = mapOperator(div)(
-      mapOperator(sub)(
-        mapOperator(sub)(closings, lows, decimals),
-        mapOperator(sub)(highs, closings, decimals),
+    const mfm = divide(
+      subtract(
+        subtract(closings, lows, decimals),
+        subtract(highs, closings, decimals),
         decimals,
       ),
-      mapOperator(sub)(highs, lows, decimals),
+      subtract(highs, lows, decimals),
       { decimals, rounding },
     )
 
     /** Money Flow Volume */
-    const mfv = mapOperator(mul)(mfm, volumes)
+    const mfv = multiply(mfm, volumes)
 
     let prevValue = from(0, decimals)
 

@@ -1,7 +1,6 @@
 import type { KlineData, RequiredProperties } from '~/types'
-import { sub } from 'dnum'
 import { createSignal } from '~/base'
-import { mapOperator } from '~/helpers/operator'
+import { subtract } from '~/helpers/operator'
 import { ema } from '~/trend/exponentialMovingAverage'
 import { ad } from '~/volume/accumulationDistribution'
 
@@ -28,7 +27,7 @@ export const cmo = createSignal(
   (data: RequiredProperties<KlineData, 'h' | 'l' | 'c' | 'v'>[], { fastPeriod, slowPeriod }) => {
     const adResult = ad(data)
 
-    return mapOperator(sub)(
+    return subtract(
       ema(adResult, { period: fastPeriod }),
       ema(adResult, { period: slowPeriod }),
     )
