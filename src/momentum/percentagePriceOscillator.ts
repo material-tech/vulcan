@@ -1,4 +1,4 @@
-import type { Numberish } from 'dnum'
+import type { Dnum, Numberish } from 'dnum'
 import { from } from 'dnum'
 import { createSignal } from '~/base'
 import { divide, multiply, subtract } from '../helpers/operator'
@@ -17,9 +17,9 @@ export const defaultPercentagePriceOscillatorOptions: PercentagePriceOscillatorO
 }
 
 export interface PercentagePriceOscillatorResult {
-  ppo: Numberish[]
-  signal: Numberish[]
-  histogram: Numberish[]
+  ppo: Dnum[]
+  signal: Dnum[]
+  histogram: Dnum[]
 }
 
 /**
@@ -49,10 +49,10 @@ export const ppo = createSignal((
   data: Numberish[],
   { fastPeriod, slowPeriod, signalPeriod, decimals, rounding },
 ): PercentagePriceOscillatorResult => {
-  const closes = data.map(v => from(v, decimals))
+  const closes = data.map(v => from(v))
 
-  const fastEMA = ema(closes, { period: fastPeriod, decimals, rounding })
-  const slowEMA = ema(closes, { period: slowPeriod, decimals, rounding })
+  const fastEMA = ema(closes, { period: fastPeriod, rounding })
+  const slowEMA = ema(closes, { period: slowPeriod, rounding })
 
   // Calculate PPO = ((Fast EMA - Slow EMA) / Slow EMA) * 100
   const ppoValues = multiply(
@@ -60,17 +60,15 @@ export const ppo = createSignal((
       subtract(
         fastEMA,
         slowEMA,
-        decimals,
       ),
       slowEMA,
-      decimals,
     ),
     100,
     decimals,
   )
 
   // Calculate Signal = EMA(signalPeriod, PPO)
-  const signal = ema(ppoValues, { period: signalPeriod, decimals, rounding })
+  const signal = ema(ppoValues, { period: signalPeriod, decimals })
 
   // Calculate Histogram = PPO - Signal
   const histogram = subtract(ppoValues, signal, decimals)
