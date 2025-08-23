@@ -33,8 +33,7 @@
   },
   "dependencies": {
     "defu": "^6.1.4",
-    "dnum": "^2.15.0",
-    "unctx": "^2.4.1"
+    "dnum": "^2.15.0"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^5.2.1",
