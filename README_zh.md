@@ -55,7 +55,7 @@ const result = rsi(data, { period: 4, decimals: 18 })
 - [x] Awesome Oscillator (AO)
 - [x] Chaikin Oscillator (CMO)
 - [x] Ichimoku Cloud
-- [ ] Percentage Price Oscillator (PPO)
+- [x] Percentage Price Oscillator (PPO)
 - [ ] Percentage Volume Oscillator (PVO)
 - [ ] Price Rate of Change (ROC)
 - [x] Relative Strength Index (RSI)
