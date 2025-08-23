@@ -26,10 +26,8 @@ export const mmin = createSignal(
       // Calculate the starting index of the current window
       const startIndex = Math.max(0, i - period + 1)
 
-      // 初始化最小值为当前窗口的第一个值
       let min = dnumValues[startIndex]
 
-      // 在当前窗口中寻找最小值
       for (let j = startIndex + 1; j <= i; j++) {
         if (lt(dnumValues[j], min)) {
           min = dnumValues[j]
