@@ -1,7 +1,7 @@
 import type { Numberish } from 'dnum'
-import { div, from, mul, sub } from 'dnum'
+import { from } from 'dnum'
 import { createSignal } from '~/base'
-import { mapOperator } from '../helpers/operator'
+import { divide, multiply, subtract } from '../helpers/operator'
 import { ema } from '../trend/exponentialMovingAverage'
 
 export interface PercentagePriceOscillatorOptions {
@@ -55,9 +55,13 @@ export const ppo = createSignal((
   const slowEMA = ema(closes, { period: slowPeriod, decimals, rounding })
 
   // Calculate PPO = ((Fast EMA - Slow EMA) / Slow EMA) * 100
-  const ppoValues = mapOperator(mul)(
-    mapOperator(div)(
-      mapOperator(sub)(fastEMA, slowEMA, decimals),
+  const ppoValues = multiply(
+    divide(
+      subtract(
+        fastEMA,
+        slowEMA,
+        decimals,
+      ),
       slowEMA,
       decimals,
     ),
@@ -69,7 +73,7 @@ export const ppo = createSignal((
   const signal = ema(ppoValues, { period: signalPeriod, decimals, rounding })
 
   // Calculate Histogram = PPO - Signal
-  const histogram = mapOperator(sub)(ppoValues, signal, decimals)
+  const histogram = subtract(ppoValues, signal, decimals)
 
   return {
     ppo: ppoValues,
