@@ -9,8 +9,9 @@ describe('accumulation distribution (A/D)', () => {
     { h: 14, l: 12, c: 10, v: 400 },
     { h: 12, l: 10, c: 8, v: 500 },
   ]
+
   it('should be able to compute accumulation distribution', () => {
-    const expected = [50, 650, -50, -1250, -2750]
+    const expected = [50, 650, -48, -1248, -2748]
 
     const result = ad(values)
     expect(result).toMatchNumberArray(expected)

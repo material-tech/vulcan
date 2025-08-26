@@ -1,7 +1,7 @@
 import type { Dnum, Numberish, Rounding } from 'dnum'
 import { abs, add, ceil, compare, floor, from, gt, gte, lt, lte, mul, remainder, round, setDecimals, sub, toJSON, toParts } from 'dnum'
 import { describe, expect, expectTypeOf, it } from 'vitest'
-import { mapOperator, max, min } from '~/helpers/operator'
+import { mapOperator, max, min, movingAction } from '~/helpers/operations'
 
 interface Case<
   Data extends Numberish = Numberish,
@@ -299,5 +299,17 @@ describe('custom operator', () => {
   it('should min() work properly with period and start', () => {
     const result = min([3, 2, 1], { period: 2, start: 0 })
     expect(result).toEqual(2)
+  })
+})
+
+describe('movingAction', () => {
+  it('should work properly', () => {
+    const result = movingAction([1, 2, 3], window => max(window), 2)
+    expect(result).toStrictEqual([1, 2, 3])
+  })
+
+  it('should return empty array when the values is empty', () => {
+    const result = movingAction([], window => max(window), 2)
+    expect(result).toStrictEqual([])
   })
 })

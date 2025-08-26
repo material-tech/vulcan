@@ -21,22 +21,22 @@ export const defaultRMAOptions: RMAOptions = {
  * R[p] and after is R[i] = ((R[i-1]*(p-1)) + v[i]) / p
  */
 export const rma = createSignal(
-  (values: Numberish[], { period, decimals }) => {
-    const result = Array.from({ length: values.length }, () => from(0, decimals))
+  (values: Numberish[], { period }) => {
+    const result = Array.from({ length: values.length }, () => from(0))
 
     // Use SMA for the first period
-    let sum = from(0, decimals)
+    let sum = from(0)
     for (let i = 0; i < values.length; i++) {
       if (i < period) {
         // Use SMA for the first 'period' values
         sum = add(sum, values[i])
-        result[i] = div(sum, from(i + 1, decimals))
+        result[i] = div(sum, i + 1, 18)
       }
       else {
         // Use RMA formula: RMA(i) = (RMA(i-1) * (period-1) + value(i)) / period
         result[i] = div(
-          add(mul(result[i - 1], from(period - 1, decimals)), values[i]),
-          from(period, decimals),
+          add(mul(result[i - 1], from(period - 1), 18), values[i]),
+          from(period),
         )
       }
     }

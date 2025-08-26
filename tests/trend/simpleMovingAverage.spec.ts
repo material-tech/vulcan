@@ -17,4 +17,23 @@ describe('sma', () => {
 
     expect(result).toMatchNumberArray(expected)
   })
+
+  it('should calculate simple moving average for decimal values', () => {
+    const values = [
+      1,
+      1.5,
+      1.3333333333333333,
+      2.6666666666666665,
+      4.666666666666667,
+      7.666666666666667,
+      7.333333333333333,
+      6.666666666666667,
+      5,
+      4.333333333333333,
+    ]
+    const result = sma(values, { period: 2 })
+    const expected = [1, 1.25, 1.42, 2, 3.67, 6.17, 7.5, 7, 5.83, 4.67]
+
+    expect(result).toMatchNumberArray(expected)
+  })
 })

@@ -1,19 +1,12 @@
-import type { Numberish, Rounding } from 'dnum'
+import type { Numberish } from 'dnum'
 
 export interface TechnicalSignal<Data, Result, Options extends Record<string, any>> {
-  readonly defaultOptions: TechnicalSignalOptions<Options>
-  (dataset: Data[], options?: Partial<TechnicalSignalOptions<Options>>): Result
+  readonly defaultOptions: Options
+  (dataset: Data[], options?: Partial<Options>): Result
 }
 
 export interface CreateSignalFunc<Data, Result, Options extends Record<string, any>> {
   (dataset: Data[], options: Required<Options>): Result
-}
-
-export type TechnicalSignalOptions<T extends Record<string, any> = object> = T & {
-  /** decimal precision */
-  decimals?: number
-  /** rounding method */
-  rounding?: Rounding
 }
 
 export interface KlineData {

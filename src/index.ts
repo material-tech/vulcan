@@ -1,4 +1,4 @@
-export { createSignal, setDecimalOptions, useDecimalOptions } from './base'
+export { createSignal } from './base'
 export * from './momentum'
 export * from './trend'
 export * from './types'

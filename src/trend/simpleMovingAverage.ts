@@ -1,10 +1,12 @@
 import type { Numberish } from 'dnum'
-import { add, div, from, sub } from 'dnum'
+import { add, div, from } from 'dnum'
 import { createSignal } from '~/base'
+import { movingAction } from '~/helpers/operations'
 
 export interface SimpleMovingAverageOptions {
   /**
-   * period
+   * The period for calculating the moving average
+   * @default 2
    */
   period: number
 }
@@ -15,31 +17,32 @@ export const defaultSMAOptions: SimpleMovingAverageOptions = {
 
 /**
  * Simple Moving Average (SMA)
+ *
+ * Calculates the arithmetic mean of a set of values over a specified period.
+ * The SMA is calculated by summing all values in the period and dividing by the period length.
+ *
+ * Formula: SMA = (P1 + P2 + ... + Pn) / n
+ * Where: P = Price values, n = Period
+ *
+ * @param values - Array of price values
+ * @param options - Configuration options
+ * @param options.period - The period for calculating the moving average (default: 2)
+ * @returns Array of SMA values
  */
 export const sma = createSignal(
-  (values: Numberish[], { period, decimals, rounding }) => {
-    const result = Array.from({ length: values.length }, () => from(0, decimals))
-
-    // Calculate the average for data that is less than the period
-    let sum = from(0, decimals)
-    for (let i = 0; i < values.length; i++) {
-      sum = add(sum, values[i], decimals)
-
-      if (i < period - 1) {
-        // For data less than one period, calculate the average of all current values
-        result[i] = div(sum, from(i + 1, decimals), { decimals, rounding })
-      }
-      else {
-        // For a complete period, calculate the average within the period
-        if (i > period - 1) {
-          // Remove the leftmost value of the window to prepare for the current calculation
-          sum = sub(sum, values[i - period], decimals)
-        }
-        result[i] = div(sum, from(period, decimals), { decimals, rounding })
-      }
+  (values: Numberish[], { period }: Required<SimpleMovingAverageOptions>) => {
+    if (values.length === 0) {
+      return []
     }
 
-    return result
+    return movingAction(
+      values,
+      (window) => {
+        const sum = window.reduce((acc, cur) => add(acc, cur), from(0, 18))
+        return div(sum, window.length, 18)
+      },
+      period,
+    )
   },
   defaultSMAOptions,
 )

@@ -1,14 +1,15 @@
-import type { Dnum } from 'dnum'
+import type { Dnum, toParts } from 'dnum'
+import defu from 'defu'
 import { isDnum, toNumber } from 'dnum'
 import { expect } from 'vitest'
 
 expect.extend({
-  toMatchNumberArray(received: Dnum[], expected: number[], options?: { digits?: number }) {
+  toMatchNumberArray(received: Dnum[], expected: number[], options?: Parameters<typeof toParts>[1]) {
     if (received.some(v => !isDnum(v))) {
       throw new Error('Received value is not a Dnum')
     }
     const { isNot, utils } = this
-    const receivedNumbers = received.map(v => toNumber(v, { digits: options?.digits }))
+    const receivedNumbers = received.map(v => toNumber(v, defu(options, { digits: 2 })))
     const pass = this.equals(receivedNumbers, expected)
     return {
       pass,
@@ -17,12 +18,12 @@ expect.extend({
       },
     }
   },
-  toMatchNumber(received: Dnum, expected: number, options?: { digits?: number }) {
+  toMatchNumber(received: Dnum, expected: number, options?: Parameters<typeof toParts>[1]) {
     if (!isDnum(received)) {
       throw new Error('Received value is not a Dnum')
     }
     const { isNot, utils } = this
-    const receivedNumber = toNumber(received, { digits: options?.digits })
+    const receivedNumber = toNumber(received, defu(options, { digits: 2 }))
     return {
       pass: this.equals(receivedNumber, expected),
       message: () => `expected ${receivedNumber} is${isNot ? ' not' : ''} to match ${expected}\n${utils.printDiffOrStringify(receivedNumber, expected)}`,
@@ -43,7 +44,7 @@ interface CustomMatchers<R = unknown> {
    * expect(result).toMatchNumberArray(expected, { digits: 2 })
    * ```
    */
-  toMatchNumberArray: (expected: number[], options?: { digits?: number }) => R
+  toMatchNumberArray: (expected: number[], options?: Parameters<typeof toParts>[1]) => R
   /**
    * Checks if the received `Dnum` matches the expected `number`
    *
@@ -56,10 +57,10 @@ interface CustomMatchers<R = unknown> {
    * expect(result).toMatchNumber(expected, { digits: 2 })
    * ```
    */
-  toMatchNumber: (expected: number, options?: { digits?: number }) => R
+  toMatchNumber: (expected: number, options?: Parameters<typeof toParts>[1]) => R
 }
 
 declare module 'vitest' {
-  interface Assertion<T = any> extends CustomMatchers<T> {}
-  interface AsymmetricMatchersContaining extends CustomMatchers {}
+  interface Assertion<T = any> extends CustomMatchers<T> { }
+  interface AsymmetricMatchersContaining extends CustomMatchers { }
 }

@@ -56,29 +56,29 @@ export interface PeriodCompareOptions {
   start?: number
 }
 
-export function max(
-  numbers: Numberish[],
+export function max<T extends Numberish>(
+  numbers: T[],
   { period = numbers.length, start = 0 }: PeriodCompareOptions = {},
-) {
+): T {
   const filtered = numbers.filter((_, index) => index >= start && index < start + period)
   return filtered.reduce(
     (max, current) => {
       return gt(max, current) ? max : current
     },
-    numbers.at(0) as Numberish,
+    numbers.at(0) as T,
   )
 }
 
-export function min(
-  numbers: Numberish[],
+export function min<T extends Numberish>(
+  numbers: T[],
   { period = numbers.length, start = 0 }: PeriodCompareOptions = {},
-) {
+): T {
   const filtered = numbers.filter((_, index) => index >= start && index < start + period)
   return filtered.reduce(
     (min, current) => {
       return lt(min, current) ? min : current
     },
-    numbers.at(0) as Numberish,
+    numbers.at(0) as T,
   )
 }
 
@@ -87,3 +87,34 @@ export const subtract = mapOperator(dnumSubtract)
 export const multiply = mapOperator(dnumMultiply)
 export const divide = mapOperator(dnumDivide)
 export { divide as div, multiply as mul, subtract as sub }
+
+/**
+ * Moving Action - Generic sliding window operation
+ *
+ * Applies a specified action function to each sliding window of the input array.
+ * The window size is determined by the period parameter.
+ *
+ * @param values - Array of values to process
+ * @param action - Function to apply to each window of values
+ * @param period - Size of the sliding window
+ * @returns Array of results from applying the action to each window
+ */
+export function movingAction<T extends Numberish, Result>(
+  values: T[],
+  action: (values: T[]) => Result,
+  period: number,
+): Result[] {
+  if (values.length === 0) {
+    return []
+  }
+
+  const result: Result[] = []
+
+  for (let i = 0; i < values.length; i++) {
+    const start = Math.max(0, i - period + 1)
+    const window = values.slice(start, i + 1)
+    result.push(action(window))
+  }
+
+  return result
+}

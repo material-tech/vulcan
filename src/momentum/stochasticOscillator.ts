@@ -3,7 +3,7 @@ import type { KlineData, RequiredProperties } from '~/types'
 import { from } from 'dnum'
 import { createSignal } from '~/base'
 import { mapPick } from '~/helpers/array'
-import { divide, multiply, subtract } from '~/helpers/operator'
+import { divide, multiply, subtract } from '~/helpers/operations'
 import { mmin, sma } from '~/trend'
 import { mmax } from '~/trend/movingMax'
 
@@ -27,22 +27,22 @@ export interface StochResult {
   d: Dnum[]
 }
 
-export const stoch = createSignal((data: RequiredProperties<KlineData, 'h' | 'l' | 'c'>[], { kPeriod, slowingPeriod, dPeriod, decimals, rounding }) => {
-  const highs = mapPick(data, 'h', v => from(v, decimals))
-  const lows = mapPick(data, 'l', v => from(v, decimals))
-  const closings = mapPick(data, 'c', v => from(v, decimals))
+export const stoch = createSignal((data: RequiredProperties<KlineData, 'h' | 'l' | 'c'>[], { kPeriod, slowingPeriod, dPeriod }) => {
+  const highs = mapPick(data, 'h', v => from(v))
+  const lows = mapPick(data, 'l', v => from(v))
+  const closings = mapPick(data, 'c', v => from(v))
 
   const highestHigh = mmax(highs, { period: kPeriod })
   const lowestLow = mmin(lows, { period: kPeriod })
 
   const rawK = multiply(
     divide(
-      subtract(closings, lowestLow, decimals),
-      subtract(highestHigh, lowestLow, decimals),
-      { decimals, rounding },
+      subtract(closings, lowestLow, 18),
+      subtract(highestHigh, lowestLow, 18),
+      18,
     ),
     100,
-    { decimals, rounding },
+    18,
   )
 
   // 应用平滑度处理

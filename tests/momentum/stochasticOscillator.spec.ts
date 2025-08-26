@@ -26,12 +26,54 @@ describe('stochastic oscillator (STOCH)', () => {
   ]
 
   it('should be able get k and d', () => {
-    const expectedK = [38.79, 54.87, 80.67, 84.39, 97.84, 93.43, 39.14, 32.5, 49.17, 60.28, 75.97, 88.89, 91.47, 70.54, 67.7, 89.15, 65.89, 85.44, 67.39, 74.66]
-    const expectedD = [38.79, 46.83, 67.77, 82.53, 91.11, 95.63, 66.29, 35.82, 40.83, 54.72, 68.12, 82.43, 90.18, 81.01, 69.12, 78.42, 77.52, 75.67, 76.42, 71.02]
+    const expectedK = [
+      38.79,
+      54.87,
+      80.67,
+      84.39,
+      97.84,
+      93.43,
+      39.14,
+      32.5,
+      49.17,
+      60.28,
+      75.97,
+      88.89,
+      91.47,
+      70.54,
+      67.7,
+      89.15,
+      65.89,
+      85.44,
+      67.39,
+      74.66,
+    ]
+    const expectedD = [
+      38.79,
+      46.83,
+      67.77,
+      82.53,
+      91.11,
+      95.63,
+      66.29,
+      35.82,
+      40.83,
+      54.72,
+      68.12,
+      82.43,
+      90.18,
+      81.01,
+      69.12,
+      78.42,
+      77.52,
+      75.67,
+      76.42,
+      71.02,
+    ]
 
     const actual = stoch(values, { kPeriod: 12, dPeriod: 2 })
-    expect(actual.k).toMatchNumberArray(expectedK, { digits: 2 })
-    expect(actual.d).toMatchNumberArray(expectedD, { digits: 2 })
+    expect(actual.k).toMatchNumberArray(expectedK)
+    expect(actual.d).toMatchNumberArray(expectedD)
   })
 
   it('should be able get k and d with options', () => {
@@ -43,7 +85,7 @@ describe('stochastic oscillator (STOCH)', () => {
       dPeriod: 2,
       slowingPeriod: 3,
     })
-    expect(actual.k).toMatchNumberArray(expectedK, { digits: 2 })
-    expect(actual.d).toMatchNumberArray(expectedD, { digits: 2 })
+    expect(actual.k).toMatchNumberArray(expectedK)
+    expect(actual.d).toMatchNumberArray(expectedD)
   })
 })

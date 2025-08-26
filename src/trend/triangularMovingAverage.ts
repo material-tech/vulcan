@@ -24,7 +24,10 @@ export const trima = createSignal(
       n2 = n1
     }
 
-    const result = sma(sma(values, { period: n2 }), { period: n1 })
+    const result = sma(
+      sma(values, { period: n2 }),
+      { period: n1 },
+    )
 
     return result
   },

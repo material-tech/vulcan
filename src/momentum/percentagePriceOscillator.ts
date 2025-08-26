@@ -1,7 +1,7 @@
 import type { Dnum, Numberish } from 'dnum'
 import { from } from 'dnum'
 import { createSignal } from '~/base'
-import { divide, multiply, subtract } from '../helpers/operator'
+import { divide, multiply, subtract } from '../helpers/operations'
 import { ema } from '../trend/exponentialMovingAverage'
 
 export interface PercentagePriceOscillatorOptions {
@@ -41,37 +41,27 @@ export interface PercentagePriceOscillatorResult {
  * @param options.fastPeriod - Period for the fast EMA (default: 12)
  * @param options.slowPeriod - Period for the slow EMA (default: 26)
  * @param options.signalPeriod - Period for the signal EMA (default: 9)
- * @param options.decimals - Number of decimal places for precision
- * @param options.rounding - Rounding mode for calculations
  * @returns Object containing ppo, signal, and histogram arrays
  */
 export const ppo = createSignal((
   data: Numberish[],
-  { fastPeriod, slowPeriod, signalPeriod, decimals, rounding },
+  { fastPeriod, slowPeriod, signalPeriod },
 ): PercentagePriceOscillatorResult => {
   const closes = data.map(v => from(v))
 
-  const fastEMA = ema(closes, { period: fastPeriod, rounding })
-  const slowEMA = ema(closes, { period: slowPeriod, rounding })
+  const fastEMA = ema(closes, { period: fastPeriod })
+  const slowEMA = ema(closes, { period: slowPeriod })
 
   // Calculate PPO = ((Fast EMA - Slow EMA) / Slow EMA) * 100
-  const ppoValues = multiply(
-    divide(
-      subtract(
-        fastEMA,
-        slowEMA,
-      ),
-      slowEMA,
-    ),
-    100,
-    decimals,
-  )
+  const emaDiff = subtract(fastEMA, slowEMA, 18)
+  const emaPercent = divide(emaDiff, slowEMA, 18)
+  const ppoValues = multiply(emaPercent, 100, 18)
 
   // Calculate Signal = EMA(signalPeriod, PPO)
-  const signal = ema(ppoValues, { period: signalPeriod, decimals })
+  const signal = ema(ppoValues, { period: signalPeriod })
 
   // Calculate Histogram = PPO - Signal
-  const histogram = subtract(ppoValues, signal, decimals)
+  const histogram = subtract(ppoValues, signal, 18)
 
   return {
     ppo: ppoValues,

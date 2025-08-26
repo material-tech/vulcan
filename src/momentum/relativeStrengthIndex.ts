@@ -21,13 +21,13 @@ export const defaultRSIOptions: RSIOptions = {
  * RSI = 100 - (100 / (1 + RS))
  */
 export const rsi = createSignal(
-  (closings: Numberish[], { period, decimals, rounding }) => {
+  (closings: Numberish[], { period }) => {
     // Convert input data to Dnum type
-    const prices = closings.map(item => from(item, decimals))
+    const prices = closings.map(item => from(item))
 
     // Initialize arrays for gains and losses
-    const gains = Array.from({ length: prices.length }, () => from(0, decimals))
-    const losses = Array.from({ length: prices.length }, () => from(0, decimals))
+    const gains = Array.from({ length: prices.length }, () => from(0))
+    const losses = Array.from({ length: prices.length }, () => from(0))
 
     // Calculate price changes and separate gains and losses
     for (let i = 1; i < prices.length; i++) {
@@ -39,7 +39,7 @@ export const rsi = createSignal(
       }
       else {
         // Loss, take absolute value
-        losses[i] = mul(change, from(-1, decimals), { decimals, rounding })
+        losses[i] = mul(change, -1, 18)
       }
     }
 
@@ -48,30 +48,29 @@ export const rsi = createSignal(
     const avgLosses = rma(losses, { period })
 
     // Calculate RSI
-    const result = Array.from({ length: prices.length }, () => from(0, decimals))
+    const result = Array.from({ length: prices.length }, () => from(0))
 
     for (let i = 0; i < prices.length; i++) {
       // The first element is always 0 because there is no previous price point to calculate the change
       if (i === 0) {
-        result[i] = from(0, decimals)
+        result[i] = from(0)
       }
       // Other elements are processed using the normal RSI calculation method
       else if (eq(avgLosses[i], 0)) {
         // If average loss is zero, RSI is 100
-        result[i] = from(100, decimals)
+        result[i] = from(100)
       }
       else {
         // Calculate RS = average gain / average loss
         const rs = div(avgGains[i], avgLosses[i])
         // RSI = 100 - (100 / (1 + RS))
         result[i] = sub(
-          from(100, decimals),
+          100,
           div(
-            from(100, decimals),
-            add(from(1, decimals), rs, decimals),
-            { decimals, rounding },
+            100,
+            add(1, rs),
+            18,
           ),
-          decimals,
         )
       }
     }

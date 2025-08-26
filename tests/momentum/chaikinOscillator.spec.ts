@@ -16,8 +16,9 @@ describe('chaikin money flow oscillator (CMO)', () => {
   it('should able to calculate CMO', () => {
     const result = cmo(values)
 
-    expect(result)
-      .toMatchNumberArray([0, -7.07, -19.93, -37.52, -58.98, -83.61, -110.83, -140.17], { digits: 2 })
+    const expected = [0, -7.07, -19.93, -37.52, -58.98, -83.61, -110.83, -140.17]
+
+    expect(result).toMatchNumberArray(expected, { digits: 2 })
   })
 
   it('should able to calculate CMO with options', () => {
@@ -26,7 +27,8 @@ describe('chaikin money flow oscillator (CMO)', () => {
       slowPeriod: 5,
     })
 
-    expect(result)
-      .toMatchNumberArray([0, -7.41, -18.52, -31.69, -46.09, -61.27, -76.95, -92.97], { digits: 2 })
+    const expected = [0, -7.41, -18.52, -31.69, -46.09, -61.27, -76.95, -92.97]
+
+    expect(result).toMatchNumberArray(expected, { digits: 2 })
   })
 })
