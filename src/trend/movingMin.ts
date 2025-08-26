@@ -1,6 +1,7 @@
 import type { Numberish } from 'dnum'
-import { from, lt } from 'dnum'
+import { from } from 'dnum'
 import { createSignal } from '~/base'
+import { min, movingAction } from '~/helpers/operations'
 
 export interface MovingMinOptions {
   /**
@@ -17,27 +18,14 @@ export const defaultMovingMinOptions: MovingMinOptions = {
  * Moving Minimum (MovingMin)
  */
 export const mmin = createSignal(
-  (values: Numberish[], { period, decimals }) => {
-    // Convert input data to Dnum type
-    const dnumValues = values.map(item => from(item, decimals))
-    const result = Array.from({ length: values.length }, () => from(0, decimals))
+  (values: Numberish[], { period }) => {
+    const dnumValues = values.map(item => from(item))
 
-    for (let i = 0; i < values.length; i++) {
-      // Calculate the starting index of the current window
-      const startIndex = Math.max(0, i - period + 1)
-
-      let min = dnumValues[startIndex]
-
-      for (let j = startIndex + 1; j <= i; j++) {
-        if (lt(dnumValues[j], min)) {
-          min = dnumValues[j]
-        }
-      }
-
-      result[i] = min
-    }
-
-    return result
+    return movingAction(
+      dnumValues,
+      window => min(window),
+      period,
+    )
   },
   defaultMovingMinOptions,
 )
