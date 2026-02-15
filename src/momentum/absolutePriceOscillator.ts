@@ -13,18 +13,15 @@ export const defaultAbsolutePriceOscillatorOptions: AbsolutePriceOscillatorOptio
   slowPeriod: 26,
 }
 
-export const apo = createSignal({
-  stream: ({ fastPeriod, slowPeriod }) => {
-    const fastEma = ema.stream({ period: fastPeriod })
-    const slowEma = ema.stream({ period: slowPeriod })
-    return (value: Numberish): Dnum => {
-      const v = from(value)
-      const fast = fastEma(v)
-      const slow = slowEma(v)
-      return subtract(fast, slow)
-    }
-  },
-  defaultOptions: defaultAbsolutePriceOscillatorOptions,
-})
+export const apo = createSignal(({ fastPeriod, slowPeriod }) => {
+  const fastEma = ema.stream({ period: fastPeriod })
+  const slowEma = ema.stream({ period: slowPeriod })
+  return (value: Numberish): Dnum => {
+    const v = from(value)
+    const fast = fastEma(v)
+    const slow = slowEma(v)
+    return subtract(fast, slow)
+  }
+}, defaultAbsolutePriceOscillatorOptions)
 
 export { apo as absolutePriceOscillator }

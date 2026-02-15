@@ -10,29 +10,26 @@ export const defaultTriangularMovingAverageOptions: TriangularMovingAverageOptio
   period: 4,
 }
 
-export const trima = createSignal({
-  stream: ({ period }) => {
-    let n1 = 0
-    let n2 = 0
+export const trima = createSignal(({ period }) => {
+  let n1 = 0
+  let n2 = 0
 
-    if (period % 2 === 0) {
-      n1 = period / 2
-      n2 = n1 + 1
-    }
-    else {
-      n1 = (period + 1) / 2
-      n2 = n1
-    }
+  if (period % 2 === 0) {
+    n1 = period / 2
+    n2 = n1 + 1
+  }
+  else {
+    n1 = (period + 1) / 2
+    n2 = n1
+  }
 
-    const innerSma = sma.stream({ period: n2 })
-    const outerSma = sma.stream({ period: n1 })
+  const innerSma = sma.stream({ period: n2 })
+  const outerSma = sma.stream({ period: n1 })
 
-    return (value: Numberish): Dnum => {
-      const inner = innerSma(value)
-      return outerSma(inner)
-    }
-  },
-  defaultOptions: defaultTriangularMovingAverageOptions,
-})
+  return (value: Numberish): Dnum => {
+    const inner = innerSma(value)
+    return outerSma(inner)
+  }
+}, defaultTriangularMovingAverageOptions)
 
 export { trima as triangularMovingAverage }

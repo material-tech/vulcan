@@ -14,15 +14,12 @@ export const defaultMovingSumOptions: MovingSumOptions = {
  * moving sum
  * calculate the sum of the values in the specified period
  */
-export const msum = createSignal({
-  stream: ({ period }) => {
-    const buffer: Dnum[] = []
-    return (value: Numberish) => {
-      buffer.push(from(value))
-      if (buffer.length > period)
-        buffer.shift()
-      return buffer.reduce((sum, cur) => add(sum, cur), from(0))
-    }
-  },
-  defaultOptions: defaultMovingSumOptions,
-})
+export const msum = createSignal(({ period }) => {
+  const buffer: Dnum[] = []
+  return (value: Numberish) => {
+    buffer.push(from(value))
+    if (buffer.length > period)
+      buffer.shift()
+    return buffer.reduce((sum, cur) => add(sum, cur), from(0))
+  }
+}, defaultMovingSumOptions)

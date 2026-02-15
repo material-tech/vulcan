@@ -1,4 +1,4 @@
-import type { CreateSignalOptions, TechnicalSignal, WrapResult } from './types'
+import type { CreateSignalConfig, TechnicalSignal, WrapResult } from './types'
 import { defu } from 'defu'
 
 function isPlainObject(value: unknown): value is Record<string, unknown> {
@@ -17,12 +17,25 @@ function transpose<T extends Record<string, unknown>>(items: T[]): { [K in keyof
 
 /**
  * Create a technical signal with batch compute and streaming support.
- * When `compute` is omitted, it is auto-derived from `stream` via `data.map(streamFn)`.
+ *
+ * Overload 1: Pass a stream factory function directly (shorthand).
+ * Overload 2: Pass a config object with `compute` and/or `stream`.
  */
 export function createSignal<Data, Element, Options extends Record<string, any>>(
-  config: CreateSignalOptions<Data, Element, Options>,
+  stream: (options: Required<Options>) => (data: Data) => Element,
+  defaultOptions?: Options,
+): TechnicalSignal<Data, WrapResult<Element>, Options>
+export function createSignal<Data, Element, Options extends Record<string, any>>(
+  config: CreateSignalConfig<Data, Element, Options>,
+): TechnicalSignal<Data, WrapResult<Element>, Options>
+export function createSignal<Data, Element, Options extends Record<string, any>>(
+  streamOrConfig: ((options: Required<Options>) => (data: Data) => Element) | CreateSignalConfig<Data, Element, Options>,
+  defaultOpts?: Options,
 ): TechnicalSignal<Data, WrapResult<Element>, Options> {
-  const { compute, stream: createStream, defaultOptions } = config
+  const isFunction = typeof streamOrConfig === 'function'
+  const createStream = isFunction ? streamOrConfig : streamOrConfig.stream
+  const compute = isFunction ? undefined : streamOrConfig.compute
+  const defaultOptions = isFunction ? defaultOpts : streamOrConfig.defaultOptions
 
   function impl(dataset: Data[], options?: Partial<Options>) {
     if (dataset.length === 0) {

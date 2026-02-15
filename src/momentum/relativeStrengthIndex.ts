@@ -20,41 +20,38 @@ export const defaultRSIOptions: RSIOptions = {
  *
  * RSI = 100 - (100 / (1 + RS))
  */
-export const rsi = createSignal({
-  stream: ({ period }) => {
-    const gainRma = rma.stream({ period })
-    const lossRma = rma.stream({ period })
-    let prev: Dnum | null = null
-    let first = true
-    return (value: Numberish): Dnum => {
-      const current = from(value)
-      if (first) {
-        first = false
-        prev = current
-        // First point: feed 0 gain/loss into RMA
-        gainRma(from(0))
-        lossRma(from(0))
-        return from(0)
-      }
-
-      const change = sub(current, prev!)
+export const rsi = createSignal(({ period }) => {
+  const gainRma = rma.stream({ period })
+  const lossRma = rma.stream({ period })
+  let prev: Dnum | null = null
+  let first = true
+  return (value: Numberish): Dnum => {
+    const current = from(value)
+    if (first) {
+      first = false
       prev = current
-
-      const gain = gt(change, 0) ? change : from(0)
-      const loss = gt(change, 0) ? from(0) : mul(change, -1, 18)
-
-      const avgGain = gainRma(gain)
-      const avgLoss = lossRma(loss)
-
-      if (eq(avgLoss, 0)) {
-        return from(100)
-      }
-
-      const rs = div(avgGain, avgLoss)
-      return sub(100, div(100, add(1, rs), 18))
+      // First point: feed 0 gain/loss into RMA
+      gainRma(from(0))
+      lossRma(from(0))
+      return from(0)
     }
-  },
-  defaultOptions: defaultRSIOptions,
-})
+
+    const change = sub(current, prev!)
+    prev = current
+
+    const gain = gt(change, 0) ? change : from(0)
+    const loss = gt(change, 0) ? from(0) : mul(change, -1, 18)
+
+    const avgGain = gainRma(gain)
+    const avgLoss = lossRma(loss)
+
+    if (eq(avgLoss, 0)) {
+      return from(100)
+    }
+
+    const rs = div(avgGain, avgLoss)
+    return sub(100, div(100, add(1, rs), 18))
+  }
+}, defaultRSIOptions)
 
 export { rsi as relativeStrengthIndex }

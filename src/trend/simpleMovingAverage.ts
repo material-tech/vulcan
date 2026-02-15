@@ -28,18 +28,15 @@ export const defaultSMAOptions: SimpleMovingAverageOptions = {
  * @param options.period - The period for calculating the moving average (default: 2)
  * @returns Array of SMA values
  */
-export const sma = createSignal({
-  stream: ({ period }: Required<SimpleMovingAverageOptions>) => {
-    const buffer: Dnum[] = []
-    return (value: Numberish) => {
-      buffer.push(from(value, 18))
-      if (buffer.length > period)
-        buffer.shift()
-      const sum = buffer.reduce((acc, cur) => add(acc, cur), from(0, 18))
-      return div(sum, buffer.length, 18)
-    }
-  },
-  defaultOptions: defaultSMAOptions,
-})
+export const sma = createSignal(({ period }: Required<SimpleMovingAverageOptions>) => {
+  const buffer: Dnum[] = []
+  return (value: Numberish) => {
+    buffer.push(from(value, 18))
+    if (buffer.length > period)
+      buffer.shift()
+    const sum = buffer.reduce((acc, cur) => add(acc, cur), from(0, 18))
+    return div(sum, buffer.length, 18)
+  }
+}, defaultSMAOptions)
 
 export { sma as simpleMovingAverage }

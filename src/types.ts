@@ -36,11 +36,14 @@ export interface CreateStreamFunc<Data, Result, Options extends Record<string, a
   (options: Required<Options>): (data: Data) => Unarray<Result>
 }
 
-export interface CreateSignalOptions<Data, Element, Options extends Record<string, any>> {
+export interface CreateSignalConfig<Data, Element, Options extends Record<string, any>> {
   compute?: (dataset: Data[], options: Required<Options>) => WrapResult<Element>
   stream: (options: Required<Options>) => (data: Data) => Element
   defaultOptions?: Options
 }
+
+/** @deprecated Use CreateSignalConfig instead */
+export type CreateSignalOptions<Data, Element, Options extends Record<string, any>> = CreateSignalConfig<Data, Element, Options>
 
 export interface KlineData {
   /** High price */

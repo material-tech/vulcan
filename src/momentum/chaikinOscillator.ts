@@ -24,19 +24,16 @@ export const defaultChaikinOscillatorOptions: ChaikinOscillatorOptions = {
  *
  * CO = Ema(fastPeriod, AD) - Ema(slowPeriod, AD)
  */
-export const cmo = createSignal({
-  stream: ({ fastPeriod, slowPeriod }) => {
-    const adStream = ad.stream()
-    const fastEma = ema.stream({ period: fastPeriod })
-    const slowEma = ema.stream({ period: slowPeriod })
-    return (data: RequiredProperties<KlineData, 'h' | 'l' | 'c' | 'v'>): Dnum => {
-      const adValue = adStream(data)
-      const fast = fastEma(adValue)
-      const slow = slowEma(adValue)
-      return subtract(fast, slow)
-    }
-  },
-  defaultOptions: defaultChaikinOscillatorOptions,
-})
+export const cmo = createSignal(({ fastPeriod, slowPeriod }) => {
+  const adStream = ad.stream()
+  const fastEma = ema.stream({ period: fastPeriod })
+  const slowEma = ema.stream({ period: slowPeriod })
+  return (data: RequiredProperties<KlineData, 'h' | 'l' | 'c' | 'v'>): Dnum => {
+    const adValue = adStream(data)
+    const fast = fastEma(adValue)
+    const slow = slowEma(adValue)
+    return subtract(fast, slow)
+  }
+}, defaultChaikinOscillatorOptions)
 
 export { cmo as chaikinOscillator }

@@ -22,17 +22,14 @@ export const defaultDoubleExponentialMovingAverageOptions: DoubleExponentialMovi
  * @param options.period - The lookback period (default: 12)
  * @returns Array of DEMA values
  */
-export const dema = createSignal({
-  stream: ({ period }) => {
-    const ema1 = ema.stream({ period })
-    const ema2 = ema.stream({ period })
-    return (value: Numberish): Dnum => {
-      const e1 = ema1(value)
-      const e2 = ema2(e1)
-      return sub(mul(e1, 2, 18), e2)
-    }
-  },
-  defaultOptions: defaultDoubleExponentialMovingAverageOptions,
-})
+export const dema = createSignal(({ period }) => {
+  const ema1 = ema.stream({ period })
+  const ema2 = ema.stream({ period })
+  return (value: Numberish): Dnum => {
+    const e1 = ema1(value)
+    const e2 = ema2(e1)
+    return sub(mul(e1, 2, 18), e2)
+  }
+}, defaultDoubleExponentialMovingAverageOptions)
 
 export { dema as doubleExponentialMovingAverage }

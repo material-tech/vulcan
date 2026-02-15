@@ -78,18 +78,15 @@ function computeCCIFromWindow(window: Dnum[], period: number): Dnum {
  * @param options.period - The period for CCI calculation (default: 20)
  * @returns Array of CCI values
  */
-export const cci = createSignal({
-  stream: ({ period }: Required<CommodityChannelIndexOptions>) => {
-    const buffer: Dnum[] = []
-    return (data: RequiredProperties<KlineData, 'h' | 'l' | 'c'>) => {
-      const tp = divide(add(add(from(data.h, 18), from(data.l, 18)), from(data.c, 18)), 3, 18)
-      buffer.push(tp)
-      if (buffer.length > period)
-        buffer.shift()
-      return computeCCIFromWindow(buffer, period)
-    }
-  },
-  defaultOptions: defaultCCIOptions,
-})
+export const cci = createSignal(({ period }: Required<CommodityChannelIndexOptions>) => {
+  const buffer: Dnum[] = []
+  return (data: RequiredProperties<KlineData, 'h' | 'l' | 'c'>) => {
+    const tp = divide(add(add(from(data.h, 18), from(data.l, 18)), from(data.c, 18)), 3, 18)
+    buffer.push(tp)
+    if (buffer.length > period)
+      buffer.shift()
+    return computeCCIFromWindow(buffer, period)
+  }
+}, defaultCCIOptions)
 
 export { cci as commodityChannelIndex }

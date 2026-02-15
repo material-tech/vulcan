@@ -42,23 +42,20 @@ export interface PercentagePriceOscillatorResult {
  * @param options.signalPeriod - Period for the signal EMA (default: 9)
  * @returns Object containing ppo, signal, and histogram arrays
  */
-export const ppo = createSignal({
-  stream: ({ fastPeriod, slowPeriod, signalPeriod }) => {
-    const fastEma = ema.stream({ period: fastPeriod })
-    const slowEma = ema.stream({ period: slowPeriod })
-    const signalEma = ema.stream({ period: signalPeriod })
-    return (value: Numberish) => {
-      const v = from(value)
-      const fast = fastEma(v)
-      const slow = slowEma(v)
-      const diff = subtract(fast, slow)
-      const ppoValue = mul(divide(diff, slow, 18), 100, 18)
-      const signal = signalEma(ppoValue)
-      const histogram = sub(ppoValue, signal)
-      return { ppo: ppoValue, signal, histogram }
-    }
-  },
-  defaultOptions: defaultPercentagePriceOscillatorOptions,
-})
+export const ppo = createSignal(({ fastPeriod, slowPeriod, signalPeriod }) => {
+  const fastEma = ema.stream({ period: fastPeriod })
+  const slowEma = ema.stream({ period: slowPeriod })
+  const signalEma = ema.stream({ period: signalPeriod })
+  return (value: Numberish) => {
+    const v = from(value)
+    const fast = fastEma(v)
+    const slow = slowEma(v)
+    const diff = subtract(fast, slow)
+    const ppoValue = mul(divide(diff, slow, 18), 100, 18)
+    const signal = signalEma(ppoValue)
+    const histogram = sub(ppoValue, signal)
+    return { ppo: ppoValue, signal, histogram }
+  }
+}, defaultPercentagePriceOscillatorOptions)
 
 export { ppo as percentagePriceOscillator }

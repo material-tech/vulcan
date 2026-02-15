@@ -42,22 +42,19 @@ export interface MACDResult {
  * @param options.signalPeriod - Period for the signal EMA (default: 9)
  * @returns Object containing macd, signal, and histogram arrays
  */
-export const macd = createSignal({
-  stream: ({ fastPeriod, slowPeriod, signalPeriod }) => {
-    const fastEma = ema.stream({ period: fastPeriod })
-    const slowEma = ema.stream({ period: slowPeriod })
-    const signalEma = ema.stream({ period: signalPeriod })
-    return (value: Numberish) => {
-      const v = from(value)
-      const fast = fastEma(v)
-      const slow = slowEma(v)
-      const macdValue = subtract(fast, slow)
-      const signal = signalEma(macdValue)
-      const histogram = subtract(macdValue, signal)
-      return { macd: macdValue, signal, histogram }
-    }
-  },
-  defaultOptions: defaultMACDOptions,
-})
+export const macd = createSignal(({ fastPeriod, slowPeriod, signalPeriod }) => {
+  const fastEma = ema.stream({ period: fastPeriod })
+  const slowEma = ema.stream({ period: slowPeriod })
+  const signalEma = ema.stream({ period: signalPeriod })
+  return (value: Numberish) => {
+    const v = from(value)
+    const fast = fastEma(v)
+    const slow = slowEma(v)
+    const macdValue = subtract(fast, slow)
+    const signal = signalEma(macdValue)
+    const histogram = subtract(macdValue, signal)
+    return { macd: macdValue, signal, histogram }
+  }
+}, defaultMACDOptions)
 
 export { macd as movingAverageConvergenceDivergence }

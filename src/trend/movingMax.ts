@@ -16,17 +16,14 @@ export const defaultMovingMaxOptions: MovingMaxOptions = {
 /**
  * Moving Maximum (MovingMax)
  */
-export const mmax = createSignal({
-  stream: ({ period }) => {
-    const buffer: Dnum[] = []
-    return (value: Numberish) => {
-      buffer.push(from(value))
-      if (buffer.length > period)
-        buffer.shift()
-      return buffer.reduce((m, cur) => gt(cur, m) ? cur : m, buffer[0])
-    }
-  },
-  defaultOptions: defaultMovingMaxOptions,
-})
+export const mmax = createSignal(({ period }) => {
+  const buffer: Dnum[] = []
+  return (value: Numberish) => {
+    buffer.push(from(value))
+    if (buffer.length > period)
+      buffer.shift()
+    return buffer.reduce((m, cur) => gt(cur, m) ? cur : m, buffer[0])
+  }
+}, defaultMovingMaxOptions)
 
 export { mmax as movingMax }

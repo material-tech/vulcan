@@ -16,17 +16,14 @@ export const defaultMovingMinOptions: MovingMinOptions = {
 /**
  * Moving Minimum (MovingMin)
  */
-export const mmin = createSignal({
-  stream: ({ period }) => {
-    const buffer: Dnum[] = []
-    return (value: Numberish) => {
-      buffer.push(from(value))
-      if (buffer.length > period)
-        buffer.shift()
-      return buffer.reduce((m, cur) => lt(cur, m) ? cur : m, buffer[0])
-    }
-  },
-  defaultOptions: defaultMovingMinOptions,
-})
+export const mmin = createSignal(({ period }) => {
+  const buffer: Dnum[] = []
+  return (value: Numberish) => {
+    buffer.push(from(value))
+    if (buffer.length > period)
+      buffer.shift()
+    return buffer.reduce((m, cur) => lt(cur, m) ? cur : m, buffer[0])
+  }
+}, defaultMovingMinOptions)
 
 export { mmin as movingMin }

@@ -66,17 +66,14 @@ function linearRegressionCFO(window: Dnum[]): Dnum {
  * @param options.period - The period for linear regression (default: 14)
  * @returns Array of CFO values as percentages
  */
-export const cfo = createSignal({
-  stream: ({ period }: Required<ChandeForecastOscillatorOptions>) => {
-    const buffer: Dnum[] = []
-    return (value: Numberish) => {
-      buffer.push(from(value, 18))
-      if (buffer.length > period)
-        buffer.shift()
-      return linearRegressionCFO(buffer)
-    }
-  },
-  defaultOptions: defaultCFOOptions,
-})
+export const cfo = createSignal(({ period }: Required<ChandeForecastOscillatorOptions>) => {
+  const buffer: Dnum[] = []
+  return (value: Numberish) => {
+    buffer.push(from(value, 18))
+    if (buffer.length > period)
+      buffer.shift()
+    return linearRegressionCFO(buffer)
+  }
+}, defaultCFOOptions)
 
 export { cfo as chandeForecastOscillator }

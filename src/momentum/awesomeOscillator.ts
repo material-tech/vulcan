@@ -14,18 +14,15 @@ export const defaultAwesomeOscillatorOptions: AwesomeOscillatorOptions = {
   slowPeriod: 34,
 }
 
-export const ao = createSignal({
-  stream: ({ fastPeriod, slowPeriod }) => {
-    const fastSma = sma.stream({ period: fastPeriod })
-    const slowSma = sma.stream({ period: slowPeriod })
-    return (data: RequiredProperties<KlineData, 'h' | 'l'>): Dnum => {
-      const median = div(add(from(data.h, 18), from(data.l, 18)), 2, 18)
-      const fast = fastSma(median)
-      const slow = slowSma(median)
-      return sub(fast, slow)
-    }
-  },
-  defaultOptions: defaultAwesomeOscillatorOptions,
-})
+export const ao = createSignal(({ fastPeriod, slowPeriod }) => {
+  const fastSma = sma.stream({ period: fastPeriod })
+  const slowSma = sma.stream({ period: slowPeriod })
+  return (data: RequiredProperties<KlineData, 'h' | 'l'>): Dnum => {
+    const median = div(add(from(data.h, 18), from(data.l, 18)), 2, 18)
+    const fast = fastSma(median)
+    const slow = slowSma(median)
+    return sub(fast, slow)
+  }
+}, defaultAwesomeOscillatorOptions)
 
 export { ao as awesomeOscillator }

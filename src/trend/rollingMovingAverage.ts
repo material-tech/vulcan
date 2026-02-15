@@ -20,27 +20,24 @@ export const defaultRMAOptions: RMAOptions = {
  *
  * R[p] and after is R[i] = ((R[i-1]*(p-1)) + v[i]) / p
  */
-export const rma = createSignal({
-  stream: ({ period }) => {
-    let count = 0
-    let sum = from(0)
-    let prev: Dnum = from(0)
-    return (value: Numberish) => {
-      if (count < period) {
-        sum = add(sum, value)
-        count++
-        prev = div(sum, count, 18)
-      }
-      else {
-        prev = div(
-          add(mul(prev, from(period - 1), 18), value),
-          from(period),
-        )
-      }
-      return prev
+export const rma = createSignal(({ period }) => {
+  let count = 0
+  let sum = from(0)
+  let prev: Dnum = from(0)
+  return (value: Numberish) => {
+    if (count < period) {
+      sum = add(sum, value)
+      count++
+      prev = div(sum, count, 18)
     }
-  },
-  defaultOptions: defaultRMAOptions,
-})
+    else {
+      prev = div(
+        add(mul(prev, from(period - 1), 18), value),
+        from(period),
+      )
+    }
+    return prev
+  }
+}, defaultRMAOptions)
 
 export { rma as rollingMovingAverage }
