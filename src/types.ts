@@ -25,7 +25,7 @@ export interface CreateStreamFunc<Data, Result, Options extends Record<string, a
 }
 
 export interface CreateSignalOptions<Data, Result, Options extends Record<string, any>> {
-  compute: CreateSignalFunc<Data, Result, Options>
+  compute?: CreateSignalFunc<Data, Result, Options>
   stream: CreateStreamFunc<Data, Result, Options>
   defaultOptions?: Options
 }

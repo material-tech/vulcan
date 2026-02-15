@@ -1,7 +1,6 @@
 import type { Dnum, Numberish } from 'dnum'
 import { add, divide, equal, from, multiply, subtract } from 'dnum'
 import { createSignal } from '~/base'
-import { movingAction } from '~/helpers/operations'
 
 export interface ChandeForecastOscillatorOptions {
   /**
@@ -68,16 +67,6 @@ function linearRegressionCFO(window: Dnum[]): Dnum {
  * @returns Array of CFO values as percentages
  */
 export const cfo = createSignal({
-  compute: (values: Numberish[], { period }: Required<ChandeForecastOscillatorOptions>) => {
-    return movingAction(
-      values,
-      (window): Dnum => {
-        const dnumValues = window.map(v => from(v, 18))
-        return linearRegressionCFO(dnumValues)
-      },
-      period,
-    )
-  },
   stream: ({ period }: Required<ChandeForecastOscillatorOptions>) => {
     const buffer: Dnum[] = []
     return (value: Numberish) => {

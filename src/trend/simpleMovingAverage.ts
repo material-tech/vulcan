@@ -1,7 +1,6 @@
 import type { Dnum, Numberish } from 'dnum'
 import { add, div, from } from 'dnum'
 import { createSignal } from '~/base'
-import { movingAction } from '~/helpers/operations'
 
 export interface SimpleMovingAverageOptions {
   /**
@@ -30,20 +29,6 @@ export const defaultSMAOptions: SimpleMovingAverageOptions = {
  * @returns Array of SMA values
  */
 export const sma = createSignal({
-  compute: (values: Numberish[], { period }: Required<SimpleMovingAverageOptions>) => {
-    if (values.length === 0) {
-      return []
-    }
-
-    return movingAction(
-      values,
-      (window) => {
-        const sum = window.reduce((acc, cur) => add(acc, cur), from(0, 18))
-        return div(sum, window.length, 18)
-      },
-      period,
-    )
-  },
   stream: ({ period }: Required<SimpleMovingAverageOptions>) => {
     const buffer: Dnum[] = []
     return (value: Numberish) => {

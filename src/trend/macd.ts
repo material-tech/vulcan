@@ -1,7 +1,6 @@
 import type { Dnum, Numberish } from 'dnum'
 import { from, subtract } from 'dnum'
 import { createSignal } from '~/base'
-import { subtract as mapSubtract } from '~/helpers/operations'
 import { ema } from './exponentialMovingAverage'
 
 export interface MACDOptions {
@@ -44,30 +43,6 @@ export interface MACDResult {
  * @returns Object containing macd, signal, and histogram arrays
  */
 export const macd = createSignal({
-  compute: (
-    data: Numberish[],
-    { fastPeriod, slowPeriod, signalPeriod },
-  ): MACDResult => {
-    const closes = data.map(v => from(v))
-
-    const fastEMA = ema(closes, { period: fastPeriod })
-    const slowEMA = ema(closes, { period: slowPeriod })
-
-    // MACD Line = Fast EMA - Slow EMA
-    const macdValues = mapSubtract(fastEMA, slowEMA, 18)
-
-    // Signal Line = EMA(signalPeriod, MACD)
-    const signal = ema(macdValues, { period: signalPeriod })
-
-    // Histogram = MACD - Signal
-    const histogram = mapSubtract(macdValues, signal, 18)
-
-    return {
-      macd: macdValues,
-      signal,
-      histogram,
-    }
-  },
   stream: ({ fastPeriod, slowPeriod, signalPeriod }) => {
     const fastEma = ema.stream({ period: fastPeriod })
     const slowEma = ema.stream({ period: slowPeriod })

@@ -11,25 +11,6 @@ export const defaultExponentialMovingAverageOptions: ExponentialMovingAverageOpt
 }
 
 export const ema = createSignal({
-  compute: (values: Numberish[], { period }) => {
-    const result = Array.from({ length: values.length }, () => from(0))
-
-    if (result.length > 0) {
-      const kValue = 2 / (1 + period)
-      const mValue = 1 - kValue
-
-      result[0] = from(values[0])
-
-      for (let i = 1; i < result.length; i++) {
-        result[i] = add(
-          mul(values[i], kValue, 18),
-          mul(result[i - 1], mValue, 18),
-        )
-      }
-    }
-
-    return result
-  },
   stream: ({ period }) => {
     const k = 2 / (1 + period)
     const m = 1 - k

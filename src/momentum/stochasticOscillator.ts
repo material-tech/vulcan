@@ -2,8 +2,6 @@ import type { Dnum } from 'dnum'
 import type { KlineData, RequiredProperties } from '~/types'
 import { div, from, mul, sub } from 'dnum'
 import { createSignal } from '~/base'
-import { mapPick } from '~/helpers/array'
-import { divide, multiply, subtract } from '~/helpers/operations'
 import { mmin, sma } from '~/trend'
 import { mmax } from '~/trend/movingMax'
 
@@ -28,36 +26,6 @@ export interface StochResult {
 }
 
 export const stoch = createSignal({
-  compute: (data: RequiredProperties<KlineData, 'h' | 'l' | 'c'>[], { kPeriod, slowingPeriod, dPeriod }) => {
-    const highs = mapPick(data, 'h', v => from(v))
-    const lows = mapPick(data, 'l', v => from(v))
-    const closings = mapPick(data, 'c', v => from(v))
-
-    const highestHigh = mmax(highs, { period: kPeriod })
-    const lowestLow = mmin(lows, { period: kPeriod })
-
-    const rawK = multiply(
-      divide(
-        subtract(closings, lowestLow, 18),
-        subtract(highestHigh, lowestLow, 18),
-        18,
-      ),
-      100,
-      18,
-    )
-
-    // Apply slowing
-    const kValue = slowingPeriod > 1
-      ? sma(rawK, { period: slowingPeriod })
-      : rawK
-
-    const dValue = sma(kValue, { period: dPeriod })
-
-    return {
-      k: kValue,
-      d: dValue,
-    } as StochResult
-  },
   stream: ({ kPeriod, slowingPeriod, dPeriod }) => {
     const mmaxStream = mmax.stream({ period: kPeriod })
     const mminStream = mmin.stream({ period: kPeriod })

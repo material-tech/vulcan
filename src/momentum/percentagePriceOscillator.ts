@@ -1,7 +1,6 @@
 import type { Dnum, Numberish } from 'dnum'
 import { divide, from, mul, sub, subtract } from 'dnum'
 import { createSignal } from '~/base'
-import { divide as mapDivide, subtract as mapSubtract, multiply } from '../helpers/operations'
 import { ema } from '../trend/exponentialMovingAverage'
 
 export interface PercentagePriceOscillatorOptions {
@@ -44,32 +43,6 @@ export interface PercentagePriceOscillatorResult {
  * @returns Object containing ppo, signal, and histogram arrays
  */
 export const ppo = createSignal({
-  compute: (
-    data: Numberish[],
-    { fastPeriod, slowPeriod, signalPeriod },
-  ): PercentagePriceOscillatorResult => {
-    const closes = data.map(v => from(v))
-
-    const fastEMA = ema(closes, { period: fastPeriod })
-    const slowEMA = ema(closes, { period: slowPeriod })
-
-    // Calculate PPO = ((Fast EMA - Slow EMA) / Slow EMA) * 100
-    const emaDiff = mapSubtract(fastEMA, slowEMA, 18)
-    const emaPercent = mapDivide(emaDiff, slowEMA, 18)
-    const ppoValues = multiply(emaPercent, 100, 18)
-
-    // Calculate Signal = EMA(signalPeriod, PPO)
-    const signal = ema(ppoValues, { period: signalPeriod })
-
-    // Calculate Histogram = PPO - Signal
-    const histogram = mapSubtract(ppoValues, signal, 18)
-
-    return {
-      ppo: ppoValues,
-      signal,
-      histogram,
-    }
-  },
   stream: ({ fastPeriod, slowPeriod, signalPeriod }) => {
     const fastEma = ema.stream({ period: fastPeriod })
     const slowEma = ema.stream({ period: slowPeriod })

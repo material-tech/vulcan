@@ -2,8 +2,6 @@ import type { Dnum } from 'dnum'
 import type { KlineData, RequiredProperties } from '~/types'
 import { add, divide, equal, from, subtract } from 'dnum'
 import { createSignal } from '~/base'
-import { mapPick } from '~/helpers/array'
-import { movingAction } from '~/helpers/operations'
 
 export interface CommodityChannelIndexOptions {
   /**
@@ -81,22 +79,6 @@ function computeCCIFromWindow(window: Dnum[], period: number): Dnum {
  * @returns Array of CCI values
  */
 export const cci = createSignal({
-  compute: (data: RequiredProperties<KlineData, 'h' | 'l' | 'c'>[], { period }: Required<CommodityChannelIndexOptions>) => {
-    const highs = mapPick(data, 'h', v => from(v, 18))
-    const lows = mapPick(data, 'l', v => from(v, 18))
-    const closings = mapPick(data, 'c', v => from(v, 18))
-
-    // TP = (High + Low + Close) / 3
-    const typicalPrices = data.map((_, i): Dnum =>
-      divide(add(add(highs[i], lows[i]), closings[i]), 3, 18),
-    )
-
-    return movingAction(
-      typicalPrices,
-      (window): Dnum => computeCCIFromWindow(window, period),
-      period,
-    )
-  },
   stream: ({ period }: Required<CommodityChannelIndexOptions>) => {
     const buffer: Dnum[] = []
     return (data: RequiredProperties<KlineData, 'h' | 'l' | 'c'>) => {
