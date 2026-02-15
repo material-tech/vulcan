@@ -9,6 +9,18 @@ export type Unarray<T> = T extends readonly (infer U)[]
   ? U
   : { [K in keyof T]: T[K] extends readonly (infer U)[] ? U : T[K] }
 
+/**
+ * Wrap an element type into a batch result type (inverse of Unarray).
+ * - `Dnum` → `Dnum[]`
+ * - `{ macd: Dnum, signal: Dnum }` → `{ macd: Dnum[], signal: Dnum[] }`
+ * - `number` → `number[]`
+ */
+export type WrapResult<T> = T extends readonly any[]
+  ? T[]
+  : T extends Record<string, any>
+    ? { [K in keyof T]: T[K][] }
+    : T[]
+
 export interface TechnicalSignal<Data, Result, Options extends Record<string, any>> {
   readonly defaultOptions: Options
   (dataset: Data[], options?: Partial<Options>): Result
@@ -24,9 +36,9 @@ export interface CreateStreamFunc<Data, Result, Options extends Record<string, a
   (options: Required<Options>): (data: Data) => Unarray<Result>
 }
 
-export interface CreateSignalOptions<Data, Result, Options extends Record<string, any>> {
-  compute?: CreateSignalFunc<Data, Result, Options>
-  stream: CreateStreamFunc<Data, Result, Options>
+export interface CreateSignalOptions<Data, Element, Options extends Record<string, any>> {
+  compute?: (dataset: Data[], options: Required<Options>) => WrapResult<Element>
+  stream: (options: Required<Options>) => (data: Data) => Element
   defaultOptions?: Options
 }
 

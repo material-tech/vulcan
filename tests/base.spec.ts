@@ -1,4 +1,3 @@
-import type { Dnum } from 'dnum'
 import { from, toNumber } from 'dnum'
 import { describe, expect, it } from 'vitest'
 import { createSignal } from '../src/base'
@@ -16,8 +15,7 @@ describe('createSignal', () => {
 
   it('should get default options', () => {
     const signal = createSignal({
-      compute: () => void 0,
-      stream: () => () => void 0,
+      stream: () => () => void 0 as unknown,
       defaultOptions: { foo: 'bar' },
     })
 
@@ -106,7 +104,7 @@ describe('createSignal', () => {
 
 describe('createSignal auto-derive from stream', () => {
   it('should auto-derive compute for scalar results', () => {
-    const signal = createSignal<number, number[], Record<string, never>>({
+    const signal = createSignal({
       stream: () => (v: number) => v * 2,
     })
 
@@ -114,11 +112,11 @@ describe('createSignal auto-derive from stream', () => {
   })
 
   it('should auto-derive compute for Dnum results', () => {
-    const signal = createSignal<number, Dnum[], Record<string, never>>({
+    const signal = createSignal({
       stream: () => (v: number) => from(v, 18),
     })
 
-    const result = signal([1, 2, 3]) as Dnum[]
+    const result = signal([1, 2, 3])
     expect(result).toHaveLength(3)
     expect(toNumber(result[0])).toBe(1)
     expect(toNumber(result[1])).toBe(2)
@@ -126,29 +124,29 @@ describe('createSignal auto-derive from stream', () => {
   })
 
   it('should not treat Dnum tuples as plain objects', () => {
-    const signal = createSignal<number, Dnum[], Record<string, never>>({
+    const signal = createSignal({
       stream: () => (v: number) => from(v, 18),
     })
 
     // Dnum is [bigint, number] - Array.isArray returns true
     // so it should NOT be transposed
-    const result = signal([42]) as Dnum[]
+    const result = signal([42])
     expect(Array.isArray(result[0])).toBe(true)
     expect(toNumber(result[0])).toBe(42)
   })
 
   it('should auto-derive and transpose object results', () => {
-    const signal = createSignal<number, { doubled: number[], tripled: number[] }, Record<string, never>>({
+    const signal = createSignal({
       stream: () => (v: number) => ({ doubled: v * 2, tripled: v * 3 }),
     })
 
-    const result = signal([1, 2, 3]) as { doubled: number[], tripled: number[] }
+    const result = signal([1, 2, 3])
     expect(result.doubled).toEqual([2, 4, 6])
     expect(result.tripled).toEqual([3, 6, 9])
   })
 
   it('should return empty array for empty dataset', () => {
-    const signal = createSignal<number, number[], Record<string, never>>({
+    const signal = createSignal({
       stream: () => (v: number) => v,
     })
 

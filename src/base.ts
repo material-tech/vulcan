@@ -1,4 +1,4 @@
-import type { CreateSignalOptions, TechnicalSignal, Unarray } from './types'
+import type { CreateSignalOptions, TechnicalSignal, WrapResult } from './types'
 import { defu } from 'defu'
 
 function isPlainObject(value: unknown): value is Record<string, unknown> {
@@ -19,14 +19,14 @@ function transpose<T extends Record<string, unknown>>(items: T[]): { [K in keyof
  * Create a technical signal with batch compute and streaming support.
  * When `compute` is omitted, it is auto-derived from `stream` via `data.map(streamFn)`.
  */
-export function createSignal<Data, Result, Options extends Record<string, any>>(
-  config: CreateSignalOptions<Data, Result, Options>,
-): TechnicalSignal<Data, Result, Options> {
+export function createSignal<Data, Element, Options extends Record<string, any>>(
+  config: CreateSignalOptions<Data, Element, Options>,
+): TechnicalSignal<Data, WrapResult<Element>, Options> {
   const { compute, stream: createStream, defaultOptions } = config
 
   function impl(dataset: Data[], options?: Partial<Options>) {
     if (dataset.length === 0) {
-      return [] as Result
+      return [] as unknown as WrapResult<Element>
     }
     const opt = defu(options, defaultOptions) as Required<Options>
     if (compute) {
@@ -37,9 +37,9 @@ export function createSignal<Data, Result, Options extends Record<string, any>>(
     const results = dataset.map(streamFn)
     const first = results[0]
     if (isPlainObject(first)) {
-      return transpose(results as Record<string, unknown>[]) as Result
+      return transpose(results as Record<string, unknown>[]) as WrapResult<Element>
     }
-    return results as Result
+    return results as WrapResult<Element>
   }
 
   impl.stream = (options?: Partial<Options>) => {
@@ -49,7 +49,7 @@ export function createSignal<Data, Result, Options extends Record<string, any>>(
 
   impl.toTransformStream = (options?: Partial<Options>) => {
     const streamFn = impl.stream(options)
-    return new TransformStream<Data, Unarray<Result>>({
+    return new TransformStream<Data, Element>({
       transform(chunk: Data, controller) {
         controller.enqueue(streamFn(chunk))
       },
@@ -62,5 +62,5 @@ export function createSignal<Data, Result, Options extends Record<string, any>>(
     },
   })
 
-  return impl as TechnicalSignal<Data, Result, Options>
+  return impl as TechnicalSignal<Data, WrapResult<Element>, Options>
 }
