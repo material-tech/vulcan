@@ -31,7 +31,7 @@ Most common technical indicators are targeted for support, some are still being 
 - [x] Commodity Channel Index (CCI)
 - [x] Double Exponential Moving Average (DEMA)
 - [x] Exponential Moving Average (EMA)
-- [ ] Mass Index (MI)
+- [x] Mass Index (MI)
 - [ ] Moving Average Convergence Divergence (MACD)
 - [x] Moving Max (MMAX)
 - [x] Moving Min (MMIN)
