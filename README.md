@@ -27,7 +27,7 @@ Most common technical indicators are targeted for support, some are still being 
 
 - [x] Aroon Indicator
 - [x] Balance of Power (BOP)
-- [ ] Chande Forecast Oscillator (CFO)
+- [x] Chande Forecast Oscillator (CFO)
 - [ ] Community Channel Index (CCI)
 - [ ] Double Exponential Moving Average (DEMA)
 - [x] Exponential Moving Average (EMA)

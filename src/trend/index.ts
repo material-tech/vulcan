@@ -1,5 +1,6 @@
 export * from './aroon'
 export * from './balanceOfPower'
+export * from './chandeForecastOscillator'
 export * from './exponentialMovingAverage'
 export * from './movingMax'
 export * from './movingMin'
