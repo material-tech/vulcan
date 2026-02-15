@@ -1,6 +1,6 @@
 # indicator-x
 
-`indicator-x` is a JavaScript library that provides various technical analysis indicators, strategies, and a backtesting framework for trading.
+`indicator-x` is a JavaScript library that provides various technical analysis indicators.
 
 ## Advantages
 
@@ -23,11 +23,43 @@ Most common technical indicators are targeted for support, some are still being 
 <details>
 <summary>Currently Supported Technical Indicators</summary>
 
-- [x] RSI
-- [x] Stochastic Oscillator
-- [ ] MACD
-- [ ] KDJ
-- [ ] BOLL
-- [ ] MA
+#### Trend Indicators
+
+- [x] Aroon Indicator
+- [ ] Balance of Power (BOP)
+- [ ] Chande Forecast Oscillator (CFO)
+- [ ] Community Channel Index (CCI)
+- [ ] Double Exponential Moving Average (DEMA)
+- [x] Exponential Moving Average (EMA)
+- [ ] Mass Index (MI)
+- [ ] Moving Average Convergence Divergence (MACD)
+- [x] Moving Max (MMAX)
+- [x] Moving Min (MMIN)
+- [x] Moving Sum (MSUM)
+- [ ] Parabolic SAR (PSAR)
+- [ ] Qstick
+- [ ] Random Index (KDJ)
+- [x] Rolling Moving Average (RMA)
+- [x] Simple Moving Average (SMA)
+- [ ] Since Change
+- [ ] Triple Exponential Moving Average (TEMA)
+- [x] Triangular Moving Average (TRIMA)
+- [ ] Triple Exponential Average (TRIX)
+- [ ] Typical Price
+- [ ] Volume Weighted Moving Average (VWMA)
+- [ ] Vortex Indicator
+
+#### Momentum Indicators
+
+- [x] Absolute Price Oscillator (APO)
+- [x] Awesome Oscillator (AO)
+- [x] Chaikin Oscillator (CMO)
+- [x] Ichimoku Cloud
+- [x] Percentage Price Oscillator (PPO)
+- [ ] Percentage Volume Oscillator (PVO)
+- [ ] Price Rate of Change (ROC)
+- [x] Relative Strength Index (RSI)
+- [x] Stochastic Oscillator (STOCH)
+- [ ] Williams R (WILLR)
 
 </details>

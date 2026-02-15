@@ -25,7 +25,7 @@ const result = rsi(data, { period: 4, decimals: 18 })
 
 #### 趋势指标
 
-- [ ] Aroon Indicator
+- [x] Aroon Indicator
 - [ ] Balance of Power (BOP)
 - [ ] Chande Forecast Oscillator (CFO)
 - [ ] Community Channel Index (CCI)
