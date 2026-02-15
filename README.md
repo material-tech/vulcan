@@ -29,7 +29,7 @@ Most common technical indicators are targeted for support, some are still being 
 - [x] Balance of Power (BOP)
 - [x] Chande Forecast Oscillator (CFO)
 - [x] Commodity Channel Index (CCI)
-- [ ] Double Exponential Moving Average (DEMA)
+- [x] Double Exponential Moving Average (DEMA)
 - [x] Exponential Moving Average (EMA)
 - [ ] Mass Index (MI)
 - [ ] Moving Average Convergence Divergence (MACD)
