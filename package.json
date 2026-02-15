@@ -12,19 +12,16 @@
     "technical-indicator"
   ],
   "exports": {
-    ".": {
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
-    }
+    ".": "./dist/index.js",
+    "./package.json": "./package.json"
   },
-  "main": "./dist/index.cjs",
-  "types": "./dist/index.d.ts",
+  "types": "./dist/index.d.mts",
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "unbuild",
-    "prepack": "unbuild",
+    "build": "tsdown",
+    "prepack": "tsdown",
     "test": "vitest --typecheck",
     "test:coverage": "vitest --coverage",
     "lint": "eslint .",
@@ -42,8 +39,8 @@
     "eslint": "^10.0.0",
     "lint-staged": "^16.2.7",
     "simple-git-hooks": "^2.13.1",
+    "tsdown": "^0.20.3",
     "typescript": "^5.9.3",
-    "unbuild": "^3.6.1",
     "vite-tsconfig-paths": "^6.1.1",
     "vitest": "^4.0.18"
   },

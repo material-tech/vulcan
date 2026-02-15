@@ -17,5 +17,5 @@
     "skipLibCheck": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["vitest.config.ts", "build.config.ts"]
+  "include": ["vitest.config.ts", "tsdown.config.ts"]
 }
