@@ -1,3 +1,4 @@
+import type { Dnum } from 'dnum'
 import type { KlineData, RequiredProperties } from '~/types'
 import { divide, from, subtract } from 'dnum'
 import { createSignal } from '~/base'
@@ -43,8 +44,8 @@ export const defaultMassIndexOptions: MassIndexOptions = {
  * @param options.miPeriod - The moving sum period (default: 25)
  * @returns Array of Mass Index values
  */
-export const mi = createSignal(
-  (data: RequiredProperties<KlineData, 'h' | 'l'>[], { emaPeriod, miPeriod }: Required<MassIndexOptions>) => {
+export const mi = createSignal({
+  compute: (data: RequiredProperties<KlineData, 'h' | 'l'>[], { emaPeriod, miPeriod }: Required<MassIndexOptions>) => {
     const highs = mapPick(data, 'h', v => from(v, 18))
     const lows = mapPick(data, 'l', v => from(v, 18))
 
@@ -63,7 +64,19 @@ export const mi = createSignal(
     // MI = MovingSum(Ratio, miPeriod)
     return msum(ratios, { period: miPeriod })
   },
-  defaultMassIndexOptions,
-)
+  stream: ({ emaPeriod, miPeriod }: Required<MassIndexOptions>) => {
+    const ema1 = ema.stream({ period: emaPeriod })
+    const ema2 = ema.stream({ period: emaPeriod })
+    const msumStream = msum.stream({ period: miPeriod })
+    return (data: RequiredProperties<KlineData, 'h' | 'l'>): Dnum => {
+      const range = subtract(from(data.h, 18), from(data.l, 18))
+      const e1 = ema1(range)
+      const e2 = ema2(e1)
+      const ratio = divide(e1, e2, 18)
+      return msumStream(ratio)
+    }
+  },
+  defaultOptions: defaultMassIndexOptions,
+})
 
 export { mi as massIndex }

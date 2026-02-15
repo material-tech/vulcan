@@ -1,3 +1,4 @@
+import { toNumber } from 'dnum'
 import { describe, expect, it } from 'vitest'
 import { rsi } from '~/momentum/relativeStrengthIndex'
 
@@ -57,5 +58,14 @@ describe('relativeStrengthIndex (RSI)', () => {
 
     // For continuously falling prices, RSI should be close to 0
     expect(result).toMatchNumberArray(expected)
+  })
+
+  it('stream should produce same results as batch', () => {
+    const batchResult = rsi(values, { period: 9 })
+    const next = rsi.stream({ period: 9 })
+    const streamResult = values.map(v => next(v))
+    expect(streamResult).toMatchNumberArray(
+      batchResult.map(v => toNumber(v, { digits: 2 })),
+    )
   })
 })

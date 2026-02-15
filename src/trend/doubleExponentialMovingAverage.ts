@@ -1,4 +1,5 @@
-import type { Numberish } from 'dnum'
+import type { Dnum, Numberish } from 'dnum'
+import { mul, sub } from 'dnum'
 import { createSignal } from '~/base'
 import { multiply, subtract } from '~/helpers/operations'
 import { ema } from './exponentialMovingAverage'
@@ -22,14 +23,23 @@ export const defaultDoubleExponentialMovingAverageOptions: DoubleExponentialMovi
  * @param options.period - The lookback period (default: 12)
  * @returns Array of DEMA values
  */
-export const dema = createSignal(
-  (values: Numberish[], { period }) => {
+export const dema = createSignal({
+  compute: (values: Numberish[], { period }) => {
     const ema1 = ema(values, { period })
     const ema2 = ema(ema1, { period })
 
     return subtract(multiply(ema1, 2, 18), ema2, 18)
   },
-  defaultDoubleExponentialMovingAverageOptions,
-)
+  stream: ({ period }) => {
+    const ema1 = ema.stream({ period })
+    const ema2 = ema.stream({ period })
+    return (value: Numberish): Dnum => {
+      const e1 = ema1(value)
+      const e2 = ema2(e1)
+      return sub(mul(e1, 2, 18), e2)
+    }
+  },
+  defaultOptions: defaultDoubleExponentialMovingAverageOptions,
+})
 
 export { dema as doubleExponentialMovingAverage }

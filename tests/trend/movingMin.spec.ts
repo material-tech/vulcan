@@ -1,3 +1,4 @@
+import { toNumber } from 'dnum'
 import { describe, expect, it } from 'vitest'
 import { mmin } from '~/trend/movingMin'
 
@@ -14,5 +15,14 @@ describe('movingMin', () => {
     const result = mmin(values, { period: 2 })
 
     expect(result).toMatchNumberArray([1, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+  })
+
+  it('stream should produce same results as batch', () => {
+    const batchResult = mmin(values, { period: 8 })
+    const next = mmin.stream({ period: 8 })
+    const streamResult = values.map(v => next(v))
+    expect(streamResult).toMatchNumberArray(
+      batchResult.map(v => toNumber(v, { digits: 2 })),
+    )
   })
 })

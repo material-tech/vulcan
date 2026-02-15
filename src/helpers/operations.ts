@@ -65,7 +65,7 @@ export function max<T extends Numberish>(
     (max, current) => {
       return gt(max, current) ? max : current
     },
-    numbers.at(0) as T,
+    filtered[0],
   )
 }
 
@@ -78,7 +78,7 @@ export function min<T extends Numberish>(
     (min, current) => {
       return lt(min, current) ? min : current
     },
-    numbers.at(0) as T,
+    filtered[0],
   )
 }
 

@@ -1,3 +1,4 @@
+import { toNumber } from 'dnum'
 import { describe, expect, it } from 'vitest'
 import { aroon } from '~/trend/aroon'
 
@@ -29,5 +30,20 @@ describe('aroon indicator', () => {
     expect(result.up).toMatchNumberArray([100, 100, 66.67, 100, 66.67, 33.33, 100, 66.67, 33.33, 0])
     expect(result.down).toMatchNumberArray([100, 66.67, 100, 66.67, 100, 100, 66.67, 100, 66.67, 33.33])
     expect(result.oscillator).toMatchNumberArray([0, 33.33, -33.33, 33.33, -33.33, -66.67, 33.33, -33.33, -33.33, -33.33])
+  })
+
+  it('stream should produce same results as batch', () => {
+    const batchResult = aroon(values, { period: 5 })
+    const next = aroon.stream({ period: 5 })
+    const streamResults = values.map(v => next(v))
+    expect(streamResults.map(r => r.up)).toMatchNumberArray(
+      batchResult.up.map(v => toNumber(v, { digits: 2 })),
+    )
+    expect(streamResults.map(r => r.down)).toMatchNumberArray(
+      batchResult.down.map(v => toNumber(v, { digits: 2 })),
+    )
+    expect(streamResults.map(r => r.oscillator)).toMatchNumberArray(
+      batchResult.oscillator.map(v => toNumber(v, { digits: 2 })),
+    )
   })
 })

@@ -1,5 +1,5 @@
-import type { Numberish } from 'dnum'
-import { from } from 'dnum'
+import type { Dnum, Numberish } from 'dnum'
+import { from, lt } from 'dnum'
 import { createSignal } from '~/base'
 import { min, movingAction } from '~/helpers/operations'
 
@@ -17,8 +17,8 @@ export const defaultMovingMinOptions: MovingMinOptions = {
 /**
  * Moving Minimum (MovingMin)
  */
-export const mmin = createSignal(
-  (values: Numberish[], { period }) => {
+export const mmin = createSignal({
+  compute: (values: Numberish[], { period }) => {
     const dnumValues = values.map(item => from(item))
 
     return movingAction(
@@ -27,7 +27,16 @@ export const mmin = createSignal(
       period,
     )
   },
-  defaultMovingMinOptions,
-)
+  stream: ({ period }) => {
+    const buffer: Dnum[] = []
+    return (value: Numberish) => {
+      buffer.push(from(value))
+      if (buffer.length > period)
+        buffer.shift()
+      return buffer.reduce((m, cur) => lt(cur, m) ? cur : m, buffer[0])
+    }
+  },
+  defaultOptions: defaultMovingMinOptions,
+})
 
 export { mmin as movingMin }

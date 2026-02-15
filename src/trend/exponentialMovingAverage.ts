@@ -1,4 +1,4 @@
-import type { Numberish } from 'dnum'
+import type { Dnum, Numberish } from 'dnum'
 import { add, from, mul } from 'dnum'
 import { createSignal } from '~/base'
 
@@ -10,8 +10,8 @@ export const defaultExponentialMovingAverageOptions: ExponentialMovingAverageOpt
   period: 12,
 }
 
-export const ema = createSignal(
-  (values: Numberish[], { period }) => {
+export const ema = createSignal({
+  compute: (values: Numberish[], { period }) => {
     const result = Array.from({ length: values.length }, () => from(0))
 
     if (result.length > 0) {
@@ -30,7 +30,21 @@ export const ema = createSignal(
 
     return result
   },
-  defaultExponentialMovingAverageOptions,
-)
+  stream: ({ period }) => {
+    const k = 2 / (1 + period)
+    const m = 1 - k
+    let prev: Dnum | null = null
+    return (value: Numberish) => {
+      if (prev === null) {
+        prev = from(value)
+      }
+      else {
+        prev = add(mul(value, k, 18), mul(prev, m, 18))
+      }
+      return prev
+    }
+  },
+  defaultOptions: defaultExponentialMovingAverageOptions,
+})
 
 export { ema as exponentialMovingAverage }

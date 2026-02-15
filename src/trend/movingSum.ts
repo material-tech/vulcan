@@ -1,4 +1,4 @@
-import type { Numberish } from 'dnum'
+import type { Dnum, Numberish } from 'dnum'
 import { add, from } from 'dnum'
 import { createSignal } from '~/base'
 import { movingAction } from '~/helpers/operations'
@@ -15,8 +15,8 @@ export const defaultMovingSumOptions: MovingSumOptions = {
  * moving sum
  * calculate the sum of the values in the specified period
  */
-export const msum = createSignal(
-  (values: Numberish[], { period }) => {
+export const msum = createSignal({
+  compute: (values: Numberish[], { period }) => {
     const dnumValues = values.map(item => from(item))
 
     return movingAction(
@@ -25,5 +25,14 @@ export const msum = createSignal(
       period,
     )
   },
-  defaultMovingSumOptions,
-)
+  stream: ({ period }) => {
+    const buffer: Dnum[] = []
+    return (value: Numberish) => {
+      buffer.push(from(value))
+      if (buffer.length > period)
+        buffer.shift()
+      return buffer.reduce((sum, cur) => add(sum, cur), from(0))
+    }
+  },
+  defaultOptions: defaultMovingSumOptions,
+})

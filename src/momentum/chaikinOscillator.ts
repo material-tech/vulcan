@@ -1,6 +1,8 @@
+import type { Dnum } from 'dnum'
 import type { KlineData, RequiredProperties } from '~/types'
+import { subtract } from 'dnum'
 import { createSignal } from '~/base'
-import { subtract } from '~/helpers/operations'
+import { subtract as mapSubtract } from '~/helpers/operations'
 import { ema } from '~/trend/exponentialMovingAverage'
 import { ad } from '~/volume/accumulationDistribution'
 
@@ -23,20 +25,31 @@ export const defaultChaikinOscillatorOptions: ChaikinOscillatorOptions = {
  *
  * CO = Ema(fastPeriod, AD) - Ema(slowPeriod, AD)
  */
-export const cmo = createSignal(
-  (
+export const cmo = createSignal({
+  compute: (
     data: RequiredProperties<KlineData, 'h' | 'l' | 'c' | 'v'>[],
     { fastPeriod, slowPeriod },
   ) => {
     const adResult = ad(data)
 
-    return subtract(
+    return mapSubtract(
       ema(adResult, { period: fastPeriod }),
       ema(adResult, { period: slowPeriod }),
       18,
     )
   },
-  defaultChaikinOscillatorOptions,
-)
+  stream: ({ fastPeriod, slowPeriod }) => {
+    const adStream = ad.stream()
+    const fastEma = ema.stream({ period: fastPeriod })
+    const slowEma = ema.stream({ period: slowPeriod })
+    return (data: RequiredProperties<KlineData, 'h' | 'l' | 'c' | 'v'>): Dnum => {
+      const adValue = adStream(data)
+      const fast = fastEma(adValue)
+      const slow = slowEma(adValue)
+      return subtract(fast, slow)
+    }
+  },
+  defaultOptions: defaultChaikinOscillatorOptions,
+})
 
 export { cmo as chaikinOscillator }

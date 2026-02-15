@@ -1,3 +1,4 @@
+import { toNumber } from 'dnum'
 import { describe, expect, it } from 'vitest'
 import { mmax } from '~/trend/movingMax'
 
@@ -16,5 +17,14 @@ describe('movingMax (mmax)', () => {
 
     expect(result)
       .toMatchNumberArray([10, 10, 10, 10, 10, 10, 10, 10, 9, 8])
+  })
+
+  it('stream should produce same results as batch', () => {
+    const batchResult = mmax(values)
+    const next = mmax.stream()
+    const streamResult = values.map(v => next(v))
+    expect(streamResult).toMatchNumberArray(
+      batchResult.map(v => toNumber(v, { digits: 2 })),
+    )
   })
 })

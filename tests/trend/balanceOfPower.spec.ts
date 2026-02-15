@@ -1,3 +1,4 @@
+import { toNumber } from 'dnum'
 import { describe, expect, it } from 'vitest'
 import { bop } from '~/trend/balanceOfPower'
 
@@ -32,5 +33,22 @@ describe('balance of power (BOP)', () => {
     const result = bop([])
 
     expect(result).toEqual([])
+  })
+
+  it('stream should produce same results as batch', () => {
+    const values = [
+      { o: 10, h: 15, l: 5, c: 12 },
+      { o: 10, h: 15, l: 5, c: 8 },
+      { o: 5, h: 20, l: 5, c: 20 },
+      { o: 20, h: 20, l: 5, c: 5 },
+      { o: 100, h: 110, l: 90, c: 105 },
+      { o: 50, h: 55, l: 45, c: 52 },
+    ]
+    const batchResult = bop(values)
+    const next = bop.stream()
+    const streamResult = values.map(v => next(v))
+    expect(streamResult).toMatchNumberArray(
+      batchResult.map(v => toNumber(v, { digits: 2 })),
+    )
   })
 })

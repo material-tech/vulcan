@@ -1,7 +1,7 @@
 import type { Dnum, Numberish } from 'dnum'
-import { from } from 'dnum'
+import { from, subtract } from 'dnum'
 import { createSignal } from '~/base'
-import { subtract } from '~/helpers/operations'
+import { subtract as mapSubtract } from '~/helpers/operations'
 import { ema } from './exponentialMovingAverage'
 
 export interface MACDOptions {
@@ -43,29 +43,46 @@ export interface MACDResult {
  * @param options.signalPeriod - Period for the signal EMA (default: 9)
  * @returns Object containing macd, signal, and histogram arrays
  */
-export const macd = createSignal((
-  data: Numberish[],
-  { fastPeriod, slowPeriod, signalPeriod },
-): MACDResult => {
-  const closes = data.map(v => from(v))
+export const macd = createSignal({
+  compute: (
+    data: Numberish[],
+    { fastPeriod, slowPeriod, signalPeriod },
+  ): MACDResult => {
+    const closes = data.map(v => from(v))
 
-  const fastEMA = ema(closes, { period: fastPeriod })
-  const slowEMA = ema(closes, { period: slowPeriod })
+    const fastEMA = ema(closes, { period: fastPeriod })
+    const slowEMA = ema(closes, { period: slowPeriod })
 
-  // MACD Line = Fast EMA - Slow EMA
-  const macdValues = subtract(fastEMA, slowEMA, 18)
+    // MACD Line = Fast EMA - Slow EMA
+    const macdValues = mapSubtract(fastEMA, slowEMA, 18)
 
-  // Signal Line = EMA(signalPeriod, MACD)
-  const signal = ema(macdValues, { period: signalPeriod })
+    // Signal Line = EMA(signalPeriod, MACD)
+    const signal = ema(macdValues, { period: signalPeriod })
 
-  // Histogram = MACD - Signal
-  const histogram = subtract(macdValues, signal, 18)
+    // Histogram = MACD - Signal
+    const histogram = mapSubtract(macdValues, signal, 18)
 
-  return {
-    macd: macdValues,
-    signal,
-    histogram,
-  }
-}, defaultMACDOptions)
+    return {
+      macd: macdValues,
+      signal,
+      histogram,
+    }
+  },
+  stream: ({ fastPeriod, slowPeriod, signalPeriod }) => {
+    const fastEma = ema.stream({ period: fastPeriod })
+    const slowEma = ema.stream({ period: slowPeriod })
+    const signalEma = ema.stream({ period: signalPeriod })
+    return (value: Numberish) => {
+      const v = from(value)
+      const fast = fastEma(v)
+      const slow = slowEma(v)
+      const macdValue = subtract(fast, slow)
+      const signal = signalEma(macdValue)
+      const histogram = subtract(macdValue, signal)
+      return { macd: macdValue, signal, histogram }
+    }
+  },
+  defaultOptions: defaultMACDOptions,
+})
 
 export { macd as movingAverageConvergenceDivergence }

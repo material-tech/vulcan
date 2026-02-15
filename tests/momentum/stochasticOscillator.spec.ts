@@ -1,3 +1,4 @@
+import { toNumber } from 'dnum'
 import { describe, expect, it } from 'vitest'
 import { stoch } from '~/momentum/stochasticOscillator'
 
@@ -87,5 +88,17 @@ describe('stochastic oscillator (STOCH)', () => {
     })
     expect(actual.k).toMatchNumberArray(expectedK)
     expect(actual.d).toMatchNumberArray(expectedD)
+  })
+
+  it('stream should produce same results as batch', () => {
+    const batchResult = stoch(values, { kPeriod: 12, dPeriod: 2 })
+    const next = stoch.stream({ kPeriod: 12, dPeriod: 2 })
+    const streamResults = values.map(v => next(v))
+    expect(streamResults.map(r => r.k)).toMatchNumberArray(
+      batchResult.k.map(v => toNumber(v, { digits: 2 })),
+    )
+    expect(streamResults.map(r => r.d)).toMatchNumberArray(
+      batchResult.d.map(v => toNumber(v, { digits: 2 })),
+    )
   })
 })

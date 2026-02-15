@@ -1,4 +1,4 @@
-import type { Numberish } from 'dnum'
+import type { Dnum, Numberish } from 'dnum'
 import { add, div, from, mul } from 'dnum'
 import { createSignal } from '~/base'
 
@@ -20,8 +20,8 @@ export const defaultRMAOptions: RMAOptions = {
  *
  * R[p] and after is R[i] = ((R[i-1]*(p-1)) + v[i]) / p
  */
-export const rma = createSignal(
-  (values: Numberish[], { period }) => {
+export const rma = createSignal({
+  compute: (values: Numberish[], { period }) => {
     const result = Array.from({ length: values.length }, () => from(0))
 
     // Use SMA for the first period
@@ -43,7 +43,26 @@ export const rma = createSignal(
 
     return result
   },
-  defaultRMAOptions,
-)
+  stream: ({ period }) => {
+    let count = 0
+    let sum = from(0)
+    let prev: Dnum = from(0)
+    return (value: Numberish) => {
+      if (count < period) {
+        sum = add(sum, value)
+        count++
+        prev = div(sum, count, 18)
+      }
+      else {
+        prev = div(
+          add(mul(prev, from(period - 1), 18), value),
+          from(period),
+        )
+      }
+      return prev
+    }
+  },
+  defaultOptions: defaultRMAOptions,
+})
 
 export { rma as rollingMovingAverage }

@@ -1,4 +1,4 @@
-import type { Numberish } from 'dnum'
+import type { Dnum, Numberish } from 'dnum'
 import { add, div, eq, from, gt, mul, sub } from 'dnum'
 import { createSignal } from '~/base'
 import { rma } from '~/trend/rollingMovingAverage'
@@ -20,8 +20,8 @@ export const defaultRSIOptions: RSIOptions = {
  *
  * RSI = 100 - (100 / (1 + RS))
  */
-export const rsi = createSignal(
-  (closings: Numberish[], { period }) => {
+export const rsi = createSignal({
+  compute: (closings: Numberish[], { period }) => {
     // Convert input data to Dnum type
     const prices = closings.map(item => from(item))
 
@@ -77,7 +77,40 @@ export const rsi = createSignal(
 
     return result
   },
-  defaultRSIOptions,
-)
+  stream: ({ period }) => {
+    const gainRma = rma.stream({ period })
+    const lossRma = rma.stream({ period })
+    let prev: Dnum | null = null
+    let first = true
+    return (value: Numberish): Dnum => {
+      const current = from(value)
+      if (first) {
+        first = false
+        prev = current
+        // First point: feed 0 gain/loss into RMA
+        gainRma(from(0))
+        lossRma(from(0))
+        return from(0)
+      }
+
+      const change = sub(current, prev!)
+      prev = current
+
+      const gain = gt(change, 0) ? change : from(0)
+      const loss = gt(change, 0) ? from(0) : mul(change, -1, 18)
+
+      const avgGain = gainRma(gain)
+      const avgLoss = lossRma(loss)
+
+      if (eq(avgLoss, 0)) {
+        return from(100)
+      }
+
+      const rs = div(avgGain, avgLoss)
+      return sub(100, div(100, add(1, rs), 18))
+    }
+  },
+  defaultOptions: defaultRSIOptions,
+})
 
 export { rsi as relativeStrengthIndex }

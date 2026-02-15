@@ -1,3 +1,4 @@
+import { toNumber } from 'dnum'
 import { describe, expect, it } from 'vitest'
 import { trima } from '~/trend/triangularMovingAverage'
 
@@ -18,5 +19,14 @@ describe('triangular moving average (trima)', () => {
     const expected = [1, 1.25, 1.28, 1.52, 1.9, 2.74, 3.56, 4.61, 5.48, 5.88]
 
     expect(result).toMatchNumberArray(expected)
+  })
+
+  it('stream should produce same results as batch', () => {
+    const batchResult = trima(values)
+    const next = trima.stream()
+    const streamResult = values.map(v => next(v))
+    expect(streamResult).toMatchNumberArray(
+      batchResult.map(v => toNumber(v, { digits: 2 })),
+    )
   })
 })

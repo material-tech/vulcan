@@ -1,3 +1,4 @@
+import { toNumber } from 'dnum'
 import { describe, expect, it } from 'vitest'
 import { mi } from '~/trend/massIndex'
 
@@ -83,5 +84,14 @@ describe('mass index (MI)', () => {
     const result = mi([])
 
     expect(result).toEqual([])
+  })
+
+  it('stream should produce same results as batch', () => {
+    const batchResult = mi(data)
+    const next = mi.stream()
+    const streamResult = data.map(v => next(v))
+    expect(streamResult).toMatchNumberArray(
+      batchResult.map(v => toNumber(v, { digits: 2 })),
+    )
   })
 })
