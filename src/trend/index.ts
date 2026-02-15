@@ -1,4 +1,5 @@
 export * from './aroon'
+export * from './balanceOfPower'
 export * from './exponentialMovingAverage'
 export * from './movingMax'
 export * from './movingMin'
