@@ -1,5 +1,6 @@
 import { toNumber } from 'dnum'
 import { describe, expect, it } from 'vitest'
+import { mapOperator } from '~/helpers/operations'
 import { ad } from '~/volume/accumulationDistribution'
 
 describe('accumulation distribution (A/D)', () => {
@@ -19,11 +20,9 @@ describe('accumulation distribution (A/D)', () => {
   })
 
   it('stream should produce same results as batch', () => {
-    const batchResult = ad(values)
+    const batchResult = mapOperator(toNumber)(ad(values), { digits: 2 })
     const next = ad.stream()
     const streamResult = values.map(v => next(v))
-    expect(streamResult).toMatchNumberArray(
-      batchResult.map(v => toNumber(v, { digits: 2 })),
-    )
+    expect(streamResult).toMatchNumberArray(batchResult)
   })
 })

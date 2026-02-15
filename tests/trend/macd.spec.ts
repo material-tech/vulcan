@@ -1,6 +1,7 @@
 /* eslint-disable antfu/consistent-list-newline */
 import { toNumber } from 'dnum'
 import { describe, expect, it } from 'vitest'
+import { mapOperator } from '~/helpers/operations'
 import { macd } from '~/trend/macd'
 
 describe('moving average convergence divergence (MACD)', () => {
@@ -130,17 +131,18 @@ describe('moving average convergence divergence (MACD)', () => {
   })
 
   it('stream should produce same results as batch', () => {
+    const toNum = mapOperator(toNumber)
     const batchResult = macd(values)
     const next = macd.stream()
     const streamResults = values.map(v => next(v))
     expect(streamResults.map(r => r.macd)).toMatchNumberArray(
-      batchResult.macd.map(v => toNumber(v, { digits: 2 })),
+      toNum(batchResult.macd, { digits: 2 }),
     )
     expect(streamResults.map(r => r.signal)).toMatchNumberArray(
-      batchResult.signal.map(v => toNumber(v, { digits: 2 })),
+      toNum(batchResult.signal, { digits: 2 }),
     )
     expect(streamResults.map(r => r.histogram)).toMatchNumberArray(
-      batchResult.histogram.map(v => toNumber(v, { digits: 2 })),
+      toNum(batchResult.histogram, { digits: 2 }),
     )
   })
 })

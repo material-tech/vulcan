@@ -2,6 +2,7 @@
 
 import { toNumber } from 'dnum'
 import { describe, expect, it } from 'vitest'
+import { mapOperator } from '~/helpers/operations'
 import { ichimokuCloud } from '~/momentum/ichimokuCloud'
 import ohlcv from '../ohlcv.json' with { type: 'json' }
 
@@ -118,14 +119,15 @@ describe('ichimoku cloud', () => {
   })
 
   it('stream should produce same results as batch for conversion and base', () => {
+    const toNum = mapOperator(toNumber)
     const batchResult = ichimokuCloud(data)
     const next = ichimokuCloud.stream()
     const streamResults = data.map(v => next(v))
     expect(streamResults.map(r => r.conversion)).toMatchNumberArray(
-      batchResult.conversion.map(v => toNumber(v, { digits: 2 })),
+      toNum(batchResult.conversion, { digits: 2 }),
     )
     expect(streamResults.map(r => r.base)).toMatchNumberArray(
-      batchResult.base.map(v => toNumber(v, { digits: 2 })),
+      toNum(batchResult.base, { digits: 2 }),
     )
   })
 })

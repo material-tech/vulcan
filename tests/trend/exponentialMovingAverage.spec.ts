@@ -1,5 +1,6 @@
 import { toNumber } from 'dnum'
 import { describe, expect, it } from 'vitest'
+import { mapOperator } from '~/helpers/operations'
 import { ema } from '~/trend/exponentialMovingAverage'
 
 describe('exponential moving average (ema)', () => {
@@ -22,12 +23,9 @@ describe('exponential moving average (ema)', () => {
   })
 
   it('stream should produce same results as batch', () => {
-    const batchResult = ema(values)
+    const batchResult = mapOperator(toNumber)(ema(values), { digits: 3 })
     const next = ema.stream()
     const streamResult = values.map(v => next(v))
-    expect(streamResult).toMatchNumberArray(
-      batchResult.map(v => toNumber(v, { digits: 3 })),
-      { digits: 3 },
-    )
+    expect(streamResult).toMatchNumberArray(batchResult, { digits: 3 })
   })
 })

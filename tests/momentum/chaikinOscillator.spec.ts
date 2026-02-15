@@ -1,5 +1,6 @@
 import { toNumber } from 'dnum'
 import { describe, expect, it } from 'vitest'
+import { mapOperator } from '~/helpers/operations'
 import { cmo } from '~/momentum/chaikinOscillator'
 
 describe('chaikin money flow oscillator (CMO)', () => {
@@ -34,11 +35,9 @@ describe('chaikin money flow oscillator (CMO)', () => {
   })
 
   it('stream should produce same results as batch', () => {
-    const batchResult = cmo(values)
+    const batchResult = mapOperator(toNumber)(cmo(values), { digits: 2 })
     const next = cmo.stream()
     const streamResult = values.map(v => next(v))
-    expect(streamResult).toMatchNumberArray(
-      batchResult.map(v => toNumber(v, { digits: 2 })),
-    )
+    expect(streamResult).toMatchNumberArray(batchResult)
   })
 })

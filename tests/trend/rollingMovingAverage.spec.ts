@@ -1,5 +1,6 @@
 import { toNumber } from 'dnum'
 import { describe, expect, it } from 'vitest'
+import { mapOperator } from '~/helpers/operations'
 import { rma } from '~/trend/rollingMovingAverage'
 
 describe('rollingMovingAverage', () => {
@@ -20,11 +21,9 @@ describe('rollingMovingAverage', () => {
   })
 
   it('stream should produce same results as batch', () => {
-    const batchResult = rma(values)
+    const batchResult = mapOperator(toNumber)(rma(values), { digits: 2 })
     const next = rma.stream()
     const streamResult = values.map(v => next(v))
-    expect(streamResult).toMatchNumberArray(
-      batchResult.map(v => toNumber(v, { digits: 2 })),
-    )
+    expect(streamResult).toMatchNumberArray(batchResult)
   })
 })

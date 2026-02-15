@@ -1,5 +1,6 @@
 import { toNumber } from 'dnum'
 import { describe, expect, it } from 'vitest'
+import { mapOperator } from '~/helpers/operations'
 import { bop } from '~/trend/balanceOfPower'
 
 describe('balance of power (BOP)', () => {
@@ -44,11 +45,9 @@ describe('balance of power (BOP)', () => {
       { o: 100, h: 110, l: 90, c: 105 },
       { o: 50, h: 55, l: 45, c: 52 },
     ]
-    const batchResult = bop(values)
+    const batchResult = mapOperator(toNumber)(bop(values), { digits: 2 })
     const next = bop.stream()
     const streamResult = values.map(v => next(v))
-    expect(streamResult).toMatchNumberArray(
-      batchResult.map(v => toNumber(v, { digits: 2 })),
-    )
+    expect(streamResult).toMatchNumberArray(batchResult)
   })
 })

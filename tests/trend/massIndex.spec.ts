@@ -1,5 +1,6 @@
 import { toNumber } from 'dnum'
 import { describe, expect, it } from 'vitest'
+import { mapOperator } from '~/helpers/operations'
 import { mi } from '~/trend/massIndex'
 
 describe('mass index (MI)', () => {
@@ -87,11 +88,9 @@ describe('mass index (MI)', () => {
   })
 
   it('stream should produce same results as batch', () => {
-    const batchResult = mi(data)
+    const batchResult = mapOperator(toNumber)(mi(data), { digits: 2 })
     const next = mi.stream()
     const streamResult = data.map(v => next(v))
-    expect(streamResult).toMatchNumberArray(
-      batchResult.map(v => toNumber(v, { digits: 2 })),
-    )
+    expect(streamResult).toMatchNumberArray(batchResult)
   })
 })

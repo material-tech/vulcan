@@ -1,5 +1,6 @@
 import { toNumber } from 'dnum'
 import { describe, expect, it } from 'vitest'
+import { mapOperator } from '~/helpers/operations'
 import { cfo } from '~/trend/chandeForecastOscillator'
 
 describe('chande forecast oscillator (CFO)', () => {
@@ -30,11 +31,9 @@ describe('chande forecast oscillator (CFO)', () => {
   })
 
   it('stream should produce same results as batch', () => {
-    const batchResult = cfo(values, { period: 4 })
+    const batchResult = mapOperator(toNumber)(cfo(values, { period: 4 }), { digits: 2 })
     const next = cfo.stream({ period: 4 })
     const streamResult = values.map(v => next(v))
-    expect(streamResult).toMatchNumberArray(
-      batchResult.map(v => toNumber(v, { digits: 2 })),
-    )
+    expect(streamResult).toMatchNumberArray(batchResult)
   })
 })

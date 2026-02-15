@@ -1,5 +1,6 @@
 import { toNumber } from 'dnum'
 import { describe, expect, it } from 'vitest'
+import { mapOperator } from '~/helpers/operations'
 import { msum } from '~/trend/movingSum'
 
 describe('movingSum', () => {
@@ -22,11 +23,9 @@ describe('movingSum', () => {
   })
 
   it('stream should produce same results as batch', () => {
-    const batchResult = msum(values)
+    const batchResult = mapOperator(toNumber)(msum(values), { digits: 2 })
     const next = msum.stream()
     const streamResult = values.map(v => next(v))
-    expect(streamResult).toMatchNumberArray(
-      batchResult.map(v => toNumber(v, { digits: 2 })),
-    )
+    expect(streamResult).toMatchNumberArray(batchResult)
   })
 })

@@ -1,5 +1,6 @@
 import { toNumber } from 'dnum'
 import { describe, expect, it } from 'vitest'
+import { mapOperator } from '~/helpers/operations'
 import { rsi } from '~/momentum/relativeStrengthIndex'
 
 describe('relativeStrengthIndex (RSI)', () => {
@@ -61,11 +62,9 @@ describe('relativeStrengthIndex (RSI)', () => {
   })
 
   it('stream should produce same results as batch', () => {
-    const batchResult = rsi(values, { period: 9 })
+    const batchResult = mapOperator(toNumber)(rsi(values, { period: 9 }), { digits: 2 })
     const next = rsi.stream({ period: 9 })
     const streamResult = values.map(v => next(v))
-    expect(streamResult).toMatchNumberArray(
-      batchResult.map(v => toNumber(v, { digits: 2 })),
-    )
+    expect(streamResult).toMatchNumberArray(batchResult)
   })
 })
