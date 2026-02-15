@@ -286,6 +286,13 @@ describe('custom operator', () => {
     expect(result).toEqual(2)
   })
 
+  it('should max() work properly with start > 0', () => {
+    // When start > 0, the initial value for reduce must be filtered[0] (not numbers[0])
+    // e.g. numbers[0]=10 is outside the window [start=1, period=2] → should NOT be used
+    const result = max([10, 2, 5, 3], { period: 2, start: 1 })
+    expect(result).toEqual(5)
+  })
+
   it('should max() work properly with negative start', () => {
     const result = max([1, 2, 3], { period: 3, start: -2 })
     expect(result).toEqual(1)
@@ -299,6 +306,13 @@ describe('custom operator', () => {
   it('should min() work properly with period and start', () => {
     const result = min([3, 2, 1], { period: 2, start: 0 })
     expect(result).toEqual(2)
+  })
+
+  it('should min() work properly with start > 0', () => {
+    // When start > 0, the initial value for reduce must be filtered[0] (not numbers[0])
+    // e.g. numbers[0]=1 is outside the window [start=1, period=2] → should NOT be used
+    const result = min([1, 8, 5, 3], { period: 2, start: 1 })
+    expect(result).toEqual(5)
   })
 })
 

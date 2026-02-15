@@ -39,6 +39,24 @@ describe('createSignal', () => {
     expect(next(42)).toBe(42)
   })
 
+  it('stream should merge options with defaults', () => {
+    const signal = createSignal({
+      compute: (v: number[], { multiplier }: { multiplier: number }) =>
+        v.map(x => x * multiplier),
+      stream: ({ multiplier }: { multiplier: number }) =>
+        (v: number) => v * multiplier,
+      defaultOptions: { multiplier: 2 },
+    })
+
+    // Use default options
+    const next1 = signal.stream()
+    expect(next1(3)).toBe(6)
+
+    // Override options
+    const next2 = signal.stream({ multiplier: 5 })
+    expect(next2(3)).toBe(15)
+  })
+
   it('should return TransformStream', async () => {
     const { from } = await import('dnum')
     const addOne = createSignal({
@@ -59,6 +77,29 @@ describe('createSignal', () => {
     writer.write(5)
     const { value: value2 } = await read2
     expect(toNumber(value2!)).toBe(6)
+
+    writer.close()
+  })
+
+  it('toTransformStream should merge options with defaults', async () => {
+    const { from } = await import('dnum')
+    const mulSignal = createSignal({
+      compute: (v: number[], { factor }: { factor: number }) =>
+        v.map(x => from(x * factor)),
+      stream: ({ factor }: { factor: number }) =>
+        (v: number) => from(v * factor),
+      defaultOptions: { factor: 3 },
+    })
+
+    // Use custom options
+    const transform = mulSignal.toTransformStream({ factor: 10 })
+    const reader = transform.readable.getReader()
+    const writer = transform.writable.getWriter()
+
+    const read1 = reader.read()
+    writer.write(4)
+    const { value } = await read1
+    expect(toNumber(value!)).toBe(40)
 
     writer.close()
   })
