@@ -28,7 +28,7 @@ const result = rsi(data, { period: 4, decimals: 18 })
 - [x] Aroon Indicator
 - [x] Balance of Power (BOP)
 - [x] Chande Forecast Oscillator (CFO)
-- [ ] Community Channel Index (CCI)
+- [x] Commodity Channel Index (CCI)
 - [ ] Double Exponential Moving Average (DEMA)
 - [x] Exponential Moving Average (EMA)
 - [ ] Mass Index (MI)
