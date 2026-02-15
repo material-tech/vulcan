@@ -1,6 +1,6 @@
-# indicator-x
+# alloy
 
-`indicator-x` is a JavaScript library that provides various technical analysis indicators.
+`alloy` is a JavaScript library that provides various technical analysis indicators.
 
 ## Advantages
 
@@ -10,7 +10,7 @@
 ### Usage
 
 ```ts
-import { rsi } from 'indicator-x'
+import { rsi } from 'alloy'
 
 const data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 const result = rsi(data, { period: 4, decimals: 18 })

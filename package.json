@@ -1,5 +1,5 @@
 {
-  "name": "indicator-x",
+  "name": "alloy",
   "type": "module",
   "version": "0.1.0",
   "packageManager": "pnpm@10.29.3",

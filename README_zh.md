@@ -1,6 +1,6 @@
-# indicator-x
+# alloy
 
-`indicator-x` 是一个提供各种技术分析指标的 JavaScript 库。
+`alloy` 是一个提供各种技术分析指标的 JavaScript 库。
 
 ## 优势
 
@@ -10,7 +10,7 @@
 ### 使用
 
 ```ts
-import { rsi } from 'indicator-x'
+import { rsi } from 'alloy'
 
 const data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 const result = rsi(data, { period: 4, decimals: 18 })
