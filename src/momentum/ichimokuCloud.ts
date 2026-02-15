@@ -110,7 +110,7 @@ export const ichimokuCloud = createSignal({
       lagging,
     }
   },
-  stream: ({ conversionPeriod, basePeriod, leadingBPeriod, displacement }) => {
+  step: ({ conversionPeriod, basePeriod, leadingBPeriod, displacement }) => {
     // Buffers for donchian channels of different periods
     const highBufferConv: Dnum[] = []
     const lowBufferConv: Dnum[] = []
@@ -176,7 +176,7 @@ export const ichimokuCloud = createSignal({
         : from(0)
       const leadingB = count >= displacement ? leadingBBase : from(0)
 
-      // Lagging: in stream mode, always return current close
+      // Lagging: in step mode, always return current close
       const lagging = close
 
       count++

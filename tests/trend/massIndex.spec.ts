@@ -87,9 +87,9 @@ describe('mass index (MI)', () => {
     expect(result).toEqual([])
   })
 
-  it('stream should produce same results as batch', () => {
+  it('step should produce same results as batch', () => {
     const batchResult = mapOperator(toNumber)(mi(data), { digits: 2 })
-    const next = mi.stream()
+    const next = mi.step()
     const streamResult = data.map(v => next(v))
     expect(streamResult).toMatchNumberArray(batchResult)
   })

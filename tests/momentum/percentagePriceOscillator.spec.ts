@@ -128,10 +128,10 @@ describe('percentage price oscillator (PPO)', () => {
     expect(result.histogram).toMatchNumberArray(expectedHistogram)
   })
 
-  it('stream should produce same results as batch', () => {
+  it('step should produce same results as batch', () => {
     const toNum = mapOperator(toNumber)
     const batchResult = ppo(values)
-    const next = ppo.stream()
+    const next = ppo.step()
     const streamResults = values.map(v => next(v))
     expect(streamResults.map(r => r.ppo)).toMatchNumberArray(
       toNum(batchResult.ppo, { digits: 2 }),

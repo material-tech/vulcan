@@ -61,9 +61,9 @@ describe('relativeStrengthIndex (RSI)', () => {
     expect(result).toMatchNumberArray(expected)
   })
 
-  it('stream should produce same results as batch', () => {
+  it('step should produce same results as batch', () => {
     const batchResult = mapOperator(toNumber)(rsi(values, { period: 9 }), { digits: 2 })
-    const next = rsi.stream({ period: 9 })
+    const next = rsi.step({ period: 9 })
     const streamResult = values.map(v => next(v))
     expect(streamResult).toMatchNumberArray(batchResult)
   })

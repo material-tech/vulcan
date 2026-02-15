@@ -33,9 +33,9 @@ describe('absolute price oscillator (APO)', () => {
     expect(result).toMatchNumberArray(expected)
   })
 
-  it('stream should produce same results as batch', () => {
+  it('step should produce same results as batch', () => {
     const batchResult = mapOperator(toNumber)(apo(values), { digits: 2 })
-    const next = apo.stream()
+    const next = apo.step()
     const streamResult = values.map(v => next(v))
     expect(streamResult).toMatchNumberArray(batchResult)
   })

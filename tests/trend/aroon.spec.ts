@@ -33,10 +33,10 @@ describe('aroon indicator', () => {
     expect(result.oscillator).toMatchNumberArray([0, 33.33, -33.33, 33.33, -33.33, -66.67, 33.33, -33.33, -33.33, -33.33])
   })
 
-  it('stream should produce same results as batch', () => {
+  it('step should produce same results as batch', () => {
     const toNum = mapOperator(toNumber)
     const batchResult = aroon(values, { period: 5 })
-    const next = aroon.stream({ period: 5 })
+    const next = aroon.step({ period: 5 })
     const streamResults = values.map(v => next(v))
     expect(streamResults.map(r => r.up)).toMatchNumberArray(
       toNum(batchResult.up, { digits: 2 }),

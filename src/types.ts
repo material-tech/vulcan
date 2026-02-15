@@ -24,7 +24,7 @@ export type WrapResult<T> = T extends readonly any[]
 export interface TechnicalSignal<Data, Result, Options extends Record<string, any>> {
   readonly defaultOptions: Options
   (dataset: Data[], options?: Partial<Options>): Result
-  stream: (options?: Partial<Options>) => (data: Data) => Unarray<Result>
+  step: (options?: Partial<Options>) => (data: Data) => Unarray<Result>
   toTransformStream: (options?: Partial<Options>) => TransformStream<Data, Unarray<Result>>
 }
 
@@ -32,13 +32,13 @@ export interface CreateSignalFunc<Data, Result, Options extends Record<string, a
   (dataset: Data[], options: Required<Options>): Result
 }
 
-export interface CreateStreamFunc<Data, Result, Options extends Record<string, any>> {
+export interface CreateStepFunc<Data, Result, Options extends Record<string, any>> {
   (options: Required<Options>): (data: Data) => Unarray<Result>
 }
 
 export interface CreateSignalConfig<Data, Element, Options extends Record<string, any>> {
   compute?: (dataset: Data[], options: Required<Options>) => WrapResult<Element>
-  stream: (options: Required<Options>) => (data: Data) => Element
+  step: (options: Required<Options>) => (data: Data) => Element
   defaultOptions?: Options
 }
 

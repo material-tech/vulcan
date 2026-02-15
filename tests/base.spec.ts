@@ -5,7 +5,7 @@ import { createSignal } from '../src/base'
 describe('createSignal', () => {
   const signal = createSignal({
     compute: (v: number[]) => v,
-    stream: () => (v: number) => v,
+    step: () => (v: number) => v,
   })
 
   it('should create a TechnicalSignal instance', () => {
@@ -15,7 +15,7 @@ describe('createSignal', () => {
 
   it('should get default options', () => {
     const signal = createSignal({
-      stream: () => () => void 0 as unknown,
+      step: () => () => void 0 as unknown,
       defaultOptions: { foo: 'bar' },
     })
 
@@ -32,34 +32,34 @@ describe('createSignal', () => {
     expect(signal([1, 2, 3])).toEqual([1, 2, 3])
   })
 
-  it('should return stream function', () => {
-    const next = signal.stream()
+  it('should return step function', () => {
+    const next = signal.step()
     expect(next).instanceOf(Function)
     expect(next(42)).toBe(42)
   })
 
-  it('stream should merge options with defaults', () => {
+  it('step should merge options with defaults', () => {
     const signal = createSignal({
       compute: (v: number[], { multiplier }: { multiplier: number }) =>
         v.map(x => x * multiplier),
-      stream: ({ multiplier }: { multiplier: number }) =>
+      step: ({ multiplier }: { multiplier: number }) =>
         (v: number) => v * multiplier,
       defaultOptions: { multiplier: 2 },
     })
 
     // Use default options
-    const next1 = signal.stream()
+    const next1 = signal.step()
     expect(next1(3)).toBe(6)
 
     // Override options
-    const next2 = signal.stream({ multiplier: 5 })
+    const next2 = signal.step({ multiplier: 5 })
     expect(next2(3)).toBe(15)
   })
 
   it('should return TransformStream', async () => {
     const addOne = createSignal({
       compute: (v: number[]) => v.map(x => from(x + 1)),
-      stream: () => (v: number) => from(v + 1),
+      step: () => (v: number) => from(v + 1),
     })
 
     const transform = addOne.toTransformStream()
@@ -83,7 +83,7 @@ describe('createSignal', () => {
     const mulSignal = createSignal({
       compute: (v: number[], { factor }: { factor: number }) =>
         v.map(x => from(x * factor)),
-      stream: ({ factor }: { factor: number }) =>
+      step: ({ factor }: { factor: number }) =>
         (v: number) => from(v * factor),
       defaultOptions: { factor: 3 },
     })
@@ -102,10 +102,10 @@ describe('createSignal', () => {
   })
 })
 
-describe('createSignal auto-derive from stream', () => {
+describe('createSignal auto-derive from step', () => {
   it('should auto-derive compute for scalar results', () => {
     const signal = createSignal({
-      stream: () => (v: number) => v * 2,
+      step: () => (v: number) => v * 2,
     })
 
     expect(signal([1, 2, 3])).toEqual([2, 4, 6])
@@ -113,7 +113,7 @@ describe('createSignal auto-derive from stream', () => {
 
   it('should auto-derive compute for Dnum results', () => {
     const signal = createSignal({
-      stream: () => (v: number) => from(v, 18),
+      step: () => (v: number) => from(v, 18),
     })
 
     const result = signal([1, 2, 3])
@@ -125,7 +125,7 @@ describe('createSignal auto-derive from stream', () => {
 
   it('should not treat Dnum tuples as plain objects', () => {
     const signal = createSignal({
-      stream: () => (v: number) => from(v, 18),
+      step: () => (v: number) => from(v, 18),
     })
 
     // Dnum is [bigint, number] - Array.isArray returns true
@@ -137,7 +137,7 @@ describe('createSignal auto-derive from stream', () => {
 
   it('should auto-derive and transpose object results', () => {
     const signal = createSignal({
-      stream: () => (v: number) => ({ doubled: v * 2, tripled: v * 3 }),
+      step: () => (v: number) => ({ doubled: v * 2, tripled: v * 3 }),
     })
 
     const result = signal([1, 2, 3])
@@ -147,7 +147,7 @@ describe('createSignal auto-derive from stream', () => {
 
   it('should return empty array for empty dataset', () => {
     const signal = createSignal({
-      stream: () => (v: number) => v,
+      step: () => (v: number) => v,
     })
 
     expect(signal([])).toEqual([])
@@ -155,7 +155,7 @@ describe('createSignal auto-derive from stream', () => {
 
   it('should merge options with defaults when auto-deriving', () => {
     const signal = createSignal({
-      stream: ({ factor }: { factor: number }) => (v: number) => v * factor,
+      step: ({ factor }: { factor: number }) => (v: number) => v * factor,
       defaultOptions: { factor: 10 },
     })
 
@@ -167,10 +167,10 @@ describe('createSignal auto-derive from stream', () => {
     const computeSpy = (v: number[]) => v.map(x => x + 100)
     const signal = createSignal({
       compute: computeSpy,
-      stream: () => (v: number) => v * 2,
+      step: () => (v: number) => v * 2,
     })
 
-    // Should use compute, not stream
+    // Should use compute, not step
     expect(signal([1, 2, 3])).toEqual([101, 102, 103])
   })
 })

@@ -19,9 +19,9 @@ describe('accumulation distribution (A/D)', () => {
     expect(result).toMatchNumberArray(expected)
   })
 
-  it('stream should produce same results as batch', () => {
+  it('step should produce same results as batch', () => {
     const batchResult = mapOperator(toNumber)(ad(values), { digits: 2 })
-    const next = ad.stream()
+    const next = ad.step()
     const streamResult = values.map(v => next(v))
     expect(streamResult).toMatchNumberArray(batchResult)
   })

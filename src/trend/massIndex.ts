@@ -44,9 +44,9 @@ export const defaultMassIndexOptions: MassIndexOptions = {
  * @returns Array of Mass Index values
  */
 export const mi = createSignal(({ emaPeriod, miPeriod }: Required<MassIndexOptions>) => {
-  const ema1 = ema.stream({ period: emaPeriod })
-  const ema2 = ema.stream({ period: emaPeriod })
-  const msumStream = msum.stream({ period: miPeriod })
+  const ema1 = ema.step({ period: emaPeriod })
+  const ema2 = ema.step({ period: emaPeriod })
+  const msumStream = msum.step({ period: miPeriod })
   return (data: RequiredProperties<KlineData, 'h' | 'l'>): Dnum => {
     const range = subtract(from(data.h, 18), from(data.l, 18))
     const e1 = ema1(range)

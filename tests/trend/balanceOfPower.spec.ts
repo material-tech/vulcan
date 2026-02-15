@@ -36,7 +36,7 @@ describe('balance of power (BOP)', () => {
     expect(result).toEqual([])
   })
 
-  it('stream should produce same results as batch', () => {
+  it('step should produce same results as batch', () => {
     const values = [
       { o: 10, h: 15, l: 5, c: 12 },
       { o: 10, h: 15, l: 5, c: 8 },
@@ -46,7 +46,7 @@ describe('balance of power (BOP)', () => {
       { o: 50, h: 55, l: 45, c: 52 },
     ]
     const batchResult = mapOperator(toNumber)(bop(values), { digits: 2 })
-    const next = bop.stream()
+    const next = bop.step()
     const streamResult = values.map(v => next(v))
     expect(streamResult).toMatchNumberArray(batchResult)
   })

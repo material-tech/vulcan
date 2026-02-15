@@ -26,10 +26,10 @@ export interface StochResult {
 }
 
 export const stoch = createSignal(({ kPeriod, slowingPeriod, dPeriod }) => {
-  const mmaxStream = mmax.stream({ period: kPeriod })
-  const mminStream = mmin.stream({ period: kPeriod })
-  const slowingSma = slowingPeriod > 1 ? sma.stream({ period: slowingPeriod }) : null
-  const dSma = sma.stream({ period: dPeriod })
+  const mmaxStream = mmax.step({ period: kPeriod })
+  const mminStream = mmin.step({ period: kPeriod })
+  const slowingSma = slowingPeriod > 1 ? sma.step({ period: slowingPeriod }) : null
+  const dSma = sma.step({ period: dPeriod })
   return (data: RequiredProperties<KlineData, 'h' | 'l' | 'c'>) => {
     const high = from(data.h, 18)
     const low = from(data.l, 18)

@@ -30,9 +30,9 @@ describe('chande forecast oscillator (CFO)', () => {
     expect(result).toEqual([])
   })
 
-  it('stream should produce same results as batch', () => {
+  it('step should produce same results as batch', () => {
     const batchResult = mapOperator(toNumber)(cfo(values, { period: 4 }), { digits: 2 })
-    const next = cfo.stream({ period: 4 })
+    const next = cfo.step({ period: 4 })
     const streamResult = values.map(v => next(v))
     expect(streamResult).toMatchNumberArray(batchResult)
   })
