@@ -1,7 +1,7 @@
 import type { Dnum } from 'dnum'
-import type { KlineData, RequiredProperties } from '~/types'
-import { defu } from 'defu'
+import type { KlineData, Processor, RequiredProperties } from '~/types'
 import { add, div, from, sub } from 'dnum'
+import { createGenerator } from '~/base'
 import { sma } from '~/trend/simpleMovingAverage'
 
 export interface AwesomeOscillatorOptions {
@@ -20,20 +20,15 @@ export const defaultAwesomeOscillatorOptions: AwesomeOscillatorOptions = {
  * AO = SMA(median, fastPeriod) - SMA(median, slowPeriod)
  * Where median = (high + low) / 2
  */
-export function* ao(
-  source: Iterable<RequiredProperties<KlineData, 'h' | 'l'>>,
-  options?: Partial<AwesomeOscillatorOptions>,
-): Generator<Dnum> {
-  const { fastPeriod, slowPeriod } = defu(options, defaultAwesomeOscillatorOptions) as Required<AwesomeOscillatorOptions>
+function createAoProcessor({ fastPeriod, slowPeriod }: Required<AwesomeOscillatorOptions>): Processor<RequiredProperties<KlineData, 'h' | 'l'>, Dnum> {
   const fastProc = sma.create({ period: fastPeriod })
   const slowProc = sma.create({ period: slowPeriod })
-
-  for (const bar of source) {
+  return (bar) => {
     const median = div(add(from(bar.h), from(bar.l)), 2, 18)
-    const fast = fastProc(median)
-    const slow = slowProc(median)
-    yield sub(fast, slow)
+    return sub(fastProc(median), slowProc(median))
   }
 }
+
+export const ao = createGenerator(createAoProcessor, defaultAwesomeOscillatorOptions)
 
 export { ao as awesomeOscillator }
