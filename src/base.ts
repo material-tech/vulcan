@@ -4,7 +4,7 @@ import { defu } from 'defu'
 /**
  * Create a generator-based indicator from a processor factory.
  *
- * Returns a generator function with `.createProcessor()` and `.defaultOptions`.
+ * Returns a generator function with `.create()` and `.defaultOptions`.
  */
 export function createSignal<Input, Output, Options extends Record<string, any>>(
   factory: (options: Required<Options>) => Processor<Input, Output>,
