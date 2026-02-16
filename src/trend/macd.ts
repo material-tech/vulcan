@@ -43,19 +43,20 @@ export interface MACDPoint {
  * @param options.signalPeriod - Period for the signal EMA (default: 9)
  * @returns Generator yielding MACDPoint objects
  */
-function createMacdProcessor({ fastPeriod, slowPeriod, signalPeriod }: Required<MACDOptions>): Processor<Numberish, MACDPoint> {
-  const fastProc = ema.create({ period: fastPeriod })
-  const slowProc = ema.create({ period: slowPeriod })
-  const signalProc = ema.create({ period: signalPeriod })
-  return (value) => {
-    const fast = fastProc(value)
-    const slow = slowProc(value)
-    const m = sub(fast, slow)
-    const sig = signalProc(m)
-    return { macd: m, signal: sig, histogram: sub(m, sig) }
-  }
-}
-
-export const macd = createGenerator(createMacdProcessor, defaultMACDOptions)
+export const macd = createGenerator(
+  ({ fastPeriod, slowPeriod, signalPeriod }: Required<MACDOptions>): Processor<Numberish, MACDPoint> => {
+    const fastProc = ema.create({ period: fastPeriod })
+    const slowProc = ema.create({ period: slowPeriod })
+    const signalProc = ema.create({ period: signalPeriod })
+    return (value) => {
+      const fast = fastProc(value)
+      const slow = slowProc(value)
+      const m = sub(fast, slow)
+      const sig = signalProc(m)
+      return { macd: m, signal: sig, histogram: sub(m, sig) }
+    }
+  },
+  defaultMACDOptions,
+)
 
 export { macd as movingAverageConvergenceDivergence }

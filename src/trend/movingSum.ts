@@ -16,14 +16,15 @@ export const defaultMovingSumOptions: MovingSumOptions = {
  *
  * Calculates the sum of values in a sliding window of the specified period.
  */
-function createMsumProcessor({ period }: Required<MovingSumOptions>): Processor<Numberish, Dnum> {
-  const buffer: Dnum[] = []
-  return (value: Numberish) => {
-    buffer.push(from(value))
-    if (buffer.length > period)
-      buffer.shift()
-    return buffer.reduce((sum, cur) => add(sum, cur), from(0))
-  }
-}
-
-export const msum = createGenerator(createMsumProcessor, defaultMovingSumOptions)
+export const msum = createGenerator(
+  ({ period }: Required<MovingSumOptions>): Processor<Numberish, Dnum> => {
+    const buffer: Dnum[] = []
+    return (value: Numberish) => {
+      buffer.push(from(value))
+      if (buffer.length > period)
+        buffer.shift()
+      return buffer.reduce((sum, cur) => add(sum, cur), from(0))
+    }
+  },
+  defaultMovingSumOptions,
+)

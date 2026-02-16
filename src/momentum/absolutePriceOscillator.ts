@@ -1,5 +1,4 @@
-import type { Dnum, Numberish } from 'dnum'
-import type { Processor } from '~/types'
+import type { Numberish } from 'dnum'
 import { sub } from 'dnum'
 import { createGenerator } from '~/base'
 import { ema } from '../trend/exponentialMovingAverage'
@@ -14,16 +13,13 @@ export const defaultAbsolutePriceOscillatorOptions: AbsolutePriceOscillatorOptio
   slowPeriod: 26,
 }
 
-function createApoProcessor({ fastPeriod, slowPeriod }: Required<AbsolutePriceOscillatorOptions>): Processor<Numberish, Dnum> {
-  const fastProc = ema.create({ period: fastPeriod })
-  const slowProc = ema.create({ period: slowPeriod })
-  return (value: Numberish) => {
-    const fast = fastProc(value)
-    const slow = slowProc(value)
-    return sub(fast, slow)
-  }
-}
-
-export const apo = createGenerator(createApoProcessor, defaultAbsolutePriceOscillatorOptions)
+export const apo = createGenerator(
+  ({ fastPeriod, slowPeriod }: Required<AbsolutePriceOscillatorOptions>) => {
+    const fastProc = ema.create({ period: fastPeriod })
+    const slowProc = ema.create({ period: slowPeriod })
+    return (value: Numberish) => sub(fastProc(value), slowProc(value))
+  },
+  defaultAbsolutePriceOscillatorOptions,
+)
 
 export { apo as absolutePriceOscillator }

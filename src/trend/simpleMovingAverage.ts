@@ -15,17 +15,6 @@ export const defaultSMAOptions: SimpleMovingAverageOptions = {
   period: 2,
 }
 
-function createSmaProcessor({ period }: Required<SimpleMovingAverageOptions>): Processor<Numberish, Dnum> {
-  const buffer: Dnum[] = []
-  return (value: Numberish) => {
-    buffer.push(from(value, 18))
-    if (buffer.length > period)
-      buffer.shift()
-    const sum = buffer.reduce((acc, cur) => add(acc, cur), from(0, 18))
-    return div(sum, buffer.length, 18)
-  }
-}
-
 /**
  * Simple Moving Average (SMA)
  *
@@ -40,6 +29,18 @@ function createSmaProcessor({ period }: Required<SimpleMovingAverageOptions>): P
  * @param options.period - The period for calculating the moving average (default: 2)
  * @returns Generator yielding SMA values
  */
-export const sma = createGenerator(createSmaProcessor, defaultSMAOptions)
+export const sma = createGenerator(
+  ({ period }: Required<SimpleMovingAverageOptions>): Processor<Numberish, Dnum> => {
+    const buffer: Dnum[] = []
+    return (value: Numberish) => {
+      buffer.push(from(value, 18))
+      if (buffer.length > period)
+        buffer.shift()
+      const sum = buffer.reduce((acc, cur) => add(acc, cur), from(0, 18))
+      return div(sum, buffer.length, 18)
+    }
+  },
+  defaultSMAOptions,
+)
 
 export { sma as simpleMovingAverage }

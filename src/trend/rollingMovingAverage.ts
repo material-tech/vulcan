@@ -21,26 +21,27 @@ export const defaultRMAOptions: RMAOptions = {
  *
  * R[p] and after is R[i] = ((R[i-1]*(p-1)) + v[i]) / p
  */
-function createRmaProcessor({ period }: Required<RMAOptions>): Processor<Numberish, Dnum> {
-  let count = 0
-  let sum: Dnum = from(0)
-  let prev: Dnum = from(0)
+export const rma = createGenerator(
+  ({ period }: Required<RMAOptions>): Processor<Numberish, Dnum> => {
+    let count = 0
+    let sum: Dnum = from(0)
+    let prev: Dnum = from(0)
 
-  return (value: Numberish) => {
-    if (count < period) {
-      sum = add(sum, value)
-      count++
-      prev = div(sum, count, 18)
+    return (value: Numberish) => {
+      if (count < period) {
+        sum = add(sum, value)
+        count++
+        prev = div(sum, count, 18)
+        return prev
+      }
+      prev = div(
+        add(mul(prev, from(period - 1), 18), value),
+        from(period),
+      )
       return prev
     }
-    prev = div(
-      add(mul(prev, from(period - 1), 18), value),
-      from(period),
-    )
-    return prev
-  }
-}
-
-export const rma = createGenerator(createRmaProcessor, defaultRMAOptions)
+  },
+  defaultRMAOptions,
+)
 
 export { rma as rollingMovingAverage }

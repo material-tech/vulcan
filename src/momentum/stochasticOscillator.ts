@@ -32,25 +32,26 @@ export interface StochPoint {
  * %K = ((Close - Lowest Low) / (Highest High - Lowest Low)) * 100
  * %D = SMA(%K, dPeriod)
  */
-function createStochProcessor({ kPeriod, slowingPeriod, dPeriod }: Required<StochasticOscillatorOptions>): Processor<RequiredProperties<KlineData, 'h' | 'l' | 'c'>, StochPoint> {
-  const mmaxProc = mmax.create({ period: kPeriod })
-  const mminProc = mmin.create({ period: kPeriod })
-  const slowingProc = slowingPeriod > 1 ? sma.create({ period: slowingPeriod }) : null
-  const dProc = sma.create({ period: dPeriod })
-  return (bar) => {
-    const h = from(bar.h)
-    const l = from(bar.l)
-    const c = from(bar.c)
+export const stoch = createGenerator(
+  ({ kPeriod, slowingPeriod, dPeriod }: Required<StochasticOscillatorOptions>): Processor<RequiredProperties<KlineData, 'h' | 'l' | 'c'>, StochPoint> => {
+    const mmaxProc = mmax.create({ period: kPeriod })
+    const mminProc = mmin.create({ period: kPeriod })
+    const slowingProc = slowingPeriod > 1 ? sma.create({ period: slowingPeriod }) : null
+    const dProc = sma.create({ period: dPeriod })
+    return (bar) => {
+      const h = from(bar.h)
+      const l = from(bar.l)
+      const c = from(bar.c)
 
-    const highestHigh = mmaxProc(h)
-    const lowestLow = mminProc(l)
+      const highestHigh = mmaxProc(h)
+      const lowestLow = mminProc(l)
 
-    const rawK = mul(div(sub(c, lowestLow, 18), sub(highestHigh, lowestLow, 18), 18), 100, 18)
-    const k = slowingProc ? slowingProc(rawK) : rawK
-    return { k, d: dProc(k) }
-  }
-}
-
-export const stoch = createGenerator(createStochProcessor, defaultStochasticOscillatorOptions)
+      const rawK = mul(div(sub(c, lowestLow, 18), sub(highestHigh, lowestLow, 18), 18), 100, 18)
+      const k = slowingProc ? slowingProc(rawK) : rawK
+      return { k, d: dProc(k) }
+    }
+  },
+  defaultStochasticOscillatorOptions,
+)
 
 export { stoch as stochasticOscillator }

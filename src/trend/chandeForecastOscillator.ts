@@ -15,51 +15,6 @@ export const defaultCFOOptions: ChandeForecastOscillatorOptions = {
   period: 14,
 }
 
-function createCfoProcessor({ period }: Required<ChandeForecastOscillatorOptions>): Processor<Numberish, Dnum> {
-  const buffer: Dnum[] = []
-
-  return (value: Numberish) => {
-    buffer.push(from(value, 18))
-    if (buffer.length > period)
-      buffer.shift()
-
-    const n = buffer.length
-    if (n < 2) {
-      return from(0, 18)
-    }
-
-    // Precompute X-related sums as plain integers
-    const xSum = n * (n + 1) / 2
-    const x2Sum = n * (n + 1) * (2 * n + 1) / 6
-    const denom = n * x2Sum - xSum * xSum
-
-    // Compute Y-dependent sums (keep all Dnum at 18 decimals)
-    let sumY: Dnum = from(0, 18)
-    let sumXY: Dnum = from(0, 18)
-    for (let i = 0; i < n; i++) {
-      sumY = add(sumY, buffer[i])
-      sumXY = add(sumXY, multiply(buffer[i], i + 1))
-    }
-
-    // slope = (n * SUM(XY) - SUM(X) * SUM(Y)) / denom
-    const num = subtract(multiply(sumXY, n), multiply(sumY, xSum))
-    const slope = divide(num, denom, 18)
-
-    // intercept = (SUM(Y) - slope * SUM(X)) / n
-    const intercept = divide(subtract(sumY, multiply(slope, xSum)), n, 18)
-
-    // forecast = slope * n + intercept
-    const forecast = add(multiply(slope, n), intercept)
-
-    const close = buffer[n - 1]
-    if (equal(close, 0)) {
-      return from(0, 18)
-    }
-
-    return divide(multiply(subtract(close, forecast), 100), close, 18)
-  }
-}
-
 /**
  * Chande Forecast Oscillator (CFO)
  *
@@ -75,6 +30,52 @@ function createCfoProcessor({ period }: Required<ChandeForecastOscillatorOptions
  * @param options.period - The period for linear regression (default: 14)
  * @returns Generator yielding CFO values as percentages
  */
-export const cfo = createGenerator(createCfoProcessor, defaultCFOOptions)
+export const cfo = createGenerator(
+  ({ period }: Required<ChandeForecastOscillatorOptions>): Processor<Numberish, Dnum> => {
+    const buffer: Dnum[] = []
+
+    return (value: Numberish) => {
+      buffer.push(from(value, 18))
+      if (buffer.length > period)
+        buffer.shift()
+
+      const n = buffer.length
+      if (n < 2) {
+        return from(0, 18)
+      }
+
+      // Precompute X-related sums as plain integers
+      const xSum = n * (n + 1) / 2
+      const x2Sum = n * (n + 1) * (2 * n + 1) / 6
+      const denom = n * x2Sum - xSum * xSum
+
+      // Compute Y-dependent sums (keep all Dnum at 18 decimals)
+      let sumY: Dnum = from(0, 18)
+      let sumXY: Dnum = from(0, 18)
+      for (let i = 0; i < n; i++) {
+        sumY = add(sumY, buffer[i])
+        sumXY = add(sumXY, multiply(buffer[i], i + 1))
+      }
+
+      // slope = (n * SUM(XY) - SUM(X) * SUM(Y)) / denom
+      const num = subtract(multiply(sumXY, n), multiply(sumY, xSum))
+      const slope = divide(num, denom, 18)
+
+      // intercept = (SUM(Y) - slope * SUM(X)) / n
+      const intercept = divide(subtract(sumY, multiply(slope, xSum)), n, 18)
+
+      // forecast = slope * n + intercept
+      const forecast = add(multiply(slope, n), intercept)
+
+      const close = buffer[n - 1]
+      if (equal(close, 0)) {
+        return from(0, 18)
+      }
+
+      return divide(multiply(subtract(close, forecast), 100), close, 18)
+    }
+  },
+  defaultCFOOptions,
+)
 
 export { cfo as chandeForecastOscillator }

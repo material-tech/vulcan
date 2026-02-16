@@ -12,16 +12,6 @@ export const defaultDoubleExponentialMovingAverageOptions: DoubleExponentialMovi
   period: 12,
 }
 
-function createDemaProcessor({ period }: Required<DoubleExponentialMovingAverageOptions>): Processor<Numberish, Dnum> {
-  const ema1 = ema.create({ period })
-  const ema2 = ema.create({ period })
-  return (value: Numberish) => {
-    const e1 = ema1(value)
-    const e2 = ema2(e1)
-    return sub(mul(e1, 2, 18), e2)
-  }
-}
-
 /**
  * Double Exponential Moving Average (DEMA)
  *
@@ -33,6 +23,17 @@ function createDemaProcessor({ period }: Required<DoubleExponentialMovingAverage
  * @param options.period - The lookback period (default: 12)
  * @returns Generator yielding DEMA values
  */
-export const dema = createGenerator(createDemaProcessor, defaultDoubleExponentialMovingAverageOptions)
+export const dema = createGenerator(
+  ({ period }: Required<DoubleExponentialMovingAverageOptions>): Processor<Numberish, Dnum> => {
+    const ema1 = ema.create({ period })
+    const ema2 = ema.create({ period })
+    return (value: Numberish) => {
+      const e1 = ema1(value)
+      const e2 = ema2(e1)
+      return sub(mul(e1, 2, 18), e2)
+    }
+  },
+  defaultDoubleExponentialMovingAverageOptions,
+)
 
 export { dema as doubleExponentialMovingAverage }

@@ -23,20 +23,6 @@ export const defaultMassIndexOptions: MassIndexOptions = {
   miPeriod: 25,
 }
 
-function createMiProcessor({ emaPeriod, miPeriod }: Required<MassIndexOptions>): Processor<RequiredProperties<KlineData, 'h' | 'l'>, Dnum> {
-  const ema1Proc = ema.create({ period: emaPeriod })
-  const ema2Proc = ema.create({ period: emaPeriod })
-  const msumProc = msum.create({ period: miPeriod })
-
-  return (bar) => {
-    const range = subtract(from(bar.h, 18), from(bar.l, 18))
-    const e1 = ema1Proc(range)
-    const e2 = ema2Proc(e1)
-    const ratio = divide(e1, e2, 18)
-    return msumProc(ratio)
-  }
-}
-
 /**
  * Mass Index (MI)
  *
@@ -57,6 +43,21 @@ function createMiProcessor({ emaPeriod, miPeriod }: Required<MassIndexOptions>):
  * @param options.miPeriod - The moving sum period (default: 25)
  * @returns Generator yielding Mass Index values
  */
-export const mi = createGenerator(createMiProcessor, defaultMassIndexOptions)
+export const mi = createGenerator(
+  ({ emaPeriod, miPeriod }: Required<MassIndexOptions>): Processor<RequiredProperties<KlineData, 'h' | 'l'>, Dnum> => {
+    const ema1Proc = ema.create({ period: emaPeriod })
+    const ema2Proc = ema.create({ period: emaPeriod })
+    const msumProc = msum.create({ period: miPeriod })
+
+    return (bar) => {
+      const range = subtract(from(bar.h, 18), from(bar.l, 18))
+      const e1 = ema1Proc(range)
+      const e2 = ema2Proc(e1)
+      const ratio = divide(e1, e2, 18)
+      return msumProc(ratio)
+    }
+  },
+  defaultMassIndexOptions,
+)
 
 export { mi as massIndex }

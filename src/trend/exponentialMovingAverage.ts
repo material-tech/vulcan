@@ -17,23 +17,24 @@ export const defaultExponentialMovingAverageOptions: ExponentialMovingAverageOpt
  * EMA = Price * k + PrevEMA * (1 - k)
  * Where k = 2 / (period + 1)
  */
-function createEmaProcessor({ period }: Required<ExponentialMovingAverageOptions>): Processor<Numberish, Dnum> {
-  const k = 2 / (1 + period)
-  const m = 1 - k
-  let prev: Dnum | undefined
-  return (value: Numberish) => {
-    if (prev === undefined) {
-      prev = from(value)
+export const ema = createGenerator(
+  ({ period }: Required<ExponentialMovingAverageOptions>): Processor<Numberish, Dnum> => {
+    const k = 2 / (1 + period)
+    const m = 1 - k
+    let prev: Dnum | undefined
+    return (value: Numberish) => {
+      if (prev === undefined) {
+        prev = from(value)
+        return prev
+      }
+      prev = add(
+        mul(value, k, 18),
+        mul(prev, m, 18),
+      )
       return prev
     }
-    prev = add(
-      mul(value, k, 18),
-      mul(prev, m, 18),
-    )
-    return prev
-  }
-}
-
-export const ema = createGenerator(createEmaProcessor, defaultExponentialMovingAverageOptions)
+  },
+  defaultExponentialMovingAverageOptions,
+)
 
 export { ema as exponentialMovingAverage }

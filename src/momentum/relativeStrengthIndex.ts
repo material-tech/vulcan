@@ -21,39 +21,40 @@ export const defaultRSIOptions: RSIOptions = {
  *
  * RSI = 100 - (100 / (1 + RS))
  */
-function createRsiProcessor({ period }: Required<RSIOptions>): Processor<Numberish, Dnum> {
-  const gainProc = rma.create({ period })
-  const lossProc = rma.create({ period })
-  let prev: Dnum | undefined
+export const rsi = createGenerator(
+  ({ period }: Required<RSIOptions>): Processor<Numberish, Dnum> => {
+    const gainProc = rma.create({ period })
+    const lossProc = rma.create({ period })
+    let prev: Dnum | undefined
 
-  return (value) => {
-    const price = from(value)
+    return (value) => {
+      const price = from(value)
 
-    if (prev === undefined) {
+      if (prev === undefined) {
+        prev = price
+        gainProc(from(0))
+        lossProc(from(0))
+        return from(0)
+      }
+
+      const change = sub(price, prev)
       prev = price
-      gainProc(from(0))
-      lossProc(from(0))
-      return from(0)
+
+      const gain = gt(change, 0) ? change : from(0)
+      const loss = gt(change, 0) ? from(0) : mul(change, -1, 18)
+
+      const avgGain = gainProc(gain)
+      const avgLoss = lossProc(loss)
+
+      if (eq(avgLoss, 0)) {
+        return from(100)
+      }
+
+      const rs = div(avgGain, avgLoss)
+      return sub(100, div(100, add(1, rs), 18))
     }
-
-    const change = sub(price, prev)
-    prev = price
-
-    const gain = gt(change, 0) ? change : from(0)
-    const loss = gt(change, 0) ? from(0) : mul(change, -1, 18)
-
-    const avgGain = gainProc(gain)
-    const avgLoss = lossProc(loss)
-
-    if (eq(avgLoss, 0)) {
-      return from(100)
-    }
-
-    const rs = div(avgGain, avgLoss)
-    return sub(100, div(100, add(1, rs), 18))
-  }
-}
-
-export const rsi = createGenerator(createRsiProcessor, defaultRSIOptions)
+  },
+  defaultRSIOptions,
+)
 
 export { rsi as relativeStrengthIndex }

@@ -17,16 +17,17 @@ export const defaultMovingMinOptions: MovingMinOptions = {
 /**
  * Moving Minimum (MovingMin)
  */
-function createMminProcessor({ period }: Required<MovingMinOptions>): Processor<Numberish, Dnum> {
-  const buffer: Dnum[] = []
-  return (value: Numberish) => {
-    buffer.push(from(value, 18))
-    if (buffer.length > period)
-      buffer.shift()
-    return buffer.reduce((min, cur) => lt(min, cur) ? min : cur)
-  }
-}
-
-export const mmin = createGenerator(createMminProcessor, defaultMovingMinOptions)
+export const mmin = createGenerator(
+  ({ period }: Required<MovingMinOptions>): Processor<Numberish, Dnum> => {
+    const buffer: Dnum[] = []
+    return (value: Numberish) => {
+      buffer.push(from(value, 18))
+      if (buffer.length > period)
+        buffer.shift()
+      return buffer.reduce((min, cur) => lt(min, cur) ? min : cur)
+    }
+  },
+  defaultMovingMinOptions,
+)
 
 export { mmin as movingMin }

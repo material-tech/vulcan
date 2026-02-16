@@ -27,50 +27,6 @@ function multiply015(value: Dnum): Dnum {
   )
 }
 
-function createCciProcessor({ period }: Required<CommodityChannelIndexOptions>): Processor<RequiredProperties<KlineData, 'h' | 'l' | 'c'>, Dnum> {
-  const buffer: Dnum[] = []
-
-  return (bar) => {
-    const h = from(bar.h, 18)
-    const l = from(bar.l, 18)
-    const c = from(bar.c, 18)
-    const tp = divide(add(add(h, l), c), 3, 18)
-
-    buffer.push(tp)
-    if (buffer.length > period)
-      buffer.shift()
-
-    const n = buffer.length
-    if (n < period) {
-      return from(0, 18)
-    }
-
-    // SMA of typical prices in the window
-    let sum: Dnum = from(0, 18)
-    for (const v of buffer) {
-      sum = add(sum, v)
-    }
-    const smaVal = divide(sum, n, 18)
-
-    // Mean Deviation
-    let devSum: Dnum = from(0, 18)
-    for (const v of buffer) {
-      const diff = subtract(v, smaVal)
-      const absDiff: Dnum = diff[0] < 0n ? [-diff[0], diff[1]] : diff
-      devSum = add(devSum, absDiff)
-    }
-    const meanDev = divide(devSum, n, 18)
-
-    if (equal(meanDev, 0)) {
-      return from(0, 18)
-    }
-
-    const currentTP = buffer[n - 1]
-    const numerator = subtract(currentTP, smaVal)
-    return divide(numerator, multiply015(meanDev), 18)
-  }
-}
-
 /**
  * Commodity Channel Index (CCI)
  *
@@ -89,6 +45,51 @@ function createCciProcessor({ period }: Required<CommodityChannelIndexOptions>):
  * @param options.period - The period for CCI calculation (default: 20)
  * @returns Generator yielding CCI values
  */
-export const cci = createGenerator(createCciProcessor, defaultCCIOptions)
+export const cci = createGenerator(
+  ({ period }: Required<CommodityChannelIndexOptions>): Processor<RequiredProperties<KlineData, 'h' | 'l' | 'c'>, Dnum> => {
+    const buffer: Dnum[] = []
+
+    return (bar) => {
+      const h = from(bar.h, 18)
+      const l = from(bar.l, 18)
+      const c = from(bar.c, 18)
+      const tp = divide(add(add(h, l), c), 3, 18)
+
+      buffer.push(tp)
+      if (buffer.length > period)
+        buffer.shift()
+
+      const n = buffer.length
+      if (n < period) {
+        return from(0, 18)
+      }
+
+      // SMA of typical prices in the window
+      let sum: Dnum = from(0, 18)
+      for (const v of buffer) {
+        sum = add(sum, v)
+      }
+      const smaVal = divide(sum, n, 18)
+
+      // Mean Deviation
+      let devSum: Dnum = from(0, 18)
+      for (const v of buffer) {
+        const diff = subtract(v, smaVal)
+        const absDiff: Dnum = diff[0] < 0n ? [-diff[0], diff[1]] : diff
+        devSum = add(devSum, absDiff)
+      }
+      const meanDev = divide(devSum, n, 18)
+
+      if (equal(meanDev, 0)) {
+        return from(0, 18)
+      }
+
+      const currentTP = buffer[n - 1]
+      const numerator = subtract(currentTP, smaVal)
+      return divide(numerator, multiply015(meanDev), 18)
+    }
+  },
+  defaultCCIOptions,
+)
 
 export { cci as commodityChannelIndex }

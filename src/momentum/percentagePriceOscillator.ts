@@ -43,19 +43,20 @@ export interface PercentagePriceOscillatorPoint {
  * @param options.signalPeriod - Period for the signal EMA (default: 9)
  * @returns Generator yielding PPO point objects
  */
-function createPpoProcessor({ fastPeriod, slowPeriod, signalPeriod }: Required<PercentagePriceOscillatorOptions>): Processor<Numberish, PercentagePriceOscillatorPoint> {
-  const fastProc = ema.create({ period: fastPeriod })
-  const slowProc = ema.create({ period: slowPeriod })
-  const signalProc = ema.create({ period: signalPeriod })
-  return (value) => {
-    const fast = fastProc(from(value))
-    const slow = slowProc(from(value))
-    const ppoVal = mul(div(sub(fast, slow), slow, 18), 100, 18)
-    const sig = signalProc(ppoVal)
-    return { ppo: ppoVal, signal: sig, histogram: sub(ppoVal, sig) }
-  }
-}
-
-export const ppo = createGenerator(createPpoProcessor, defaultPercentagePriceOscillatorOptions)
+export const ppo = createGenerator(
+  ({ fastPeriod, slowPeriod, signalPeriod }: Required<PercentagePriceOscillatorOptions>): Processor<Numberish, PercentagePriceOscillatorPoint> => {
+    const fastProc = ema.create({ period: fastPeriod })
+    const slowProc = ema.create({ period: slowPeriod })
+    const signalProc = ema.create({ period: signalPeriod })
+    return (value) => {
+      const fast = fastProc(from(value))
+      const slow = slowProc(from(value))
+      const ppoVal = mul(div(sub(fast, slow), slow, 18), 100, 18)
+      const sig = signalProc(ppoVal)
+      return { ppo: ppoVal, signal: sig, histogram: sub(ppoVal, sig) }
+    }
+  },
+  defaultPercentagePriceOscillatorOptions,
+)
 
 export { ppo as percentagePriceOscillator }

@@ -24,16 +24,17 @@ export const defaultChaikinOscillatorOptions: ChaikinOscillatorOptions = {
  *
  * CO = Ema(fastPeriod, AD) - Ema(slowPeriod, AD)
  */
-function createCmoProcessor({ fastPeriod, slowPeriod }: Required<ChaikinOscillatorOptions>): Processor<RequiredProperties<KlineData, 'h' | 'l' | 'c' | 'v'>, Dnum> {
-  const adProc = ad.create()
-  const fastProc = ema.create({ period: fastPeriod })
-  const slowProc = ema.create({ period: slowPeriod })
-  return (bar) => {
-    const adVal = adProc(bar)
-    return sub(fastProc(adVal), slowProc(adVal))
-  }
-}
-
-export const cmo = createGenerator(createCmoProcessor, defaultChaikinOscillatorOptions)
+export const cmo = createGenerator(
+  ({ fastPeriod, slowPeriod }: Required<ChaikinOscillatorOptions>): Processor<RequiredProperties<KlineData, 'h' | 'l' | 'c' | 'v'>, Dnum> => {
+    const adProc = ad.create()
+    const fastProc = ema.create({ period: fastPeriod })
+    const slowProc = ema.create({ period: slowPeriod })
+    return (bar) => {
+      const adVal = adProc(bar)
+      return sub(fastProc(adVal), slowProc(adVal))
+    }
+  },
+  defaultChaikinOscillatorOptions,
+)
 
 export { cmo as chaikinOscillator }

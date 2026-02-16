@@ -20,15 +20,16 @@ export const defaultAwesomeOscillatorOptions: AwesomeOscillatorOptions = {
  * AO = SMA(median, fastPeriod) - SMA(median, slowPeriod)
  * Where median = (high + low) / 2
  */
-function createAoProcessor({ fastPeriod, slowPeriod }: Required<AwesomeOscillatorOptions>): Processor<RequiredProperties<KlineData, 'h' | 'l'>, Dnum> {
-  const fastProc = sma.create({ period: fastPeriod })
-  const slowProc = sma.create({ period: slowPeriod })
-  return (bar) => {
-    const median = div(add(from(bar.h), from(bar.l)), 2, 18)
-    return sub(fastProc(median), slowProc(median))
-  }
-}
-
-export const ao = createGenerator(createAoProcessor, defaultAwesomeOscillatorOptions)
+export const ao = createGenerator(
+  ({ fastPeriod, slowPeriod }: Required<AwesomeOscillatorOptions>): Processor<RequiredProperties<KlineData, 'h' | 'l'>, Dnum> => {
+    const fastProc = sma.create({ period: fastPeriod })
+    const slowProc = sma.create({ period: slowPeriod })
+    return (bar) => {
+      const median = div(add(from(bar.h), from(bar.l)), 2, 18)
+      return sub(fastProc(median), slowProc(median))
+    }
+  },
+  defaultAwesomeOscillatorOptions,
+)
 
 export { ao as awesomeOscillator }
