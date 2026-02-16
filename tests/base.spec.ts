@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { collect, createGenerator } from '../src/base'
+import { collect, createBatchGenerator, createGenerator } from '../src/base'
 
 describe('createGenerator', () => {
   it('should create a generator function with createProcessor and defaultOptions', () => {
@@ -100,6 +100,44 @@ describe('createGenerator', () => {
     }
 
     expect(result).toEqual([11, 21])
+  })
+})
+
+describe('createBatchGenerator', () => {
+  it('should create a batch generator with defaultOptions', () => {
+    const gen = createBatchGenerator(
+      function* (_source: Iterable<number>, _opts: Required<{ multiplier: number }>) {
+        for (const v of _source) yield v * _opts.multiplier
+      },
+      { multiplier: 3 },
+    )
+
+    expect(gen.defaultOptions).toEqual({ multiplier: 3 })
+    expect(collect(gen([1, 2, 3]))).toEqual([3, 6, 9])
+  })
+
+  it('should merge options with defaults', () => {
+    const gen = createBatchGenerator(
+      function* (source: Iterable<number>, opts: Required<{ multiplier: number }>) {
+        for (const v of source) yield v * opts.multiplier
+      },
+      { multiplier: 2 },
+    )
+
+    expect(collect(gen([3], { multiplier: 10 }))).toEqual([30])
+  })
+
+  it('should return a shallow copy from defaultOptions getter', () => {
+    const gen = createBatchGenerator(
+      function* (source: Iterable<number>) {
+        yield* source
+      },
+      { period: 14 },
+    )
+
+    const opts = gen.defaultOptions
+    opts.period = 999
+    expect(gen.defaultOptions).toEqual({ period: 14 })
   })
 })
 

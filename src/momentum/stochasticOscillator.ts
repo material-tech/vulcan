@@ -1,8 +1,7 @@
 import type { Dnum } from 'dnum'
-import type { KlineData, RequiredProperties } from '~/types'
-import { defu } from 'defu'
+import type { KlineData, Processor, RequiredProperties } from '~/types'
 import { div, from, mul, sub } from 'dnum'
-import { collect } from '~/base'
+import { createGenerator } from '~/base'
 import { mmax } from '~/trend/movingMax'
 import { mmin } from '~/trend/movingMin'
 import { sma } from '~/trend/simpleMovingAverage'
@@ -33,20 +32,12 @@ export interface StochPoint {
  * %K = ((Close - Lowest Low) / (Highest High - Lowest Low)) * 100
  * %D = SMA(%K, dPeriod)
  */
-export function* stoch(
-  source: Iterable<RequiredProperties<KlineData, 'h' | 'l' | 'c'>>,
-  options?: Partial<StochasticOscillatorOptions>,
-): Generator<StochPoint> {
-  const { kPeriod, slowingPeriod, dPeriod } = defu(options, defaultStochasticOscillatorOptions) as Required<StochasticOscillatorOptions>
-
+function createStochProcessor({ kPeriod, slowingPeriod, dPeriod }: Required<StochasticOscillatorOptions>): Processor<RequiredProperties<KlineData, 'h' | 'l' | 'c'>, StochPoint> {
   const mmaxProc = mmax.create({ period: kPeriod })
   const mminProc = mmin.create({ period: kPeriod })
-
-  // First pass: compute raw K values
-  const rawKValues: Dnum[] = []
-  const data = Array.isArray(source) ? source : [...source]
-
-  for (const bar of data) {
+  const slowingProc = slowingPeriod > 1 ? sma.create({ period: slowingPeriod }) : null
+  const dProc = sma.create({ period: dPeriod })
+  return (bar) => {
     const h = from(bar.h)
     const l = from(bar.l)
     const c = from(bar.c)
@@ -55,19 +46,11 @@ export function* stoch(
     const lowestLow = mminProc(l)
 
     const rawK = mul(div(sub(c, lowestLow, 18), sub(highestHigh, lowestLow, 18), 18), 100, 18)
-    rawKValues.push(rawK)
-  }
-
-  // Apply slowing (smoothing)
-  const kValues = slowingPeriod > 1
-    ? collect(sma(rawKValues, { period: slowingPeriod }))
-    : rawKValues
-
-  // Apply %D smoothing
-  const dProc = sma.create({ period: dPeriod })
-  for (const kVal of kValues) {
-    yield { k: kVal, d: dProc(kVal) }
+    const k = slowingProc ? slowingProc(rawK) : rawK
+    return { k, d: dProc(k) }
   }
 }
+
+export const stoch = createGenerator(createStochProcessor, defaultStochasticOscillatorOptions)
 
 export { stoch as stochasticOscillator }

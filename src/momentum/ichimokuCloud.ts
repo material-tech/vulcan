@@ -1,35 +1,19 @@
 import type { Dnum } from 'dnum'
 import type { KlineData, RequiredProperties } from '~/types'
-import { defu } from 'defu'
 import { add, div, from } from 'dnum'
+import { createBatchGenerator } from '~/base'
 import { assert } from '~/helpers/assert'
 import { max, min } from '~/helpers/operations'
 
 export interface IchimokuCloudOptions {
-  /**
-   * Conversion line period
-   *
-   * @default 9
-   */
-  conversionPeriod?: number
-  /**
-   * Base line period
-   *
-   * @default 26
-   */
-  basePeriod?: number
-  /**
-   * Leading span B period
-   *
-   * @default 52
-   */
-  leadingBPeriod?: number
-  /**
-   * Displacement period
-   *
-   * @default 26
-   */
-  displacement?: number
+  /** Conversion line period */
+  conversionPeriod: number
+  /** Base line period */
+  basePeriod: number
+  /** Leading span B period */
+  leadingBPeriod: number
+  /** Displacement period */
+  displacement: number
 }
 
 export const defaultIchimokuCloudOptions: IchimokuCloudOptions = {
@@ -50,15 +34,13 @@ export interface IchimokuCloudPoint {
 /**
  * Ichimoku Cloud
  *
- * Note: Since the lagging span requires "future" data, this generator
+ * Note: Since the lagging span requires "future" data, this indicator
  * collects the entire input first before yielding results.
  */
-export function* ichimokuCloud(
+function* ichimokuCloudGenerator(
   source: Iterable<RequiredProperties<KlineData, 'h' | 'l' | 'c' | 'v'>>,
-  options?: Partial<IchimokuCloudOptions>,
+  { conversionPeriod, basePeriod, leadingBPeriod, displacement }: Required<IchimokuCloudOptions>,
 ): Generator<IchimokuCloudPoint> {
-  const { conversionPeriod, basePeriod, leadingBPeriod, displacement } = defu(options, defaultIchimokuCloudOptions) as Required<IchimokuCloudOptions>
-
   const data = Array.isArray(source) ? source : [...source]
 
   assert(
@@ -109,3 +91,5 @@ export function* ichimokuCloud(
     }
   }
 }
+
+export const ichimokuCloud = createBatchGenerator(ichimokuCloudGenerator, defaultIchimokuCloudOptions)

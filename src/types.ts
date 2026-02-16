@@ -8,6 +8,11 @@ export interface IndicatorGenerator<Input, Output, Options extends Record<string
   defaultOptions: Options
 }
 
+export interface BatchIndicatorGenerator<Input, Output, Options extends Record<string, any>> {
+  (source: Iterable<Input>, options?: Partial<Options>): Generator<Output, void, Input | undefined>
+  defaultOptions: Options
+}
+
 export interface KlineData {
   /** High price */
   h: Numberish
