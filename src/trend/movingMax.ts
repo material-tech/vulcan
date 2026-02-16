@@ -20,7 +20,7 @@ export const defaultMovingMaxOptions: MovingMaxOptions = {
 function createMmaxProcessor({ period }: Required<MovingMaxOptions>): Processor<Numberish, Dnum> {
   const buffer: Dnum[] = []
   return (value: Numberish) => {
-    buffer.push(from(value))
+    buffer.push(from(value, 18))
     if (buffer.length > period)
       buffer.shift()
     return buffer.reduce((max, cur) => gt(max, cur) ? max : cur)

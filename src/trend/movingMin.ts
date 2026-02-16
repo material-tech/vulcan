@@ -20,7 +20,7 @@ export const defaultMovingMinOptions: MovingMinOptions = {
 function createMminProcessor({ period }: Required<MovingMinOptions>): Processor<Numberish, Dnum> {
   const buffer: Dnum[] = []
   return (value: Numberish) => {
-    buffer.push(from(value))
+    buffer.push(from(value, 18))
     if (buffer.length > period)
       buffer.shift()
     return buffer.reduce((min, cur) => lt(min, cur) ? min : cur)
