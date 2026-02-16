@@ -1,5 +1,5 @@
 import type { Dnum } from 'dnum'
-import type { KlineData, Processor, RequiredProperties } from '~/types'
+import type { KlineData, RequiredProperties } from '~/types'
 import { add, divide, equal, from, subtract } from 'dnum'
 import { createGenerator } from '~/base'
 
@@ -46,10 +46,10 @@ function multiply015(value: Dnum): Dnum {
  * @returns Generator yielding CCI values
  */
 export const cci = createGenerator(
-  ({ period }: Required<CommodityChannelIndexOptions>): Processor<RequiredProperties<KlineData, 'h' | 'l' | 'c'>, Dnum> => {
+  ({ period }: Required<CommodityChannelIndexOptions>) => {
     const buffer: Dnum[] = []
 
-    return (bar) => {
+    return (bar: RequiredProperties<KlineData, 'h' | 'l' | 'c'>) => {
       const h = from(bar.h, 18)
       const l = from(bar.l, 18)
       const c = from(bar.c, 18)

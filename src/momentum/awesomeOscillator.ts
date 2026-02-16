@@ -1,5 +1,4 @@
-import type { Dnum } from 'dnum'
-import type { KlineData, Processor, RequiredProperties } from '~/types'
+import type { KlineData, RequiredProperties } from '~/types'
 import { add, div, from, sub } from 'dnum'
 import { createGenerator } from '~/base'
 import { sma } from '~/trend/simpleMovingAverage'
@@ -21,10 +20,10 @@ export const defaultAwesomeOscillatorOptions: AwesomeOscillatorOptions = {
  * Where median = (high + low) / 2
  */
 export const ao = createGenerator(
-  ({ fastPeriod, slowPeriod }: Required<AwesomeOscillatorOptions>): Processor<RequiredProperties<KlineData, 'h' | 'l'>, Dnum> => {
+  ({ fastPeriod, slowPeriod }: Required<AwesomeOscillatorOptions>) => {
     const fastProc = sma.create({ period: fastPeriod })
     const slowProc = sma.create({ period: slowPeriod })
-    return (bar) => {
+    return (bar: RequiredProperties<KlineData, 'h' | 'l'>) => {
       const median = div(add(from(bar.h), from(bar.l)), 2, 18)
       return sub(fastProc(median), slowProc(median))
     }

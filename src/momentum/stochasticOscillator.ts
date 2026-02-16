@@ -1,5 +1,5 @@
 import type { Dnum } from 'dnum'
-import type { KlineData, Processor, RequiredProperties } from '~/types'
+import type { KlineData, RequiredProperties } from '~/types'
 import { div, from, mul, sub } from 'dnum'
 import { createGenerator } from '~/base'
 import { mmax } from '~/trend/movingMax'
@@ -33,12 +33,12 @@ export interface StochPoint {
  * %D = SMA(%K, dPeriod)
  */
 export const stoch = createGenerator(
-  ({ kPeriod, slowingPeriod, dPeriod }: Required<StochasticOscillatorOptions>): Processor<RequiredProperties<KlineData, 'h' | 'l' | 'c'>, StochPoint> => {
+  ({ kPeriod, slowingPeriod, dPeriod }: Required<StochasticOscillatorOptions>) => {
     const mmaxProc = mmax.create({ period: kPeriod })
     const mminProc = mmin.create({ period: kPeriod })
     const slowingProc = slowingPeriod > 1 ? sma.create({ period: slowingPeriod }) : null
     const dProc = sma.create({ period: dPeriod })
-    return (bar) => {
+    return (bar: RequiredProperties<KlineData, 'h' | 'l' | 'c'>) => {
       const h = from(bar.h)
       const l = from(bar.l)
       const c = from(bar.c)

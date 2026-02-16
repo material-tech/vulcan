@@ -1,11 +1,10 @@
-import type { Dnum } from 'dnum'
-import type { KlineData, Processor, RequiredProperties } from '~/types'
+import type { KlineData, RequiredProperties } from '~/types'
 import { divide, equal, from, subtract } from 'dnum'
 import { createGenerator } from '~/base'
 
 export const bop = createGenerator(
-  (): Processor<RequiredProperties<KlineData, 'o' | 'h' | 'l' | 'c'>, Dnum> => {
-    return (bar) => {
+  () => {
+    return (bar: RequiredProperties<KlineData, 'o' | 'h' | 'l' | 'c'>) => {
       const o = from(bar.o)
       const h = from(bar.h)
       const l = from(bar.l)

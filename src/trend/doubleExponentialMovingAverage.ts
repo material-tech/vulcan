@@ -1,5 +1,4 @@
-import type { Dnum, Numberish } from 'dnum'
-import type { Processor } from '~/types'
+import type { Numberish } from 'dnum'
 import { mul, sub } from 'dnum'
 import { createGenerator } from '~/base'
 import { ema } from './exponentialMovingAverage'
@@ -24,7 +23,7 @@ export const defaultDoubleExponentialMovingAverageOptions: DoubleExponentialMovi
  * @returns Generator yielding DEMA values
  */
 export const dema = createGenerator(
-  ({ period }: Required<DoubleExponentialMovingAverageOptions>): Processor<Numberish, Dnum> => {
+  ({ period }: Required<DoubleExponentialMovingAverageOptions>) => {
     const ema1 = ema.create({ period })
     const ema2 = ema.create({ period })
     return (value: Numberish) => {

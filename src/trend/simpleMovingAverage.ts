@@ -1,5 +1,4 @@
 import type { Dnum, Numberish } from 'dnum'
-import type { Processor } from '~/types'
 import { add, div, from } from 'dnum'
 import { createGenerator } from '~/base'
 
@@ -30,7 +29,7 @@ export const defaultSMAOptions: SimpleMovingAverageOptions = {
  * @returns Generator yielding SMA values
  */
 export const sma = createGenerator(
-  ({ period }: Required<SimpleMovingAverageOptions>): Processor<Numberish, Dnum> => {
+  ({ period }: Required<SimpleMovingAverageOptions>) => {
     const buffer: Dnum[] = []
     return (value: Numberish) => {
       buffer.push(from(value, 18))

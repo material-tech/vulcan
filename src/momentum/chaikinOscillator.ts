@@ -1,5 +1,4 @@
-import type { Dnum } from 'dnum'
-import type { KlineData, Processor, RequiredProperties } from '~/types'
+import type { KlineData, RequiredProperties } from '~/types'
 import { sub } from 'dnum'
 import { createGenerator } from '~/base'
 import { ema } from '~/trend/exponentialMovingAverage'
@@ -25,11 +24,11 @@ export const defaultChaikinOscillatorOptions: ChaikinOscillatorOptions = {
  * CO = Ema(fastPeriod, AD) - Ema(slowPeriod, AD)
  */
 export const cmo = createGenerator(
-  ({ fastPeriod, slowPeriod }: Required<ChaikinOscillatorOptions>): Processor<RequiredProperties<KlineData, 'h' | 'l' | 'c' | 'v'>, Dnum> => {
+  ({ fastPeriod, slowPeriod }: Required<ChaikinOscillatorOptions>) => {
     const adProc = ad.create()
     const fastProc = ema.create({ period: fastPeriod })
     const slowProc = ema.create({ period: slowPeriod })
-    return (bar) => {
+    return (bar: RequiredProperties<KlineData, 'h' | 'l' | 'c' | 'v'>) => {
       const adVal = adProc(bar)
       return sub(fastProc(adVal), slowProc(adVal))
     }

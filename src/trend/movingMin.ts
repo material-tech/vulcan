@@ -1,5 +1,4 @@
 import type { Dnum, Numberish } from 'dnum'
-import type { Processor } from '~/types'
 import { from, lt } from 'dnum'
 import { createGenerator } from '~/base'
 
@@ -18,7 +17,7 @@ export const defaultMovingMinOptions: MovingMinOptions = {
  * Moving Minimum (MovingMin)
  */
 export const mmin = createGenerator(
-  ({ period }: Required<MovingMinOptions>): Processor<Numberish, Dnum> => {
+  ({ period }: Required<MovingMinOptions>) => {
     const buffer: Dnum[] = []
     return (value: Numberish) => {
       buffer.push(from(value, 18))

@@ -1,5 +1,5 @@
 import type { Dnum } from 'dnum'
-import type { KlineData, Processor, RequiredProperties } from '~/types'
+import type { KlineData, RequiredProperties } from '~/types'
 import { add, divide, from, multiply, subtract } from 'dnum'
 import { createGenerator } from '~/base'
 
@@ -13,9 +13,9 @@ import { createGenerator } from '~/base'
  * AD = Previous AD + CMFV
  */
 export const ad = createGenerator(
-  (): Processor<RequiredProperties<KlineData, 'h' | 'l' | 'c' | 'v'>, Dnum> => {
+  () => {
     let prevAD: Dnum = from(0)
-    return (bar) => {
+    return (bar: RequiredProperties<KlineData, 'h' | 'l' | 'c' | 'v'>) => {
       const h = from(bar.h, 18)
       const l = from(bar.l, 18)
       const c = from(bar.c, 18)

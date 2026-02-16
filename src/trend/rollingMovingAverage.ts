@@ -1,5 +1,4 @@
 import type { Dnum, Numberish } from 'dnum'
-import type { Processor } from '~/types'
 import { add, div, from, mul } from 'dnum'
 import { createGenerator } from '~/base'
 
@@ -22,7 +21,7 @@ export const defaultRMAOptions: RMAOptions = {
  * R[p] and after is R[i] = ((R[i-1]*(p-1)) + v[i]) / p
  */
 export const rma = createGenerator(
-  ({ period }: Required<RMAOptions>): Processor<Numberish, Dnum> => {
+  ({ period }: Required<RMAOptions>) => {
     let count = 0
     let sum: Dnum = from(0)
     let prev: Dnum = from(0)

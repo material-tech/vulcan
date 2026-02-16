@@ -1,5 +1,4 @@
 import type { Dnum, Numberish } from 'dnum'
-import type { Processor } from '~/types'
 import { from, gt } from 'dnum'
 import { createGenerator } from '~/base'
 
@@ -18,7 +17,7 @@ export const defaultMovingMaxOptions: MovingMaxOptions = {
  * Moving Maximum (MovingMax)
  */
 export const mmax = createGenerator(
-  ({ period }: Required<MovingMaxOptions>): Processor<Numberish, Dnum> => {
+  ({ period }: Required<MovingMaxOptions>) => {
     const buffer: Dnum[] = []
     return (value: Numberish) => {
       buffer.push(from(value, 18))

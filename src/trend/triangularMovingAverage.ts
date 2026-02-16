@@ -1,5 +1,4 @@
-import type { Dnum, Numberish } from 'dnum'
-import type { Processor } from '~/types'
+import type { Numberish } from 'dnum'
 import { createGenerator } from '~/base'
 import { sma } from './simpleMovingAverage'
 
@@ -12,7 +11,7 @@ export const defaultTriangularMovingAverageOptions: TriangularMovingAverageOptio
 }
 
 export const trima = createGenerator(
-  ({ period }: Required<TriangularMovingAverageOptions>): Processor<Numberish, Dnum> => {
+  ({ period }: Required<TriangularMovingAverageOptions>) => {
     let n1: number
     let n2: number
 

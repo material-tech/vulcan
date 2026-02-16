@@ -1,5 +1,4 @@
 import type { Dnum, Numberish } from 'dnum'
-import type { Processor } from '~/types'
 import { add, div, eq, from, gt, mul, sub } from 'dnum'
 import { createGenerator } from '~/base'
 import { rma } from '~/trend/rollingMovingAverage'
@@ -22,12 +21,12 @@ export const defaultRSIOptions: RSIOptions = {
  * RSI = 100 - (100 / (1 + RS))
  */
 export const rsi = createGenerator(
-  ({ period }: Required<RSIOptions>): Processor<Numberish, Dnum> => {
+  ({ period }: Required<RSIOptions>) => {
     const gainProc = rma.create({ period })
     const lossProc = rma.create({ period })
     let prev: Dnum | undefined
 
-    return (value) => {
+    return (value: Numberish) => {
       const price = from(value)
 
       if (prev === undefined) {

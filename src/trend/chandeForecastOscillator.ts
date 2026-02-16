@@ -1,5 +1,4 @@
 import type { Dnum, Numberish } from 'dnum'
-import type { Processor } from '~/types'
 import { add, divide, equal, from, multiply, subtract } from 'dnum'
 import { createGenerator } from '~/base'
 
@@ -31,7 +30,7 @@ export const defaultCFOOptions: ChandeForecastOscillatorOptions = {
  * @returns Generator yielding CFO values as percentages
  */
 export const cfo = createGenerator(
-  ({ period }: Required<ChandeForecastOscillatorOptions>): Processor<Numberish, Dnum> => {
+  ({ period }: Required<ChandeForecastOscillatorOptions>) => {
     const buffer: Dnum[] = []
 
     return (value: Numberish) => {

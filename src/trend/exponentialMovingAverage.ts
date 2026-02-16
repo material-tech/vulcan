@@ -1,5 +1,4 @@
 import type { Dnum, Numberish } from 'dnum'
-import type { Processor } from '~/types'
 import { add, from, mul } from 'dnum'
 import { createGenerator } from '~/base'
 
@@ -18,7 +17,7 @@ export const defaultExponentialMovingAverageOptions: ExponentialMovingAverageOpt
  * Where k = 2 / (period + 1)
  */
 export const ema = createGenerator(
-  ({ period }: Required<ExponentialMovingAverageOptions>): Processor<Numberish, Dnum> => {
+  ({ period }: Required<ExponentialMovingAverageOptions>) => {
     const k = 2 / (1 + period)
     const m = 1 - k
     let prev: Dnum | undefined

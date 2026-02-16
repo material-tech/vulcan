@@ -1,5 +1,5 @@
 import type { Dnum } from 'dnum'
-import type { KlineData, Processor, RequiredProperties } from '~/types'
+import type { KlineData, RequiredProperties } from '~/types'
 import { from, gt, lt } from 'dnum'
 import { createGenerator } from '~/base'
 
@@ -25,11 +25,11 @@ export interface AroonPoint {
  * Oscillator = Aroon Up - Aroon Down
  */
 export const aroon = createGenerator(
-  ({ period }: Required<AroonOptions>): Processor<RequiredProperties<KlineData, 'h' | 'l'>, AroonPoint> => {
+  ({ period }: Required<AroonOptions>) => {
     const highBuffer: Dnum[] = []
     const lowBuffer: Dnum[] = []
 
-    return (bar) => {
+    return (bar: RequiredProperties<KlineData, 'h' | 'l'>) => {
       const h = from(bar.h)
       const l = from(bar.l)
 

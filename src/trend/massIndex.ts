@@ -1,5 +1,4 @@
-import type { Dnum } from 'dnum'
-import type { KlineData, Processor, RequiredProperties } from '~/types'
+import type { KlineData, RequiredProperties } from '~/types'
 import { divide, from, subtract } from 'dnum'
 import { createGenerator } from '~/base'
 import { ema } from './exponentialMovingAverage'
@@ -44,12 +43,12 @@ export const defaultMassIndexOptions: MassIndexOptions = {
  * @returns Generator yielding Mass Index values
  */
 export const mi = createGenerator(
-  ({ emaPeriod, miPeriod }: Required<MassIndexOptions>): Processor<RequiredProperties<KlineData, 'h' | 'l'>, Dnum> => {
+  ({ emaPeriod, miPeriod }: Required<MassIndexOptions>) => {
     const ema1Proc = ema.create({ period: emaPeriod })
     const ema2Proc = ema.create({ period: emaPeriod })
     const msumProc = msum.create({ period: miPeriod })
 
-    return (bar) => {
+    return (bar: RequiredProperties<KlineData, 'h' | 'l'>) => {
       const range = subtract(from(bar.h, 18), from(bar.l, 18))
       const e1 = ema1Proc(range)
       const e2 = ema2Proc(e1)

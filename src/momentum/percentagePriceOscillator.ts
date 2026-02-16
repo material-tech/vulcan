@@ -1,5 +1,4 @@
 import type { Dnum, Numberish } from 'dnum'
-import type { Processor } from '~/types'
 import { div, from, mul, sub } from 'dnum'
 import { createGenerator } from '~/base'
 import { ema } from '../trend/exponentialMovingAverage'
@@ -44,11 +43,11 @@ export interface PercentagePriceOscillatorPoint {
  * @returns Generator yielding PPO point objects
  */
 export const ppo = createGenerator(
-  ({ fastPeriod, slowPeriod, signalPeriod }: Required<PercentagePriceOscillatorOptions>): Processor<Numberish, PercentagePriceOscillatorPoint> => {
+  ({ fastPeriod, slowPeriod, signalPeriod }: Required<PercentagePriceOscillatorOptions>) => {
     const fastProc = ema.create({ period: fastPeriod })
     const slowProc = ema.create({ period: slowPeriod })
     const signalProc = ema.create({ period: signalPeriod })
-    return (value) => {
+    return (value: Numberish) => {
       const fast = fastProc(from(value))
       const slow = slowProc(from(value))
       const ppoVal = mul(div(sub(fast, slow), slow, 18), 100, 18)
