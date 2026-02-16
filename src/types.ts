@@ -25,7 +25,6 @@ export interface TechnicalSignal<Data, Result, Options extends Record<string, an
   readonly defaultOptions: Options
   (dataset: Data[], options?: Partial<Options>): Result
   step: (options?: Partial<Options>) => (data: Data) => Unarray<Result>
-  toTransformStream: (options?: Partial<Options>) => TransformStream<Data, Unarray<Result>>
 }
 
 export interface CreateSignalFunc<Data, Result, Options extends Record<string, any>> {

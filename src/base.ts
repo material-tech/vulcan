@@ -60,15 +60,6 @@ export function createSignal<Data, Element, Options extends Record<string, any>>
     return createStep(opt)
   }
 
-  impl.toTransformStream = (options?: Partial<Options>) => {
-    const stepFn = impl.step(options)
-    return new TransformStream<Data, Element>({
-      transform(chunk: Data, controller) {
-        controller.enqueue(stepFn(chunk))
-      },
-    })
-  }
-
   Object.defineProperty(impl, 'defaultOptions', {
     get() {
       return defu(defaultOptions)

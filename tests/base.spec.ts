@@ -55,51 +55,6 @@ describe('createSignal', () => {
     const next2 = signal.step({ multiplier: 5 })
     expect(next2(3)).toBe(15)
   })
-
-  it('should return TransformStream', async () => {
-    const addOne = createSignal({
-      compute: (v: number[]) => v.map(x => from(x + 1)),
-      step: () => (v: number) => from(v + 1),
-    })
-
-    const transform = addOne.toTransformStream()
-    const reader = transform.readable.getReader()
-    const writer = transform.writable.getWriter()
-
-    const read1 = reader.read()
-    writer.write(1)
-    const { value } = await read1
-    expect(toNumber(value!)).toBe(2)
-
-    const read2 = reader.read()
-    writer.write(5)
-    const { value: value2 } = await read2
-    expect(toNumber(value2!)).toBe(6)
-
-    writer.close()
-  })
-
-  it('toTransformStream should merge options with defaults', async () => {
-    const mulSignal = createSignal({
-      compute: (v: number[], { factor }: { factor: number }) =>
-        v.map(x => from(x * factor)),
-      step: ({ factor }: { factor: number }) =>
-        (v: number) => from(v * factor),
-      defaultOptions: { factor: 3 },
-    })
-
-    // Use custom options
-    const transform = mulSignal.toTransformStream({ factor: 10 })
-    const reader = transform.readable.getReader()
-    const writer = transform.writable.getWriter()
-
-    const read1 = reader.read()
-    writer.write(4)
-    const { value } = await read1
-    expect(toNumber(value!)).toBe(40)
-
-    writer.close()
-  })
 })
 
 describe('createSignal auto-derive from step', () => {
