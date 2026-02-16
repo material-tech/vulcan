@@ -1,5 +1,6 @@
 /* eslint-disable antfu/consistent-list-newline */
 
+import { toNumber } from 'dnum'
 import { describe, expect, it } from 'vitest'
 import { collect } from '~/base'
 import { ichimokuCloud } from '~/momentum/ichimokuCloud'
@@ -7,6 +8,17 @@ import ohlcv from '../ohlcv.json' with { type: 'json' }
 
 describe('ichimoku cloud', () => {
   const data = ohlcv
+
+  it('should accept a non-array iterable source', () => {
+    function* iterableSource() {
+      yield* data
+    }
+    const fromArray = collect(ichimokuCloud(data))
+    const fromIterable = collect(ichimokuCloud(iterableSource()))
+    expect(fromIterable.length).toBe(fromArray.length)
+    expect(fromIterable.map(p => toNumber(p.conversion, 2)))
+      .toEqual(fromArray.map(p => toNumber(p.conversion, 2)))
+  })
 
   it('should able to calculate ichimoku cloud with default options', () => {
     const result = collect(ichimokuCloud(data))

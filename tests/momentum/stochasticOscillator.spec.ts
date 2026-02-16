@@ -1,3 +1,4 @@
+import { toNumber } from 'dnum'
 import { describe, expect, it } from 'vitest'
 import { collect } from '~/base'
 import { stoch } from '~/momentum/stochasticOscillator'
@@ -25,6 +26,17 @@ describe('stochastic oscillator (STOCH)', () => {
     { h: 128.27, l: 126.13, c: 127.06 },
     { h: 127.74, l: 125.92, c: 127.33 },
   ]
+
+  it('should accept a non-array iterable source', () => {
+    function* iterableSource() {
+      yield* values
+    }
+    const fromArray = collect(stoch(values, { kPeriod: 12, dPeriod: 2 }))
+    const fromIterable = collect(stoch(iterableSource(), { kPeriod: 12, dPeriod: 2 }))
+    expect(fromIterable.length).toBe(fromArray.length)
+    expect(fromIterable.map(p => toNumber(p.k, 2)))
+      .toEqual(fromArray.map(p => toNumber(p.k, 2)))
+  })
 
   it('should be able get k and d', () => {
     const expectedK = [
