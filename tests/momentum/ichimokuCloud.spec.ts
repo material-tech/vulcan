@@ -1,6 +1,7 @@
 /* eslint-disable antfu/consistent-list-newline */
 
 import { describe, expect, it } from 'vitest'
+import { collect } from '~/base'
 import { ichimokuCloud } from '~/momentum/ichimokuCloud'
 import ohlcv from '../ohlcv.json' with { type: 'json' }
 
@@ -8,7 +9,7 @@ describe('ichimoku cloud', () => {
   const data = ohlcv
 
   it('should able to calculate ichimoku cloud with default options', () => {
-    const result = ichimokuCloud(data)
+    const result = collect(ichimokuCloud(data))
 
     const expectedConversion = [
       0, 0, 0, 0, 0, 0, 0, 0,
@@ -100,19 +101,19 @@ describe('ichimoku cloud', () => {
       0, 0, 0, 0, 0, 0, 0, 0,
     ]
 
-    expect(result.conversion)
+    expect(result.map(p => p.conversion))
       .toMatchNumberArray(expectedConversion)
 
-    expect(result.base)
+    expect(result.map(p => p.base))
       .toMatchNumberArray(expectedBase)
 
-    expect(result.leadingA)
+    expect(result.map(p => p.leadingA))
       .toMatchNumberArray(expectedLeadingA)
 
-    expect(result.leadingB)
+    expect(result.map(p => p.leadingB))
       .toMatchNumberArray(expectedLeadingB)
 
-    expect(result.lagging)
+    expect(result.map(p => p.lagging))
       .toMatchNumberArray(expectedLagging)
   })
 })

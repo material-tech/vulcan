@@ -1,7 +1,7 @@
-import type { Numberish } from 'dnum'
+import type { Dnum, Numberish } from 'dnum'
+import type { Processor } from '~/types'
 import { add, div, from } from 'dnum'
-import { createSignal } from '~/base'
-import { movingAction } from '~/helpers/operations'
+import { createGenerator } from '~/base'
 
 export interface SimpleMovingAverageOptions {
   /**
@@ -15,6 +15,17 @@ export const defaultSMAOptions: SimpleMovingAverageOptions = {
   period: 2,
 }
 
+function createSmaProcessor({ period }: Required<SimpleMovingAverageOptions>): Processor<Numberish, Dnum> {
+  const buffer: Dnum[] = []
+  return (value: Numberish) => {
+    buffer.push(from(value, 18))
+    if (buffer.length > period)
+      buffer.shift()
+    const sum = buffer.reduce((acc, cur) => add(acc, cur), from(0, 18))
+    return div(sum, buffer.length, 18)
+  }
+}
+
 /**
  * Simple Moving Average (SMA)
  *
@@ -24,27 +35,11 @@ export const defaultSMAOptions: SimpleMovingAverageOptions = {
  * Formula: SMA = (P1 + P2 + ... + Pn) / n
  * Where: P = Price values, n = Period
  *
- * @param values - Array of price values
+ * @param source - Iterable of price values
  * @param options - Configuration options
  * @param options.period - The period for calculating the moving average (default: 2)
- * @returns Array of SMA values
+ * @returns Generator yielding SMA values
  */
-export const sma = createSignal(
-  (values: Numberish[], { period }: Required<SimpleMovingAverageOptions>) => {
-    if (values.length === 0) {
-      return []
-    }
-
-    return movingAction(
-      values,
-      (window) => {
-        const sum = window.reduce((acc, cur) => add(acc, cur), from(0, 18))
-        return div(sum, window.length, 18)
-      },
-      period,
-    )
-  },
-  defaultSMAOptions,
-)
+export const sma = createGenerator(createSmaProcessor, defaultSMAOptions)
 
 export { sma as simpleMovingAverage }

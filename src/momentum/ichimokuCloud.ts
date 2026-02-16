@@ -1,8 +1,7 @@
 import type { Dnum } from 'dnum'
 import type { KlineData, RequiredProperties } from '~/types'
+import { defu } from 'defu'
 import { add, div, from } from 'dnum'
-import { createSignal } from '~/base'
-import { mapPick } from '~/helpers/array'
 import { assert } from '~/helpers/assert'
 import { max, min } from '~/helpers/operations'
 
@@ -40,75 +39,73 @@ export const defaultIchimokuCloudOptions: IchimokuCloudOptions = {
   displacement: 26,
 }
 
-export interface IchimokuCloudResult {
-  conversion: Dnum[]
-  base: Dnum[]
-  leadingA: Dnum[]
-  leadingB: Dnum[]
-  lagging: Dnum[]
+export interface IchimokuCloudPoint {
+  conversion: Dnum
+  base: Dnum
+  leadingA: Dnum
+  leadingB: Dnum
+  lagging: Dnum
 }
 
-export const ichimokuCloud = createSignal(
-  (
-    data: RequiredProperties<KlineData, 'h' | 'l' | 'c' | 'v'>[],
-    { conversionPeriod, basePeriod, leadingBPeriod, displacement },
-  ) => {
-    assert(
-      data.length > Math.max(conversionPeriod, basePeriod, leadingBPeriod),
-      'data length must be greater than the maximum of conversionPeriod, basePeriod, leadingBPeriod',
-    )
-    const highs = mapPick(data, 'h', v => from(v))
-    const lows = mapPick(data, 'l', v => from(v))
-    const closings = mapPick(data, 'c', v => from(v))
+/**
+ * Ichimoku Cloud
+ *
+ * Note: Since the lagging span requires "future" data, this generator
+ * collects the entire input first before yielding results.
+ */
+export function* ichimokuCloud(
+  source: Iterable<RequiredProperties<KlineData, 'h' | 'l' | 'c' | 'v'>>,
+  options?: Partial<IchimokuCloudOptions>,
+): Generator<IchimokuCloudPoint> {
+  const { conversionPeriod, basePeriod, leadingBPeriod, displacement } = defu(options, defaultIchimokuCloudOptions) as Required<IchimokuCloudOptions>
 
-    const createMovingAverage = (period: number) => {
-      return Array.from({ length: highs.length }, (_, cur) => {
-        const start = cur - period + 1
-        if (start < 0) {
-          return from(0)
-        }
-        const highest = max(highs, { period, start })
-        const lowest = min(lows, { period, start })
+  const data = Array.isArray(source) ? source : [...source]
 
-        return div(add(highest, lowest), 2, 18)
-      })
-    }
+  assert(
+    data.length > Math.max(conversionPeriod, basePeriod, leadingBPeriod),
+    'data length must be greater than the maximum of conversionPeriod, basePeriod, leadingBPeriod',
+  )
 
-    const conversion = createMovingAverage(conversionPeriod)
-    const base = createMovingAverage(basePeriod)
+  const highs = data.map(d => from(d.h))
+  const lows = data.map(d => from(d.l))
+  const closings = data.map(d => from(d.c))
 
-    const leadingA = Array.from({ length: highs.length }, (_, cur) => {
-      const displacedIndex = cur - displacement
-      if (displacedIndex < 0) {
+  const createMovingAverage = (period: number) => {
+    return Array.from({ length: highs.length }, (_, cur) => {
+      const start = cur - period + 1
+      if (start < 0) {
         return from(0)
       }
-      return div(add(conversion[cur], base[cur]), 2, 18)
+      const highest = max(highs, { period, start })
+      const lowest = min(lows, { period, start })
+      return div(add(highest, lowest), 2, 18)
     })
+  }
 
-    const leadingBBase = createMovingAverage(leadingBPeriod)
-    const leadingB = Array.from({ length: highs.length }, (_, cur) => {
-      const displacedIndex = cur - displacement
-      if (displacedIndex < 0) {
-        return from(0)
-      }
-      return leadingBBase[cur]
-    })
+  const conversion = createMovingAverage(conversionPeriod)
+  const base = createMovingAverage(basePeriod)
+  const leadingBBase = createMovingAverage(leadingBPeriod)
 
-    const lagging = Array.from({ length: highs.length }, (_, cur) => {
-      const laggedIndex = cur + displacement
-      if (laggedIndex >= closings.length) {
-        return from(0)
-      }
-      return closings[cur]
-    })
+  for (let i = 0; i < data.length; i++) {
+    const displacedIndex = i - displacement
+    const leadingA = displacedIndex < 0
+      ? from(0)
+      : div(add(conversion[i], base[i]), 2, 18)
+    const leadingB = displacedIndex < 0
+      ? from(0)
+      : leadingBBase[i]
 
-    return {
-      conversion,
-      base,
+    const laggedIndex = i + displacement
+    const lagging = laggedIndex >= closings.length
+      ? from(0)
+      : closings[i]
+
+    yield {
+      conversion: conversion[i],
+      base: base[i],
       leadingA,
       leadingB,
       lagging,
     }
-  },
-  defaultIchimokuCloudOptions,
-)
+  }
+}

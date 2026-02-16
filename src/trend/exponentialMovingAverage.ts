@@ -1,6 +1,7 @@
-import type { Numberish } from 'dnum'
+import type { Dnum, Numberish } from 'dnum'
+import type { Processor } from '~/types'
 import { add, from, mul } from 'dnum'
-import { createSignal } from '~/base'
+import { createGenerator } from '~/base'
 
 export interface ExponentialMovingAverageOptions {
   period: number
@@ -10,27 +11,29 @@ export const defaultExponentialMovingAverageOptions: ExponentialMovingAverageOpt
   period: 12,
 }
 
-export const ema = createSignal(
-  (values: Numberish[], { period }) => {
-    const result = Array.from({ length: values.length }, () => from(0))
-
-    if (result.length > 0) {
-      const kValue = 2 / (1 + period)
-      const mValue = 1 - kValue
-
-      result[0] = from(values[0])
-
-      for (let i = 1; i < result.length; i++) {
-        result[i] = add(
-          mul(values[i], kValue, 18),
-          mul(result[i - 1], mValue, 18),
-        )
-      }
+/**
+ * Exponential Moving Average (EMA)
+ *
+ * EMA = Price * k + PrevEMA * (1 - k)
+ * Where k = 2 / (period + 1)
+ */
+function createEmaProcessor({ period }: Required<ExponentialMovingAverageOptions>): Processor<Numberish, Dnum> {
+  const k = 2 / (1 + period)
+  const m = 1 - k
+  let prev: Dnum | undefined
+  return (value: Numberish) => {
+    if (prev === undefined) {
+      prev = from(value)
+      return prev
     }
+    prev = add(
+      mul(value, k, 18),
+      mul(prev, m, 18),
+    )
+    return prev
+  }
+}
 
-    return result
-  },
-  defaultExponentialMovingAverageOptions,
-)
+export const ema = createGenerator(createEmaProcessor, defaultExponentialMovingAverageOptions)
 
 export { ema as exponentialMovingAverage }

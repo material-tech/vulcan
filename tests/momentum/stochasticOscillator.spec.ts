@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { collect } from '~/base'
 import { stoch } from '~/momentum/stochasticOscillator'
 
 describe('stochastic oscillator (STOCH)', () => {
@@ -71,21 +72,21 @@ describe('stochastic oscillator (STOCH)', () => {
       71.02,
     ]
 
-    const actual = stoch(values, { kPeriod: 12, dPeriod: 2 })
-    expect(actual.k).toMatchNumberArray(expectedK)
-    expect(actual.d).toMatchNumberArray(expectedD)
+    const actual = collect(stoch(values, { kPeriod: 12, dPeriod: 2 }))
+    expect(actual.map(p => p.k)).toMatchNumberArray(expectedK)
+    expect(actual.map(p => p.d)).toMatchNumberArray(expectedD)
   })
 
   it('should be able get k and d with options', () => {
     const expectedK = [38.79, 46.83, 58.11, 73.31, 87.63, 91.88, 76.8, 55.02, 40.27, 47.31, 61.8, 75.05, 85.44, 83.63, 76.57, 75.8, 74.25, 80.16, 72.91, 75.83]
     const expectedD = [38.79, 42.81, 52.47, 65.71, 80.47, 89.76, 84.34, 65.91, 47.65, 43.79, 54.56, 68.42, 80.24, 84.54, 80.1, 76.18, 75.02, 77.2, 76.53, 74.37]
 
-    const actual = stoch(values, {
+    const actual = collect(stoch(values, {
       kPeriod: 12,
       dPeriod: 2,
       slowingPeriod: 3,
-    })
-    expect(actual.k).toMatchNumberArray(expectedK)
-    expect(actual.d).toMatchNumberArray(expectedD)
+    }))
+    expect(actual.map(p => p.k)).toMatchNumberArray(expectedK)
+    expect(actual.map(p => p.d)).toMatchNumberArray(expectedD)
   })
 })

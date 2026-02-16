@@ -1,5 +1,6 @@
-import type { Numberish } from 'dnum'
-import { createSignal } from '~/base'
+import type { Dnum, Numberish } from 'dnum'
+import type { Processor } from '~/types'
+import { createGenerator } from '~/base'
 import { sma } from './simpleMovingAverage'
 
 export interface TriangularMovingAverageOptions {
@@ -10,28 +11,28 @@ export const defaultTriangularMovingAverageOptions: TriangularMovingAverageOptio
   period: 4,
 }
 
-export const trima = createSignal(
-  (values: Numberish[], { period }) => {
-    let n1 = 0
-    let n2 = 0
+function createTrimaProcessor({ period }: Required<TriangularMovingAverageOptions>): Processor<Numberish, Dnum> {
+  let n1: number
+  let n2: number
 
-    if (period % 2 === 0) {
-      n1 = period / 2
-      n2 = n1 + 1
-    }
-    else {
-      n1 = (period + 1) / 2
-      n2 = n1
-    }
+  if (period % 2 === 0) {
+    n1 = period / 2
+    n2 = n1 + 1
+  }
+  else {
+    n1 = (period + 1) / 2
+    n2 = n1
+  }
 
-    const result = sma(
-      sma(values, { period: n2 }),
-      { period: n1 },
-    )
+  const sma1 = sma.createProcessor({ period: n2 })
+  const sma2 = sma.createProcessor({ period: n1 })
 
-    return result
-  },
-  defaultTriangularMovingAverageOptions,
-)
+  return (value: Numberish) => {
+    const s1 = sma1(value)
+    return sma2(s1)
+  }
+}
+
+export const trima = createGenerator(createTrimaProcessor, defaultTriangularMovingAverageOptions)
 
 export { trima as triangularMovingAverage }

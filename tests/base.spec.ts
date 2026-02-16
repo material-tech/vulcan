@@ -1,31 +1,72 @@
 import { describe, expect, it } from 'vitest'
-import { createSignal } from '../src/base'
+import { collect, createGenerator } from '../src/base'
 
-describe('createSignal', () => {
-  it('should create a TechnicalSignal instance', () => {
-    const signal = createSignal(() => void 0)
+describe('createGenerator', () => {
+  it('should create a generator function with createProcessor and defaultOptions', () => {
+    const gen = createGenerator(
+      () => (v: number) => v * 2,
+      { factor: 1 },
+    )
 
-    expect(signal).toHaveProperty('defaultOptions')
-    expect(signal).instanceOf(Function)
+    expect(gen).instanceOf(Function)
+    expect(gen.createProcessor).instanceOf(Function)
+    expect(gen.defaultOptions).toEqual({ factor: 1 })
   })
 
-  it('should get default options', () => {
-    const signal = createSignal(() => void 0, { foo: 'bar' })
+  it('should yield transformed values from source', () => {
+    const gen = createGenerator(
+      () => (v: number) => v * 2,
+    )
 
-    expect(signal.defaultOptions).toEqual({
-      foo: 'bar',
-    })
+    const result = collect(gen([1, 2, 3]))
+    expect(result).toEqual([2, 4, 6])
   })
 
-  it('should get empty result when dataset is empty', () => {
-    const signal = createSignal(() => void 0)
+  it('should return empty array when source is empty', () => {
+    const gen = createGenerator(
+      () => (v: number) => v,
+    )
 
-    expect(signal([])).toEqual([])
+    expect(collect(gen([]))).toEqual([])
   })
 
-  it('should return result by call directly', () => {
-    const signal = createSignal(v => v)
+  it('should merge options with defaults', () => {
+    const gen = createGenerator(
+      (opts: Required<{ multiplier: number }>) => (v: number) => v * opts.multiplier,
+      { multiplier: 2 },
+    )
 
-    expect(signal([1, 2, 3])).toEqual([1, 2, 3])
+    expect(collect(gen([3]))).toEqual([6])
+    expect(collect(gen([3], { multiplier: 10 }))).toEqual([30])
+  })
+
+  it('should create independent processors via createProcessor', () => {
+    const gen = createGenerator(
+      () => {
+        let sum = 0
+        return (v: number) => {
+          sum += v
+          return sum
+        }
+      },
+    )
+
+    const p1 = gen.createProcessor()
+    const p2 = gen.createProcessor()
+
+    expect(p1(1)).toBe(1)
+    expect(p1(2)).toBe(3)
+    expect(p2(10)).toBe(10)
+  })
+})
+
+describe('collect', () => {
+  it('should collect generator values into an array', () => {
+    function* gen() {
+      yield 1
+      yield 2
+      yield 3
+    }
+    expect(collect(gen())).toEqual([1, 2, 3])
   })
 })

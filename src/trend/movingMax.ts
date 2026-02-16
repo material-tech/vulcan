@@ -1,7 +1,7 @@
-import type { Numberish } from 'dnum'
-import { from } from 'dnum'
-import { createSignal } from '~/base'
-import { max, movingAction } from '~/helpers/operations'
+import type { Dnum, Numberish } from 'dnum'
+import type { Processor } from '~/types'
+import { from, gt } from 'dnum'
+import { createGenerator } from '~/base'
 
 export interface MovingMaxOptions {
   /**
@@ -17,17 +17,16 @@ export const defaultMovingMaxOptions: MovingMaxOptions = {
 /**
  * Moving Maximum (MovingMax)
  */
-export const mmax = createSignal(
-  (values: Numberish[], { period }) => {
-    const dnumValues = values.map(item => from(item))
+function createMmaxProcessor({ period }: Required<MovingMaxOptions>): Processor<Numberish, Dnum> {
+  const buffer: Dnum[] = []
+  return (value: Numberish) => {
+    buffer.push(from(value))
+    if (buffer.length > period)
+      buffer.shift()
+    return buffer.reduce((max, cur) => gt(max, cur) ? max : cur)
+  }
+}
 
-    return movingAction(
-      dnumValues,
-      window => max(window),
-      period,
-    )
-  },
-  defaultMovingMaxOptions,
-)
+export const mmax = createGenerator(createMmaxProcessor, defaultMovingMaxOptions)
 
 export { mmax as movingMax }

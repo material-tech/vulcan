@@ -1,6 +1,8 @@
+import type { Dnum } from 'dnum'
 import type { KlineData, RequiredProperties } from '~/types'
-import { createSignal } from '~/base'
-import { subtract } from '~/helpers/operations'
+import { defu } from 'defu'
+import { sub } from 'dnum'
+import { collect } from '~/base'
 import { ema } from '~/trend/exponentialMovingAverage'
 import { ad } from '~/volume/accumulationDistribution'
 
@@ -23,20 +25,20 @@ export const defaultChaikinOscillatorOptions: ChaikinOscillatorOptions = {
  *
  * CO = Ema(fastPeriod, AD) - Ema(slowPeriod, AD)
  */
-export const cmo = createSignal(
-  (
-    data: RequiredProperties<KlineData, 'h' | 'l' | 'c' | 'v'>[],
-    { fastPeriod, slowPeriod },
-  ) => {
-    const adResult = ad(data)
+export function* cmo(
+  source: Iterable<RequiredProperties<KlineData, 'h' | 'l' | 'c' | 'v'>>,
+  options?: Partial<ChaikinOscillatorOptions>,
+): Generator<Dnum> {
+  const { fastPeriod, slowPeriod } = defu(options, defaultChaikinOscillatorOptions) as Required<ChaikinOscillatorOptions>
 
-    return subtract(
-      ema(adResult, { period: fastPeriod }),
-      ema(adResult, { period: slowPeriod }),
-      18,
-    )
-  },
-  defaultChaikinOscillatorOptions,
-)
+  const adValues = collect(ad(source))
+
+  const fastProc = ema.createProcessor({ period: fastPeriod })
+  const slowProc = ema.createProcessor({ period: slowPeriod })
+
+  for (const adVal of adValues) {
+    yield sub(fastProc(adVal), slowProc(adVal))
+  }
+}
 
 export { cmo as chaikinOscillator }

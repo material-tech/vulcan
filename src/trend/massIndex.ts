@@ -1,7 +1,7 @@
-import type { KlineData, RequiredProperties } from '~/types'
+import type { Dnum } from 'dnum'
+import type { KlineData, Processor, RequiredProperties } from '~/types'
 import { divide, from, subtract } from 'dnum'
-import { createSignal } from '~/base'
-import { mapPick } from '~/helpers/array'
+import { createGenerator } from '~/base'
 import { ema } from './exponentialMovingAverage'
 import { msum } from './movingSum'
 
@@ -23,6 +23,20 @@ export const defaultMassIndexOptions: MassIndexOptions = {
   miPeriod: 25,
 }
 
+function createMiProcessor({ emaPeriod, miPeriod }: Required<MassIndexOptions>): Processor<RequiredProperties<KlineData, 'h' | 'l'>, Dnum> {
+  const ema1Proc = ema.createProcessor({ period: emaPeriod })
+  const ema2Proc = ema.createProcessor({ period: emaPeriod })
+  const msumProc = msum.createProcessor({ period: miPeriod })
+
+  return (bar) => {
+    const range = subtract(from(bar.h, 18), from(bar.l, 18))
+    const e1 = ema1Proc(range)
+    const e2 = ema2Proc(e1)
+    const ratio = divide(e1, e2, 18)
+    return msumProc(ratio)
+  }
+}
+
 /**
  * Mass Index (MI)
  *
@@ -37,33 +51,12 @@ export const defaultMassIndexOptions: MassIndexOptions = {
  *   Ratio = EMA1 / EMA2
  *   MI = MovingSum(Ratio, miPeriod)
  *
- * @param data - Array of OHLC candle data (requires high and low)
+ * @param source - Iterable of OHLC candle data (requires high and low)
  * @param options - Configuration options
  * @param options.emaPeriod - The EMA smoothing period (default: 9)
  * @param options.miPeriod - The moving sum period (default: 25)
- * @returns Array of Mass Index values
+ * @returns Generator yielding Mass Index values
  */
-export const mi = createSignal(
-  (data: RequiredProperties<KlineData, 'h' | 'l'>[], { emaPeriod, miPeriod }: Required<MassIndexOptions>) => {
-    const highs = mapPick(data, 'h', v => from(v, 18))
-    const lows = mapPick(data, 'l', v => from(v, 18))
-
-    // Range = High - Low
-    const ranges = data.map((_, i) => subtract(highs[i], lows[i]))
-
-    // EMA1 = EMA(Range, emaPeriod)
-    const ema1 = ema(ranges, { period: emaPeriod })
-
-    // EMA2 = EMA(EMA1, emaPeriod)
-    const ema2 = ema(ema1, { period: emaPeriod })
-
-    // Ratio = EMA1 / EMA2
-    const ratios = ema1.map((_, i) => divide(ema1[i], ema2[i], 18))
-
-    // MI = MovingSum(Ratio, miPeriod)
-    return msum(ratios, { period: miPeriod })
-  },
-  defaultMassIndexOptions,
-)
+export const mi = createGenerator(createMiProcessor, defaultMassIndexOptions)
 
 export { mi as massIndex }

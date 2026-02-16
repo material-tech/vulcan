@@ -1,6 +1,6 @@
-import type { Numberish } from 'dnum'
+import type { Dnum, Numberish } from 'dnum'
+import { defu } from 'defu'
 import { add, div, eq, from, gt, mul, sub } from 'dnum'
-import { createSignal } from '~/base'
 import { rma } from '~/trend/rollingMovingAverage'
 
 export interface RSIOptions {
@@ -20,64 +20,45 @@ export const defaultRSIOptions: RSIOptions = {
  *
  * RSI = 100 - (100 / (1 + RS))
  */
-export const rsi = createSignal(
-  (closings: Numberish[], { period }) => {
-    // Convert input data to Dnum type
-    const prices = closings.map(item => from(item))
+export function* rsi(
+  source: Iterable<Numberish>,
+  options?: Partial<RSIOptions>,
+): Generator<Dnum> {
+  const { period } = defu(options, defaultRSIOptions) as Required<RSIOptions>
+  const gainProc = rma.createProcessor({ period })
+  const lossProc = rma.createProcessor({ period })
 
-    // Initialize arrays for gains and losses
-    const gains = Array.from({ length: prices.length }, () => from(0))
-    const losses = Array.from({ length: prices.length }, () => from(0))
+  let prev: Dnum | undefined
 
-    // Calculate price changes and separate gains and losses
-    for (let i = 1; i < prices.length; i++) {
-      const change = sub(prices[i], prices[i - 1])
+  for (const value of source) {
+    const price = from(value)
 
-      if (gt(change, 0)) {
-        // Gain
-        gains[i] = change
-      }
-      else {
-        // Loss, take absolute value
-        losses[i] = mul(change, -1, 18)
-      }
+    if (prev === undefined) {
+      prev = price
+      // Feed zero to both RMA processors for the first element
+      gainProc(from(0))
+      lossProc(from(0))
+      yield from(0)
+      continue
     }
 
-    // Calculate average gains and losses using rma
-    const avgGains = rma(gains, { period })
-    const avgLosses = rma(losses, { period })
+    const change = sub(price, prev)
+    prev = price
 
-    // Calculate RSI
-    const result = Array.from({ length: prices.length }, () => from(0))
+    const gain = gt(change, 0) ? change : from(0)
+    const loss = gt(change, 0) ? from(0) : mul(change, -1, 18)
 
-    for (let i = 0; i < prices.length; i++) {
-      // The first element is always 0 because there is no previous price point to calculate the change
-      if (i === 0) {
-        result[i] = from(0)
-      }
-      // Other elements are processed using the normal RSI calculation method
-      else if (eq(avgLosses[i], 0)) {
-        // If average loss is zero, RSI is 100
-        result[i] = from(100)
-      }
-      else {
-        // Calculate RS = average gain / average loss
-        const rs = div(avgGains[i], avgLosses[i])
-        // RSI = 100 - (100 / (1 + RS))
-        result[i] = sub(
-          100,
-          div(
-            100,
-            add(1, rs),
-            18,
-          ),
-        )
-      }
+    const avgGain = gainProc(gain)
+    const avgLoss = lossProc(loss)
+
+    if (eq(avgLoss, 0)) {
+      yield from(100)
     }
-
-    return result
-  },
-  defaultRSIOptions,
-)
+    else {
+      const rs = div(avgGain, avgLoss)
+      yield sub(100, div(100, add(1, rs), 18))
+    }
+  }
+}
 
 export { rsi as relativeStrengthIndex }

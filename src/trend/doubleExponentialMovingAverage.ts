@@ -1,6 +1,7 @@
-import type { Numberish } from 'dnum'
-import { createSignal } from '~/base'
-import { multiply, subtract } from '~/helpers/operations'
+import type { Dnum, Numberish } from 'dnum'
+import type { Processor } from '~/types'
+import { mul, sub } from 'dnum'
+import { createGenerator } from '~/base'
 import { ema } from './exponentialMovingAverage'
 
 export interface DoubleExponentialMovingAverageOptions {
@@ -11,25 +12,27 @@ export const defaultDoubleExponentialMovingAverageOptions: DoubleExponentialMovi
   period: 12,
 }
 
+function createDemaProcessor({ period }: Required<DoubleExponentialMovingAverageOptions>): Processor<Numberish, Dnum> {
+  const ema1 = ema.createProcessor({ period })
+  const ema2 = ema.createProcessor({ period })
+  return (value: Numberish) => {
+    const e1 = ema1(value)
+    const e2 = ema2(e1)
+    return sub(mul(e1, 2, 18), e2)
+  }
+}
+
 /**
  * Double Exponential Moving Average (DEMA)
  *
  * DEMA reduces lag compared to a traditional EMA by applying the formula:
  * DEMA = 2 * EMA(data, period) - EMA(EMA(data, period), period)
  *
- * @param values - Array of input values
+ * @param source - Iterable of input values
  * @param options - Configuration options
  * @param options.period - The lookback period (default: 12)
- * @returns Array of DEMA values
+ * @returns Generator yielding DEMA values
  */
-export const dema = createSignal(
-  (values: Numberish[], { period }) => {
-    const ema1 = ema(values, { period })
-    const ema2 = ema(ema1, { period })
-
-    return subtract(multiply(ema1, 2, 18), ema2, 18)
-  },
-  defaultDoubleExponentialMovingAverageOptions,
-)
+export const dema = createGenerator(createDemaProcessor, defaultDoubleExponentialMovingAverageOptions)
 
 export { dema as doubleExponentialMovingAverage }

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { collect } from '~/base'
 import { mi } from '~/trend/massIndex'
 
 describe('mass index (MI)', () => {
@@ -19,7 +20,7 @@ describe('mass index (MI)', () => {
   ]
 
   it('should calculate MI with default options', () => {
-    const result = mi(data)
+    const result = collect(mi(data))
 
     // With constant range, EMA1/EMA2 ratio converges to 1
     // Moving sum accumulates ratios up to miPeriod window
@@ -40,7 +41,7 @@ describe('mass index (MI)', () => {
   })
 
   it('should calculate MI with custom options', () => {
-    const result = mi(data, { emaPeriod: 3, miPeriod: 5 })
+    const result = collect(mi(data, { emaPeriod: 3, miPeriod: 5 }))
 
     // With miPeriod=5, MI caps at 5 once window is full
     expect(result).toMatchNumberArray([
@@ -72,7 +73,7 @@ describe('mass index (MI)', () => {
       { h: 25.0, l: 24.5 }, // range 0.5
     ]
 
-    const result = mi(varyingData, { emaPeriod: 3, miPeriod: 4 })
+    const result = collect(mi(varyingData, { emaPeriod: 3, miPeriod: 4 }))
 
     expect(result.length).toBe(8)
     // MI accumulates up to miPeriod window then remains bounded
@@ -80,7 +81,7 @@ describe('mass index (MI)', () => {
   })
 
   it('should return empty array for empty input', () => {
-    const result = mi([])
+    const result = collect(mi([]))
 
     expect(result).toEqual([])
   })

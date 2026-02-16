@@ -1,7 +1,7 @@
-import type { Numberish } from 'dnum'
-import { from } from 'dnum'
-import { createSignal } from '~/base'
-import { min, movingAction } from '~/helpers/operations'
+import type { Dnum, Numberish } from 'dnum'
+import type { Processor } from '~/types'
+import { from, lt } from 'dnum'
+import { createGenerator } from '~/base'
 
 export interface MovingMinOptions {
   /**
@@ -17,17 +17,16 @@ export const defaultMovingMinOptions: MovingMinOptions = {
 /**
  * Moving Minimum (MovingMin)
  */
-export const mmin = createSignal(
-  (values: Numberish[], { period }) => {
-    const dnumValues = values.map(item => from(item))
+function createMminProcessor({ period }: Required<MovingMinOptions>): Processor<Numberish, Dnum> {
+  const buffer: Dnum[] = []
+  return (value: Numberish) => {
+    buffer.push(from(value))
+    if (buffer.length > period)
+      buffer.shift()
+    return buffer.reduce((min, cur) => lt(min, cur) ? min : cur)
+  }
+}
 
-    return movingAction(
-      dnumValues,
-      window => min(window),
-      period,
-    )
-  },
-  defaultMovingMinOptions,
-)
+export const mmin = createGenerator(createMminProcessor, defaultMovingMinOptions)
 
 export { mmin as movingMin }

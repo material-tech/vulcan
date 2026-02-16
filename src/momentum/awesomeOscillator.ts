@@ -1,8 +1,7 @@
+import type { Dnum } from 'dnum'
 import type { KlineData, RequiredProperties } from '~/types'
-import { from } from 'dnum'
-import { createSignal } from '~/base'
-import { mapPick } from '~/helpers/array'
-import { add, divide, subtract } from '~/helpers/operations'
+import { defu } from 'defu'
+import { add, div, from, sub } from 'dnum'
 import { sma } from '~/trend/simpleMovingAverage'
 
 export interface AwesomeOscillatorOptions {
@@ -15,25 +14,26 @@ export const defaultAwesomeOscillatorOptions: AwesomeOscillatorOptions = {
   slowPeriod: 34,
 }
 
-export const ao = createSignal((
-  data: RequiredProperties<KlineData, 'h' | 'l'>[],
-  { fastPeriod, slowPeriod },
-) => {
-  const lows = mapPick(data, 'l', v => from(v))
-  const highs = mapPick(data, 'h', v => from(v))
+/**
+ * Awesome Oscillator (AO)
+ *
+ * AO = SMA(median, fastPeriod) - SMA(median, slowPeriod)
+ * Where median = (high + low) / 2
+ */
+export function* ao(
+  source: Iterable<RequiredProperties<KlineData, 'h' | 'l'>>,
+  options?: Partial<AwesomeOscillatorOptions>,
+): Generator<Dnum> {
+  const { fastPeriod, slowPeriod } = defu(options, defaultAwesomeOscillatorOptions) as Required<AwesomeOscillatorOptions>
+  const fastProc = sma.createProcessor({ period: fastPeriod })
+  const slowProc = sma.createProcessor({ period: slowPeriod })
 
-  const medianPrice = divide(
-    add(
-      highs,
-      lows,
-    ),
-    from(2),
-    18,
-  )
-  const fastMA = sma(medianPrice, { period: fastPeriod })
-  const slowMA = sma(medianPrice, { period: slowPeriod })
-
-  return subtract(fastMA, slowMA, 18)
-}, defaultAwesomeOscillatorOptions)
+  for (const bar of source) {
+    const median = div(add(from(bar.h), from(bar.l)), 2, 18)
+    const fast = fastProc(median)
+    const slow = slowProc(median)
+    yield sub(fast, slow)
+  }
+}
 
 export { ao as awesomeOscillator }

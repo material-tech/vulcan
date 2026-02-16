@@ -1,8 +1,7 @@
-import type { KlineData, RequiredProperties } from '~/types'
-import { add, from } from 'dnum'
-import { createSignal } from '~/base'
-import { mapPick } from '~/helpers/array'
-import { divide, multiply, subtract } from '~/helpers/operations'
+import type { Dnum } from 'dnum'
+import type { KlineData, Processor, RequiredProperties } from '~/types'
+import { add, divide, from, multiply, subtract } from 'dnum'
+import { createGenerator } from '~/base'
 
 /**
  * Accumulation/Distribution Indicator (A/D). Cumulative indicator
@@ -13,33 +12,25 @@ import { divide, multiply, subtract } from '~/helpers/operations'
  * MFV = MFM * Period Volume
  * AD = Previous AD + CMFV
  */
-export const ad = createSignal(
-  (data: RequiredProperties<KlineData, 'h' | 'l' | 'c' | 'v'>[]) => {
-    const highs = mapPick(data, 'h', v => from(v))
-    const lows = mapPick(data, 'l', v => from(v))
-    const closings = mapPick(data, 'c', v => from(v))
-    const volumes = mapPick(data, 'v', v => from(v))
+function createAdProcessor(): Processor<RequiredProperties<KlineData, 'h' | 'l' | 'c' | 'v'>, Dnum> {
+  let prevAD: Dnum = from(0)
+  return (bar) => {
+    const h = from(bar.h, 18)
+    const l = from(bar.l, 18)
+    const c = from(bar.c, 18)
+    const v = from(bar.v, 18)
 
-    /** Money Flow Multiplier */
     const mfm = divide(
-      subtract(
-        subtract(closings, lows),
-        subtract(highs, closings),
-      ),
-      subtract(highs, lows),
+      subtract(subtract(c, l), subtract(h, c)),
+      subtract(h, l),
       18,
     )
+    const mfv = multiply(mfm, v)
+    prevAD = add(mfv, prevAD)
+    return prevAD
+  }
+}
 
-    /** Money Flow Volume */
-    const mfv = multiply(mfm, volumes)
-
-    let prevValue = from(0)
-
-    return Array.from({ length: mfv.length }, (_, i) => {
-      const currentValue = i === 0 ? mfv[i] : add(mfv[i], prevValue)
-      return prevValue = currentValue
-    })
-  },
-)
+export const ad = createGenerator(createAdProcessor)
 
 export { ad as accumulationDistribution }

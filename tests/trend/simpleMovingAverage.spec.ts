@@ -1,18 +1,19 @@
 import { describe, expect, it } from 'vitest'
+import { collect } from '~/base'
 import { sma } from '~/trend/simpleMovingAverage'
 
 describe('sma', () => {
   const values = [2, 4, 6, 8, 10]
 
   it('should able to calculate simple moving average', () => {
-    const result = sma(values)
+    const result = collect(sma(values))
     const expected = [2, 3, 5, 7, 9]
 
     expect(result).toMatchNumberArray(expected)
   })
 
   it('should able to calculate simple moving average with option', () => {
-    const result = sma(values, { period: 4 })
+    const result = collect(sma(values, { period: 4 }))
     const expected = [2, 3, 4, 5, 7]
 
     expect(result).toMatchNumberArray(expected)
@@ -31,7 +32,7 @@ describe('sma', () => {
       5,
       4.333333333333333,
     ]
-    const result = sma(values, { period: 2 })
+    const result = collect(sma(values, { period: 2 }))
     const expected = [1, 1.25, 1.42, 2, 3.67, 6.17, 7.5, 7, 5.83, 4.67]
 
     expect(result).toMatchNumberArray(expected)

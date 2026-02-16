@@ -1,7 +1,6 @@
 import type { Dnum, Numberish } from 'dnum'
-import { from } from 'dnum'
-import { createSignal } from '~/base'
-import { subtract } from '~/helpers/operations'
+import { defu } from 'defu'
+import { sub } from 'dnum'
 import { ema } from './exponentialMovingAverage'
 
 export interface MACDOptions {
@@ -16,10 +15,10 @@ export const defaultMACDOptions: MACDOptions = {
   signalPeriod: 9,
 }
 
-export interface MACDResult {
-  macd: Dnum[]
-  signal: Dnum[]
-  histogram: Dnum[]
+export interface MACDPoint {
+  macd: Dnum
+  signal: Dnum
+  histogram: Dnum
 }
 
 /**
@@ -36,36 +35,29 @@ export interface MACDResult {
  * - Signal = EMA(signalPeriod, MACD)
  * - Histogram = MACD - Signal
  *
- * @param data - Array of price values
+ * @param source - Iterable of price values
  * @param options - Configuration options
  * @param options.fastPeriod - Period for the fast EMA (default: 12)
  * @param options.slowPeriod - Period for the slow EMA (default: 26)
  * @param options.signalPeriod - Period for the signal EMA (default: 9)
- * @returns Object containing macd, signal, and histogram arrays
+ * @returns Generator yielding MACDPoint objects
  */
-export const macd = createSignal((
-  data: Numberish[],
-  { fastPeriod, slowPeriod, signalPeriod },
-): MACDResult => {
-  const closes = data.map(v => from(v))
+export function* macd(
+  source: Iterable<Numberish>,
+  options?: Partial<MACDOptions>,
+): Generator<MACDPoint> {
+  const { fastPeriod, slowPeriod, signalPeriod } = defu(options, defaultMACDOptions) as Required<MACDOptions>
+  const fastProc = ema.createProcessor({ period: fastPeriod })
+  const slowProc = ema.createProcessor({ period: slowPeriod })
+  const signalProc = ema.createProcessor({ period: signalPeriod })
 
-  const fastEMA = ema(closes, { period: fastPeriod })
-  const slowEMA = ema(closes, { period: slowPeriod })
-
-  // MACD Line = Fast EMA - Slow EMA
-  const macdValues = subtract(fastEMA, slowEMA, 18)
-
-  // Signal Line = EMA(signalPeriod, MACD)
-  const signal = ema(macdValues, { period: signalPeriod })
-
-  // Histogram = MACD - Signal
-  const histogram = subtract(macdValues, signal, 18)
-
-  return {
-    macd: macdValues,
-    signal,
-    histogram,
+  for (const value of source) {
+    const fast = fastProc(value)
+    const slow = slowProc(value)
+    const m = sub(fast, slow)
+    const sig = signalProc(m)
+    yield { macd: m, signal: sig, histogram: sub(m, sig) }
   }
-}, defaultMACDOptions)
+}
 
 export { macd as movingAverageConvergenceDivergence }

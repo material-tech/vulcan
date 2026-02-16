@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { collect } from '~/base'
 import { bop } from '~/trend/balanceOfPower'
 
 describe('balance of power (BOP)', () => {
@@ -12,7 +13,7 @@ describe('balance of power (BOP)', () => {
       { o: 50, h: 55, l: 45, c: 52 },
     ]
 
-    const result = bop(values)
+    const result = collect(bop(values))
 
     expect(result).toMatchNumberArray([0.2, -0.2, 1.0, -1.0, 0.25, 0.2])
   })
@@ -23,13 +24,13 @@ describe('balance of power (BOP)', () => {
       { o: 10, h: 15, l: 5, c: 12 },
     ]
 
-    const result = bop(values)
+    const result = collect(bop(values))
 
     expect(result).toMatchNumberArray([0, 0.2])
   })
 
   it('should return empty array for empty input', () => {
-    const result = bop([])
+    const result = collect(bop([]))
 
     expect(result).toEqual([])
   })

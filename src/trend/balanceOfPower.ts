@@ -1,24 +1,22 @@
 import type { Dnum } from 'dnum'
-import type { KlineData, RequiredProperties } from '~/types'
+import type { KlineData, Processor, RequiredProperties } from '~/types'
 import { divide, equal, from, subtract } from 'dnum'
-import { createSignal } from '~/base'
-import { mapPick } from '~/helpers/array'
+import { createGenerator } from '~/base'
 
-export const bop = createSignal(
-  (data: RequiredProperties<KlineData, 'o' | 'h' | 'l' | 'c'>[]) => {
-    const opens = mapPick(data, 'o', v => from(v))
-    const highs = mapPick(data, 'h', v => from(v))
-    const lows = mapPick(data, 'l', v => from(v))
-    const closings = mapPick(data, 'c', v => from(v))
+function createBopProcessor(): Processor<RequiredProperties<KlineData, 'o' | 'h' | 'l' | 'c'>, Dnum> {
+  return (bar) => {
+    const o = from(bar.o)
+    const h = from(bar.h)
+    const l = from(bar.l)
+    const c = from(bar.c)
+    const range = subtract(h, l)
+    if (equal(range, 0)) {
+      return from(0, 18)
+    }
+    return divide(subtract(c, o), range, 18)
+  }
+}
 
-    return data.map((_, i): Dnum => {
-      const range = subtract(highs[i], lows[i])
-      if (equal(range, 0)) {
-        return from(0, 18)
-      }
-      return divide(subtract(closings[i], opens[i]), range, 18)
-    })
-  },
-)
+export const bop = createGenerator(createBopProcessor)
 
 export { bop as balanceOfPower }

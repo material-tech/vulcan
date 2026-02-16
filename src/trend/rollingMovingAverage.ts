@@ -1,6 +1,7 @@
-import type { Numberish } from 'dnum'
+import type { Dnum, Numberish } from 'dnum'
+import type { Processor } from '~/types'
 import { add, div, from, mul } from 'dnum'
-import { createSignal } from '~/base'
+import { createGenerator } from '~/base'
 
 export interface RMAOptions {
   /**
@@ -20,30 +21,26 @@ export const defaultRMAOptions: RMAOptions = {
  *
  * R[p] and after is R[i] = ((R[i-1]*(p-1)) + v[i]) / p
  */
-export const rma = createSignal(
-  (values: Numberish[], { period }) => {
-    const result = Array.from({ length: values.length }, () => from(0))
+function createRmaProcessor({ period }: Required<RMAOptions>): Processor<Numberish, Dnum> {
+  let count = 0
+  let sum: Dnum = from(0)
+  let prev: Dnum = from(0)
 
-    // Use SMA for the first period
-    let sum = from(0)
-    for (let i = 0; i < values.length; i++) {
-      if (i < period) {
-        // Use SMA for the first 'period' values
-        sum = add(sum, values[i])
-        result[i] = div(sum, i + 1, 18)
-      }
-      else {
-        // Use RMA formula: RMA(i) = (RMA(i-1) * (period-1) + value(i)) / period
-        result[i] = div(
-          add(mul(result[i - 1], from(period - 1), 18), values[i]),
-          from(period),
-        )
-      }
+  return (value: Numberish) => {
+    if (count < period) {
+      sum = add(sum, value)
+      count++
+      prev = div(sum, count, 18)
+      return prev
     }
+    prev = div(
+      add(mul(prev, from(period - 1), 18), value),
+      from(period),
+    )
+    return prev
+  }
+}
 
-    return result
-  },
-  defaultRMAOptions,
-)
+export const rma = createGenerator(createRmaProcessor, defaultRMAOptions)
 
 export { rma as rollingMovingAverage }

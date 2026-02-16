@@ -1,11 +1,11 @@
 import type { Dnum } from 'dnum'
 import type { KlineData, RequiredProperties } from '~/types'
-import { from } from 'dnum'
-import { createSignal } from '~/base'
-import { mapPick } from '~/helpers/array'
-import { divide, multiply, subtract } from '~/helpers/operations'
-import { mmin, sma } from '~/trend'
+import { defu } from 'defu'
+import { div, from, mul, sub } from 'dnum'
+import { collect } from '~/base'
 import { mmax } from '~/trend/movingMax'
+import { mmin } from '~/trend/movingMin'
+import { sma } from '~/trend/simpleMovingAverage'
 
 export interface StochasticOscillatorOptions {
   /** The %k period */
@@ -22,40 +22,52 @@ export const defaultStochasticOscillatorOptions: StochasticOscillatorOptions = {
   dPeriod: 3,
 }
 
-export interface StochResult {
-  k: Dnum[]
-  d: Dnum[]
+export interface StochPoint {
+  k: Dnum
+  d: Dnum
 }
 
-export const stoch = createSignal((data: RequiredProperties<KlineData, 'h' | 'l' | 'c'>[], { kPeriod, slowingPeriod, dPeriod }) => {
-  const highs = mapPick(data, 'h', v => from(v))
-  const lows = mapPick(data, 'l', v => from(v))
-  const closings = mapPick(data, 'c', v => from(v))
+/**
+ * Stochastic Oscillator
+ *
+ * %K = ((Close - Lowest Low) / (Highest High - Lowest Low)) * 100
+ * %D = SMA(%K, dPeriod)
+ */
+export function* stoch(
+  source: Iterable<RequiredProperties<KlineData, 'h' | 'l' | 'c'>>,
+  options?: Partial<StochasticOscillatorOptions>,
+): Generator<StochPoint> {
+  const { kPeriod, slowingPeriod, dPeriod } = defu(options, defaultStochasticOscillatorOptions) as Required<StochasticOscillatorOptions>
 
-  const highestHigh = mmax(highs, { period: kPeriod })
-  const lowestLow = mmin(lows, { period: kPeriod })
+  const mmaxProc = mmax.createProcessor({ period: kPeriod })
+  const mminProc = mmin.createProcessor({ period: kPeriod })
 
-  const rawK = multiply(
-    divide(
-      subtract(closings, lowestLow, 18),
-      subtract(highestHigh, lowestLow, 18),
-      18,
-    ),
-    100,
-    18,
-  )
+  // First pass: compute raw K values
+  const rawKValues: Dnum[] = []
+  const data = Array.isArray(source) ? source : [...source]
 
-  // 应用平滑度处理
-  const kValue = slowingPeriod > 1
-    ? sma(rawK, { period: slowingPeriod })
-    : rawK
+  for (const bar of data) {
+    const h = from(bar.h)
+    const l = from(bar.l)
+    const c = from(bar.c)
 
-  const dValue = sma(kValue, { period: dPeriod })
+    const highestHigh = mmaxProc(h)
+    const lowestLow = mminProc(l)
 
-  return {
-    k: kValue,
-    d: dValue,
-  } as StochResult
-}, defaultStochasticOscillatorOptions)
+    const rawK = mul(div(sub(c, lowestLow, 18), sub(highestHigh, lowestLow, 18), 18), 100, 18)
+    rawKValues.push(rawK)
+  }
+
+  // Apply slowing (smoothing)
+  const kValues = slowingPeriod > 1
+    ? collect(sma(rawKValues, { period: slowingPeriod }))
+    : rawKValues
+
+  // Apply %D smoothing
+  const dProc = sma.createProcessor({ period: dPeriod })
+  for (const kVal of kValues) {
+    yield { k: kVal, d: dProc(kVal) }
+  }
+}
 
 export { stoch as stochasticOscillator }

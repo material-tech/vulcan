@@ -1,5 +1,6 @@
 /* eslint-disable antfu/consistent-list-newline */
 import { describe, expect, it } from 'vitest'
+import { collect } from '~/base'
 import { ppo } from '~/momentum/percentagePriceOscillator'
 
 describe('percentage price oscillator (PPO)', () => {
@@ -19,7 +20,7 @@ describe('percentage price oscillator (PPO)', () => {
   ]
 
   it('should able get PPO', () => {
-    const result = ppo(values)
+    const result = collect(ppo(values))
 
     const expectedPPO = [
       0, -0.02, 0.24, 0.31, 0.4, 0.79, 1.33, 1.93,
@@ -66,17 +67,17 @@ describe('percentage price oscillator (PPO)', () => {
       0.45, 0.6,
     ]
 
-    expect(result.ppo).toMatchNumberArray(expectedPPO, { digits: 2 })
-    expect(result.signal).toMatchNumberArray(expectedSignal)
-    expect(result.histogram).toMatchNumberArray(expectedHistogram)
+    expect(result.map(p => p.ppo)).toMatchNumberArray(expectedPPO, { digits: 2 })
+    expect(result.map(p => p.signal)).toMatchNumberArray(expectedSignal)
+    expect(result.map(p => p.histogram)).toMatchNumberArray(expectedHistogram)
   })
 
   it('should able get PPO with options', () => {
-    const result = ppo(values, {
+    const result = collect(ppo(values, {
       fastPeriod: 6,
       slowPeriod: 13,
       signalPeriod: 7,
-    })
+    }))
 
     const expectedPPO = [
       0, -0.03, 0.43, 0.48, 0.55, 1.14, 1.89, 2.61,
@@ -121,8 +122,8 @@ describe('percentage price oscillator (PPO)', () => {
       0.34, 0.52,
     ]
 
-    expect(result.ppo).toMatchNumberArray(expectedPPO)
-    expect(result.signal).toMatchNumberArray(expectedSignal)
-    expect(result.histogram).toMatchNumberArray(expectedHistogram)
+    expect(result.map(p => p.ppo)).toMatchNumberArray(expectedPPO)
+    expect(result.map(p => p.signal)).toMatchNumberArray(expectedSignal)
+    expect(result.map(p => p.histogram)).toMatchNumberArray(expectedHistogram)
   })
 })

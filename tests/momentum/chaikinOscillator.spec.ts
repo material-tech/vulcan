@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { collect } from '~/base'
 import { cmo } from '~/momentum/chaikinOscillator'
 
 describe('chaikin money flow oscillator (CMO)', () => {
@@ -14,7 +15,7 @@ describe('chaikin money flow oscillator (CMO)', () => {
   ]
 
   it('should able to calculate CMO', () => {
-    const result = cmo(values)
+    const result = collect(cmo(values))
 
     const expected = [0, -7.07, -19.93, -37.52, -58.98, -83.61, -110.83, -140.17]
 
@@ -22,10 +23,10 @@ describe('chaikin money flow oscillator (CMO)', () => {
   })
 
   it('should able to calculate CMO with options', () => {
-    const result = cmo(values, {
+    const result = collect(cmo(values, {
       fastPeriod: 2,
       slowPeriod: 5,
-    })
+    }))
 
     const expected = [0, -7.41, -18.52, -31.69, -46.09, -61.27, -76.95, -92.97]
 

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { collect } from '~/base'
 import { ao } from '~/momentum/awesomeOscillator'
 
 describe('awesomeOscillator (AO)', () => {
@@ -16,14 +17,14 @@ describe('awesomeOscillator (AO)', () => {
   it('should correctly calculate AO values', () => {
     const expected = [0, 0, 0, 0, 0, 0.5, 1, 1.5]
 
-    const result = ao(data)
+    const result = collect(ao(data))
     expect(result).toMatchNumberArray(expected)
   })
 
   it('should correctly calculate AO values with options', () => {
     const expected = [0, 0, 0.5, 1, 1.5, 2, 2.5, 3]
 
-    const result = ao(data, { fastPeriod: 2, slowPeriod: 20 })
+    const result = collect(ao(data, { fastPeriod: 2, slowPeriod: 20 }))
     expect(result).toMatchNumberArray(expected)
   })
 })

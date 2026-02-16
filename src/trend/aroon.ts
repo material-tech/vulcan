@@ -1,8 +1,7 @@
 import type { Dnum } from 'dnum'
 import type { KlineData, RequiredProperties } from '~/types'
+import { defu } from 'defu'
 import { from, gt, lt } from 'dnum'
-import { createSignal } from '~/base'
-import { mapPick } from '~/helpers/array'
 
 export interface AroonOptions {
   period: number
@@ -12,41 +11,58 @@ export const defaultAroonOptions: AroonOptions = {
   period: 25,
 }
 
-export interface AroonResult {
-  up: Dnum[]
-  down: Dnum[]
-  oscillator: Dnum[]
+export interface AroonPoint {
+  up: Dnum
+  down: Dnum
+  oscillator: Dnum
 }
 
-export const aroon = createSignal((data: RequiredProperties<KlineData, 'h' | 'l'>[], { period }) => {
-  const highs = mapPick(data, 'h', v => from(v))
-  const lows = mapPick(data, 'l', v => from(v))
+/**
+ * Aroon Indicator
+ *
+ * Aroon Up = ((period - days since highest high) / period) * 100
+ * Aroon Down = ((period - days since lowest low) / period) * 100
+ * Oscillator = Aroon Up - Aroon Down
+ */
+export function* aroon(
+  source: Iterable<RequiredProperties<KlineData, 'h' | 'l'>>,
+  options?: Partial<AroonOptions>,
+): Generator<AroonPoint> {
+  const { period } = defu(options, defaultAroonOptions) as Required<AroonOptions>
 
-  const up: Dnum[] = []
-  const down: Dnum[] = []
-  const oscillator: Dnum[] = []
+  const highBuffer: Dnum[] = []
+  const lowBuffer: Dnum[] = []
 
-  for (let i = 0; i < data.length; i++) {
-    const start = Math.max(0, i - period)
+  for (const bar of source) {
+    const h = from(bar.h)
+    const l = from(bar.l)
 
-    let highestIdx = start
-    let lowestIdx = start
+    highBuffer.push(h)
+    lowBuffer.push(l)
+    if (highBuffer.length > period + 1)
+      highBuffer.shift()
+    if (lowBuffer.length > period + 1)
+      lowBuffer.shift()
 
-    for (let j = start + 1; j <= i; j++) {
-      // Prefer the most recent index when values are equal
-      if (!gt(highs[highestIdx], highs[j]))
+    let highestIdx = 0
+    let lowestIdx = 0
+    for (let j = 1; j < highBuffer.length; j++) {
+      if (!gt(highBuffer[highestIdx], highBuffer[j]))
         highestIdx = j
-      if (!lt(lows[lowestIdx], lows[j]))
+      if (!lt(lowBuffer[lowestIdx], lowBuffer[j]))
         lowestIdx = j
     }
 
-    const aroonUpValue = ((period - (i - highestIdx)) * 100) / period
-    const aroonDownValue = ((period - (i - lowestIdx)) * 100) / period
+    const daysSinceHigh = highBuffer.length - 1 - highestIdx
+    const daysSinceLow = lowBuffer.length - 1 - lowestIdx
 
-    up.push(from(aroonUpValue))
-    down.push(from(aroonDownValue))
-    oscillator.push(from(aroonUpValue - aroonDownValue))
+    const aroonUpValue = ((period - daysSinceHigh) * 100) / period
+    const aroonDownValue = ((period - daysSinceLow) * 100) / period
+
+    yield {
+      up: from(aroonUpValue),
+      down: from(aroonDownValue),
+      oscillator: from(aroonUpValue - aroonDownValue),
+    }
   }
-
-  return { up, down, oscillator } as AroonResult
-}, defaultAroonOptions)
+}
