@@ -58,6 +58,49 @@ describe('createGenerator', () => {
     expect(p1(2)).toBe(3)
     expect(p2(10)).toBe(10)
   })
+
+  it('should apply options override in create()', () => {
+    const gen = createGenerator(
+      (opts: Required<{ multiplier: number }>) => (v: number) => v * opts.multiplier,
+      { multiplier: 2 },
+    )
+
+    const p = gen.create({ multiplier: 5 })
+    expect(p(3)).toBe(15)
+  })
+
+  it('should return empty object when no defaultOptions provided', () => {
+    const gen = createGenerator(
+      () => (v: number) => v,
+    )
+
+    expect(gen.defaultOptions).toEqual({})
+  })
+
+  it('should return a shallow copy from defaultOptions getter', () => {
+    const gen = createGenerator(
+      () => (v: number) => v,
+      { period: 14 },
+    )
+
+    const opts = gen.defaultOptions
+    opts.period = 999
+
+    expect(gen.defaultOptions).toEqual({ period: 14 })
+  })
+
+  it('should work with for...of iteration', () => {
+    const gen = createGenerator(
+      () => (v: number) => v + 1,
+    )
+
+    const result: number[] = []
+    for (const v of gen([10, 20])) {
+      result.push(v)
+    }
+
+    expect(result).toEqual([11, 21])
+  })
 })
 
 describe('collect', () => {
@@ -68,5 +111,17 @@ describe('collect', () => {
       yield 3
     }
     expect(collect(gen())).toEqual([1, 2, 3])
+  })
+
+  it('should collect from an array', () => {
+    expect(collect([4, 5, 6])).toEqual([4, 5, 6])
+  })
+
+  it('should collect from a Set', () => {
+    expect(collect(new Set([1, 2, 3]))).toEqual([1, 2, 3])
+  })
+
+  it('should return empty array for empty iterable', () => {
+    expect(collect([])).toEqual([])
   })
 })

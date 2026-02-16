@@ -10,7 +10,7 @@ export function createGenerator<Input, Output, Options extends Record<string, an
   processorFactory: (options: Required<Options>) => Processor<Input, Output>,
   defaultOptions?: Options,
 ): IndicatorGenerator<Input, Output, Options> {
-  function* generator(source: Iterable<Input>, options?: Partial<Options>): Generator<Output> {
+  function* generator(source: Iterable<Input>, options?: Partial<Options>): Generator<Output, void, Input | undefined> {
     const opt = defu(options, defaultOptions) as Required<Options>
     const process = processorFactory(opt)
     for (const value of source) {
