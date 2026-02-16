@@ -1,9 +1,9 @@
 import type { Dnum } from 'dnum'
-import type { KlineData, RequiredProperties } from '~/types'
+import type { KlineData, Processor, RequiredProperties } from '~/types'
 import { add, div, from } from 'dnum'
-import { createBatchGenerator } from '~/base'
-import { assert } from '~/helpers/assert'
-import { max, min } from '~/helpers/operations'
+import { createGenerator } from '~/base'
+import { mmax } from '~/trend/movingMax'
+import { mmin } from '~/trend/movingMin'
 
 export interface IchimokuCloudOptions {
   /** Conversion line period */
@@ -12,15 +12,12 @@ export interface IchimokuCloudOptions {
   basePeriod: number
   /** Leading span B period */
   leadingBPeriod: number
-  /** Displacement period */
-  displacement: number
 }
 
 export const defaultIchimokuCloudOptions: IchimokuCloudOptions = {
   conversionPeriod: 9,
   basePeriod: 26,
   leadingBPeriod: 52,
-  displacement: 26,
 }
 
 export interface IchimokuCloudPoint {
@@ -32,64 +29,37 @@ export interface IchimokuCloudPoint {
 }
 
 /**
- * Ichimoku Cloud
+ * Ichimoku Cloud (Ichimoku Kinko Hyo)
  *
- * Note: Since the lagging span requires "future" data, this indicator
- * collects the entire input first before yielding results.
+ * Computes raw values for each component. Displacement (shifting
+ * Leading Spans forward and Lagging Span backward on the chart)
+ * is a presentation concern left to the consumer.
+ *
+ * - Conversion (Tenkan-sen): (highest high + lowest low) / 2 over conversionPeriod
+ * - Base (Kijun-sen): (highest high + lowest low) / 2 over basePeriod
+ * - Leading Span A (Senkou A): (conversion + base) / 2
+ * - Leading Span B (Senkou B): (highest high + lowest low) / 2 over leadingBPeriod
+ * - Lagging (Chikou): current close price
  */
-function* ichimokuCloudGenerator(
-  source: Iterable<RequiredProperties<KlineData, 'h' | 'l' | 'c' | 'v'>>,
-  { conversionPeriod, basePeriod, leadingBPeriod, displacement }: Required<IchimokuCloudOptions>,
-): Generator<IchimokuCloudPoint> {
-  const data = Array.isArray(source) ? source : [...source]
+function createIchimokuProcessor({ conversionPeriod, basePeriod, leadingBPeriod }: Required<IchimokuCloudOptions>): Processor<RequiredProperties<KlineData, 'h' | 'l' | 'c'>, IchimokuCloudPoint> {
+  const convHighProc = mmax.create({ period: conversionPeriod })
+  const convLowProc = mmin.create({ period: conversionPeriod })
+  const baseHighProc = mmax.create({ period: basePeriod })
+  const baseLowProc = mmin.create({ period: basePeriod })
+  const leadBHighProc = mmax.create({ period: leadingBPeriod })
+  const leadBLowProc = mmin.create({ period: leadingBPeriod })
 
-  assert(
-    data.length > Math.max(conversionPeriod, basePeriod, leadingBPeriod),
-    'data length must be greater than the maximum of conversionPeriod, basePeriod, leadingBPeriod',
-  )
+  return (bar) => {
+    const h = from(bar.h)
+    const l = from(bar.l)
 
-  const highs = data.map(d => from(d.h))
-  const lows = data.map(d => from(d.l))
-  const closings = data.map(d => from(d.c))
+    const conversion = div(add(convHighProc(h), convLowProc(l)), 2, 18)
+    const base = div(add(baseHighProc(h), baseLowProc(l)), 2, 18)
+    const leadingA = div(add(conversion, base), 2, 18)
+    const leadingB = div(add(leadBHighProc(h), leadBLowProc(l)), 2, 18)
 
-  const createMovingAverage = (period: number) => {
-    return Array.from({ length: highs.length }, (_, cur) => {
-      const start = cur - period + 1
-      if (start < 0) {
-        return from(0)
-      }
-      const highest = max(highs, { period, start })
-      const lowest = min(lows, { period, start })
-      return div(add(highest, lowest), 2, 18)
-    })
-  }
-
-  const conversion = createMovingAverage(conversionPeriod)
-  const base = createMovingAverage(basePeriod)
-  const leadingBBase = createMovingAverage(leadingBPeriod)
-
-  for (let i = 0; i < data.length; i++) {
-    const displacedIndex = i - displacement
-    const leadingA = displacedIndex < 0
-      ? from(0)
-      : div(add(conversion[i], base[i]), 2, 18)
-    const leadingB = displacedIndex < 0
-      ? from(0)
-      : leadingBBase[i]
-
-    const laggedIndex = i + displacement
-    const lagging = laggedIndex >= closings.length
-      ? from(0)
-      : closings[i]
-
-    yield {
-      conversion: conversion[i],
-      base: base[i],
-      leadingA,
-      leadingB,
-      lagging,
-    }
+    return { conversion, base, leadingA, leadingB, lagging: from(bar.c) }
   }
 }
 
-export const ichimokuCloud = createBatchGenerator(ichimokuCloudGenerator, defaultIchimokuCloudOptions)
+export const ichimokuCloud = createGenerator(createIchimokuProcessor, defaultIchimokuCloudOptions)

@@ -1,4 +1,4 @@
-import type { BatchIndicatorGenerator, IndicatorGenerator, Processor } from './types'
+import type { IndicatorGenerator, Processor } from './types'
 import { defu } from 'defu'
 
 /**
@@ -30,30 +30,6 @@ export function createGenerator<Input, Output, Options extends Record<string, an
   })
 
   return generator as IndicatorGenerator<Input, Output, Options>
-}
-
-/**
- * Create a batch generator-based indicator from a generator function.
- *
- * Unlike `createGenerator`, this does not provide a `.create()` method,
- * because batch indicators need the entire input before producing output.
- */
-export function createBatchGenerator<Input, Output, Options extends Record<string, any>>(
-  generatorFn: (source: Iterable<Input>, options: Required<Options>) => Generator<Output>,
-  defaultOptions?: Options,
-): BatchIndicatorGenerator<Input, Output, Options> {
-  function* wrapper(source: Iterable<Input>, options?: Partial<Options>): Generator<Output, void, Input | undefined> {
-    const opt = defu(options, defaultOptions) as Required<Options>
-    yield* generatorFn(source, opt)
-  }
-
-  Object.defineProperty(wrapper, 'defaultOptions', {
-    get() {
-      return defu(defaultOptions)
-    },
-  })
-
-  return wrapper as BatchIndicatorGenerator<Input, Output, Options>
 }
 
 /**

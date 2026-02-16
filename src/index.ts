@@ -1,4 +1,4 @@
-export { collect, createBatchGenerator, createGenerator } from './base'
+export { collect, createGenerator } from './base'
 export * from './momentum'
 export * from './trend'
 export * from './types'
