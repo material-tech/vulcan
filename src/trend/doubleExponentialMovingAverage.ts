@@ -13,8 +13,8 @@ export const defaultDoubleExponentialMovingAverageOptions: DoubleExponentialMovi
 }
 
 function createDemaProcessor({ period }: Required<DoubleExponentialMovingAverageOptions>): Processor<Numberish, Dnum> {
-  const ema1 = ema.createProcessor({ period })
-  const ema2 = ema.createProcessor({ period })
+  const ema1 = ema.create({ period })
+  const ema2 = ema.create({ period })
   return (value: Numberish) => {
     const e1 = ema1(value)
     const e2 = ema2(e1)

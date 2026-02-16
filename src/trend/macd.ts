@@ -47,9 +47,9 @@ export function* macd(
   options?: Partial<MACDOptions>,
 ): Generator<MACDPoint> {
   const { fastPeriod, slowPeriod, signalPeriod } = defu(options, defaultMACDOptions) as Required<MACDOptions>
-  const fastProc = ema.createProcessor({ period: fastPeriod })
-  const slowProc = ema.createProcessor({ period: slowPeriod })
-  const signalProc = ema.createProcessor({ period: signalPeriod })
+  const fastProc = ema.create({ period: fastPeriod })
+  const slowProc = ema.create({ period: slowPeriod })
+  const signalProc = ema.create({ period: signalPeriod })
 
   for (const value of source) {
     const fast = fastProc(value)

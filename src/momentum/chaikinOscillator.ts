@@ -33,8 +33,8 @@ export function* cmo(
 
   const adValues = collect(ad(source))
 
-  const fastProc = ema.createProcessor({ period: fastPeriod })
-  const slowProc = ema.createProcessor({ period: slowPeriod })
+  const fastProc = ema.create({ period: fastPeriod })
+  const slowProc = ema.create({ period: slowPeriod })
 
   for (const adVal of adValues) {
     yield sub(fastProc(adVal), slowProc(adVal))

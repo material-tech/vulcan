@@ -24,8 +24,8 @@ function createTrimaProcessor({ period }: Required<TriangularMovingAverageOption
     n2 = n1
   }
 
-  const sma1 = sma.createProcessor({ period: n2 })
-  const sma2 = sma.createProcessor({ period: n1 })
+  const sma1 = sma.create({ period: n2 })
+  const sma2 = sma.create({ period: n1 })
 
   return (value: Numberish) => {
     const s1 = sma1(value)

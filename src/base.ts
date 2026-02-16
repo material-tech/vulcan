@@ -1,4 +1,4 @@
-import type { Processor } from './types'
+import type { IndicatorGenerator, Processor } from './types'
 import { defu } from 'defu'
 
 /**
@@ -9,7 +9,7 @@ import { defu } from 'defu'
 export function createGenerator<Input, Output, Options extends Record<string, any>>(
   processorFactory: (options: Required<Options>) => Processor<Input, Output>,
   defaultOptions?: Options,
-) {
+): IndicatorGenerator<Input, Output, Options> {
   function* generator(source: Iterable<Input>, options?: Partial<Options>): Generator<Output> {
     const opt = defu(options, defaultOptions) as Required<Options>
     const process = processorFactory(opt)
@@ -18,7 +18,7 @@ export function createGenerator<Input, Output, Options extends Record<string, an
     }
   }
 
-  generator.createProcessor = (options?: Partial<Options>): Processor<Input, Output> => {
+  generator.create = (options?: Partial<Options>): Processor<Input, Output> => {
     const opt = defu(options, defaultOptions) as Required<Options>
     return processorFactory(opt)
   }
@@ -29,7 +29,7 @@ export function createGenerator<Input, Output, Options extends Record<string, an
     },
   })
 
-  return generator
+  return generator as IndicatorGenerator<Input, Output, Options>
 }
 
 /**

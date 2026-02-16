@@ -25,8 +25,8 @@ export function* rsi(
   options?: Partial<RSIOptions>,
 ): Generator<Dnum> {
   const { period } = defu(options, defaultRSIOptions) as Required<RSIOptions>
-  const gainProc = rma.createProcessor({ period })
-  const lossProc = rma.createProcessor({ period })
+  const gainProc = rma.create({ period })
+  const lossProc = rma.create({ period })
 
   let prev: Dnum | undefined
 

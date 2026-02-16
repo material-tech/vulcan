@@ -47,9 +47,9 @@ export function* ppo(
   options?: Partial<PercentagePriceOscillatorOptions>,
 ): Generator<PercentagePriceOscillatorPoint> {
   const { fastPeriod, slowPeriod, signalPeriod } = defu(options, defaultPercentagePriceOscillatorOptions) as Required<PercentagePriceOscillatorOptions>
-  const fastProc = ema.createProcessor({ period: fastPeriod })
-  const slowProc = ema.createProcessor({ period: slowPeriod })
-  const signalProc = ema.createProcessor({ period: signalPeriod })
+  const fastProc = ema.create({ period: fastPeriod })
+  const slowProc = ema.create({ period: slowPeriod })
+  const signalProc = ema.create({ period: signalPeriod })
 
   for (const value of source) {
     const fast = fastProc(from(value))

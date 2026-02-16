@@ -15,8 +15,8 @@ export const defaultAbsolutePriceOscillatorOptions: AbsolutePriceOscillatorOptio
 }
 
 function createApoProcessor({ fastPeriod, slowPeriod }: Required<AbsolutePriceOscillatorOptions>): Processor<Numberish, Dnum> {
-  const fastProc = ema.createProcessor({ period: fastPeriod })
-  const slowProc = ema.createProcessor({ period: slowPeriod })
+  const fastProc = ema.create({ period: fastPeriod })
+  const slowProc = ema.create({ period: slowPeriod })
   return (value: Numberish) => {
     const fast = fastProc(value)
     const slow = slowProc(value)

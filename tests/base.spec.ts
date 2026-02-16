@@ -9,7 +9,7 @@ describe('createGenerator', () => {
     )
 
     expect(gen).instanceOf(Function)
-    expect(gen.createProcessor).instanceOf(Function)
+    expect(gen.create).instanceOf(Function)
     expect(gen.defaultOptions).toEqual({ factor: 1 })
   })
 
@@ -51,8 +51,8 @@ describe('createGenerator', () => {
       },
     )
 
-    const p1 = gen.createProcessor()
-    const p2 = gen.createProcessor()
+    const p1 = gen.create()
+    const p2 = gen.create()
 
     expect(p1(1)).toBe(1)
     expect(p1(2)).toBe(3)

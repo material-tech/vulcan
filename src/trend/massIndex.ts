@@ -24,9 +24,9 @@ export const defaultMassIndexOptions: MassIndexOptions = {
 }
 
 function createMiProcessor({ emaPeriod, miPeriod }: Required<MassIndexOptions>): Processor<RequiredProperties<KlineData, 'h' | 'l'>, Dnum> {
-  const ema1Proc = ema.createProcessor({ period: emaPeriod })
-  const ema2Proc = ema.createProcessor({ period: emaPeriod })
-  const msumProc = msum.createProcessor({ period: miPeriod })
+  const ema1Proc = ema.create({ period: emaPeriod })
+  const ema2Proc = ema.create({ period: emaPeriod })
+  const msumProc = msum.create({ period: miPeriod })
 
   return (bar) => {
     const range = subtract(from(bar.h, 18), from(bar.l, 18))

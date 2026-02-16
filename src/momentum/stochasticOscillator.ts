@@ -39,8 +39,8 @@ export function* stoch(
 ): Generator<StochPoint> {
   const { kPeriod, slowingPeriod, dPeriod } = defu(options, defaultStochasticOscillatorOptions) as Required<StochasticOscillatorOptions>
 
-  const mmaxProc = mmax.createProcessor({ period: kPeriod })
-  const mminProc = mmin.createProcessor({ period: kPeriod })
+  const mmaxProc = mmax.create({ period: kPeriod })
+  const mminProc = mmin.create({ period: kPeriod })
 
   // First pass: compute raw K values
   const rawKValues: Dnum[] = []
@@ -64,7 +64,7 @@ export function* stoch(
     : rawKValues
 
   // Apply %D smoothing
-  const dProc = sma.createProcessor({ period: dPeriod })
+  const dProc = sma.create({ period: dPeriod })
   for (const kVal of kValues) {
     yield { k: kVal, d: dProc(kVal) }
   }

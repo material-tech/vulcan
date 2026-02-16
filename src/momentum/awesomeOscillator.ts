@@ -25,8 +25,8 @@ export function* ao(
   options?: Partial<AwesomeOscillatorOptions>,
 ): Generator<Dnum> {
   const { fastPeriod, slowPeriod } = defu(options, defaultAwesomeOscillatorOptions) as Required<AwesomeOscillatorOptions>
-  const fastProc = sma.createProcessor({ period: fastPeriod })
-  const slowProc = sma.createProcessor({ period: slowPeriod })
+  const fastProc = sma.create({ period: fastPeriod })
+  const slowProc = sma.create({ period: slowPeriod })
 
   for (const bar of source) {
     const median = div(add(from(bar.h), from(bar.l)), 2, 18)
