@@ -7,12 +7,12 @@ import { defu } from 'defu'
  * Returns a generator function with `.createProcessor()` and `.defaultOptions`.
  */
 export function createGenerator<Input, Output, Options extends Record<string, any>>(
-  processorFactory: (options: Required<Options>) => Processor<Input, Output>,
+  factory: (options: Required<Options>) => Processor<Input, Output>,
   defaultOptions?: Options,
 ): IndicatorGenerator<Input, Output, Options> {
   function* generator(source: Iterable<Input>, options?: Partial<Options>): Generator<Output, void, Input | undefined> {
     const opt = defu(options, defaultOptions) as Required<Options>
-    const process = processorFactory(opt)
+    const process = factory(opt)
     for (const value of source) {
       yield process(value)
     }
@@ -20,7 +20,7 @@ export function createGenerator<Input, Output, Options extends Record<string, an
 
   generator.create = (options?: Partial<Options>): Processor<Input, Output> => {
     const opt = defu(options, defaultOptions) as Required<Options>
-    return processorFactory(opt)
+    return factory(opt)
   }
 
   Object.defineProperty(generator, 'defaultOptions', {
