@@ -46,7 +46,7 @@ describe('balance of power (BOP)', () => {
       { o: 50, h: 55, l: 45, c: 52 },
     ]
     const batchResult = mapOperator(toNumber)(bop(values), { digits: 2 })
-    const next = bop.step()
+    const next = bop.next()
     const streamResult = values.map(v => next(v))
     expect(streamResult).toMatchNumberArray(batchResult)
   })

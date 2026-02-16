@@ -133,7 +133,7 @@ describe('moving average convergence divergence (MACD)', () => {
   it('step should produce same results as batch', () => {
     const toNum = mapOperator(toNumber)
     const batchResult = macd(values)
-    const next = macd.step()
+    const next = macd.next()
     const streamResults = values.map(v => next(v))
     expect(streamResults.map(r => r.macd)).toMatchNumberArray(
       toNum(batchResult.macd, { digits: 2 }),

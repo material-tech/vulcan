@@ -21,7 +21,7 @@ describe('accumulation distribution (A/D)', () => {
 
   it('step should produce same results as batch', () => {
     const batchResult = mapOperator(toNumber)(ad(values), { digits: 2 })
-    const next = ad.step()
+    const next = ad.next()
     const streamResult = values.map(v => next(v))
     expect(streamResult).toMatchNumberArray(batchResult)
   })

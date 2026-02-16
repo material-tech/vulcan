@@ -25,9 +25,9 @@ export const defaultChaikinOscillatorOptions: ChaikinOscillatorOptions = {
  * CO = Ema(fastPeriod, AD) - Ema(slowPeriod, AD)
  */
 export const cmo = createSignal(({ fastPeriod, slowPeriod }) => {
-  const adStream = ad.step()
-  const fastEma = ema.step({ period: fastPeriod })
-  const slowEma = ema.step({ period: slowPeriod })
+  const adStream = ad.next()
+  const fastEma = ema.next({ period: fastPeriod })
+  const slowEma = ema.next({ period: slowPeriod })
   return (data: RequiredProperties<KlineData, 'h' | 'l' | 'c' | 'v'>): Dnum => {
     const adValue = adStream(data)
     const fast = fastEma(adValue)

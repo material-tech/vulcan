@@ -41,7 +41,7 @@ describe('sma', () => {
 
   it('step should produce same results as batch', () => {
     const batchResult = mapOperator(toNumber)(sma(values), { digits: 2 })
-    const next = sma.step()
+    const next = sma.next()
     const streamResult = values.map(v => next(v))
     expect(streamResult).toMatchNumberArray(batchResult)
   })

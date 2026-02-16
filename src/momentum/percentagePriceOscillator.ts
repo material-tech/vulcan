@@ -43,9 +43,9 @@ export interface PercentagePriceOscillatorResult {
  * @returns Object containing ppo, signal, and histogram arrays
  */
 export const ppo = createSignal(({ fastPeriod, slowPeriod, signalPeriod }) => {
-  const fastEma = ema.step({ period: fastPeriod })
-  const slowEma = ema.step({ period: slowPeriod })
-  const signalEma = ema.step({ period: signalPeriod })
+  const fastEma = ema.next({ period: fastPeriod })
+  const slowEma = ema.next({ period: slowPeriod })
+  const signalEma = ema.next({ period: signalPeriod })
   return (value: Numberish) => {
     const v = from(value)
     const fast = fastEma(v)

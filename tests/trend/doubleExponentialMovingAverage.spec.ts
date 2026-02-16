@@ -24,7 +24,7 @@ describe('double exponential moving average (dema)', () => {
 
   it('step should produce same results as batch', () => {
     const batchResult = mapOperator(toNumber)(dema(values), { digits: 2 })
-    const next = dema.step()
+    const next = dema.next()
     const streamResult = values.map(v => next(v))
     expect(streamResult).toMatchNumberArray(batchResult)
   })

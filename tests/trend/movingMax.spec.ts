@@ -22,7 +22,7 @@ describe('movingMax (mmax)', () => {
 
   it('step should produce same results as batch', () => {
     const batchResult = mapOperator(toNumber)(mmax(values), { digits: 2 })
-    const next = mmax.step()
+    const next = mmax.next()
     const streamResult = values.map(v => next(v))
     expect(streamResult).toMatchNumberArray(batchResult)
   })

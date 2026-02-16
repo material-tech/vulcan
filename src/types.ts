@@ -24,7 +24,7 @@ export type WrapResult<T> = T extends readonly any[]
 export interface TechnicalSignal<Data, Result, Options extends Record<string, any>> {
   readonly defaultOptions: Options
   (dataset: Data[], options?: Partial<Options>): Result
-  step: (options?: Partial<Options>) => (data: Data) => Unarray<Result>
+  next: (options?: Partial<Options>) => (data: Data) => Unarray<Result>
 }
 
 export interface CreateSignalFunc<Data, Result, Options extends Record<string, any>> {

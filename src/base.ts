@@ -55,7 +55,7 @@ export function createSignal<Data, Element, Options extends Record<string, any>>
     return results as WrapResult<Element>
   }
 
-  impl.step = (options?: Partial<Options>) => {
+  impl.next = (options?: Partial<Options>) => {
     const opt = defu(options, defaultOptions) as Required<Options>
     return createStep(opt)
   }

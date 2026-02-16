@@ -24,7 +24,7 @@ describe('movingSum', () => {
 
   it('step should produce same results as batch', () => {
     const batchResult = mapOperator(toNumber)(msum(values), { digits: 2 })
-    const next = msum.step()
+    const next = msum.next()
     const streamResult = values.map(v => next(v))
     expect(streamResult).toMatchNumberArray(batchResult)
   })

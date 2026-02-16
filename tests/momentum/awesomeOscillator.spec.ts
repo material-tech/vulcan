@@ -31,7 +31,7 @@ describe('awesomeOscillator (AO)', () => {
 
   it('step should produce same results as batch', () => {
     const batchResult = mapOperator(toNumber)(ao(data), { digits: 2 })
-    const next = ao.step()
+    const next = ao.next()
     const streamResult = data.map(v => next(v))
     expect(streamResult).toMatchNumberArray(batchResult)
   })

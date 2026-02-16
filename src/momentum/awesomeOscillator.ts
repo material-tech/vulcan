@@ -15,8 +15,8 @@ export const defaultAwesomeOscillatorOptions: AwesomeOscillatorOptions = {
 }
 
 export const ao = createSignal(({ fastPeriod, slowPeriod }) => {
-  const fastSma = sma.step({ period: fastPeriod })
-  const slowSma = sma.step({ period: slowPeriod })
+  const fastSma = sma.next({ period: fastPeriod })
+  const slowSma = sma.next({ period: slowPeriod })
   return (data: RequiredProperties<KlineData, 'h' | 'l'>): Dnum => {
     const median = div(add(from(data.h, 18), from(data.l, 18)), 2, 18)
     const fast = fastSma(median)

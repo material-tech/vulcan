@@ -121,7 +121,7 @@ describe('ichimoku cloud', () => {
   it('step should produce same results as batch for conversion and base', () => {
     const toNum = mapOperator(toNumber)
     const batchResult = ichimokuCloud(data)
-    const next = ichimokuCloud.step()
+    const next = ichimokuCloud.next()
     const streamResults = data.map(v => next(v))
     expect(streamResults.map(r => r.conversion)).toMatchNumberArray(
       toNum(batchResult.conversion, { digits: 2 }),

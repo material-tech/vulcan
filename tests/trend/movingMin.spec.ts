@@ -20,7 +20,7 @@ describe('movingMin', () => {
 
   it('step should produce same results as batch', () => {
     const batchResult = mapOperator(toNumber)(mmin(values, { period: 8 }), { digits: 2 })
-    const next = mmin.step({ period: 8 })
+    const next = mmin.next({ period: 8 })
     const streamResult = values.map(v => next(v))
     expect(streamResult).toMatchNumberArray(batchResult)
   })

@@ -23,8 +23,8 @@ export const defaultDoubleExponentialMovingAverageOptions: DoubleExponentialMovi
  * @returns Array of DEMA values
  */
 export const dema = createSignal(({ period }) => {
-  const ema1 = ema.step({ period })
-  const ema2 = ema.step({ period })
+  const ema1 = ema.next({ period })
+  const ema2 = ema.next({ period })
   return (value: Numberish): Dnum => {
     const e1 = ema1(value)
     const e2 = ema2(e1)

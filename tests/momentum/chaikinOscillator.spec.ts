@@ -36,7 +36,7 @@ describe('chaikin money flow oscillator (CMO)', () => {
 
   it('step should produce same results as batch', () => {
     const batchResult = mapOperator(toNumber)(cmo(values), { digits: 2 })
-    const next = cmo.step()
+    const next = cmo.next()
     const streamResult = values.map(v => next(v))
     expect(streamResult).toMatchNumberArray(batchResult)
   })

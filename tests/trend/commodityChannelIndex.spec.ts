@@ -62,7 +62,7 @@ describe('commodity channel index (CCI)', () => {
 
   it('step should produce same results as batch', () => {
     const batchResult = mapOperator(toNumber)(cci(data, { period: 5 }), { digits: 2 })
-    const next = cci.step({ period: 5 })
+    const next = cci.next({ period: 5 })
     const streamResult = data.map(v => next(v))
     expect(streamResult).toMatchNumberArray(batchResult)
   })

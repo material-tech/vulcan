@@ -33,7 +33,7 @@ describe('createSignal', () => {
   })
 
   it('should return step function', () => {
-    const next = signal.step()
+    const next = signal.next()
     expect(next).instanceOf(Function)
     expect(next(42)).toBe(42)
   })
@@ -48,11 +48,11 @@ describe('createSignal', () => {
     })
 
     // Use default options
-    const next1 = signal.step()
+    const next1 = signal.next()
     expect(next1(3)).toBe(6)
 
     // Override options
-    const next2 = signal.step({ multiplier: 5 })
+    const next2 = signal.next({ multiplier: 5 })
     expect(next2(3)).toBe(15)
   })
 })

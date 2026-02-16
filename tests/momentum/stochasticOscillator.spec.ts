@@ -94,7 +94,7 @@ describe('stochastic oscillator (STOCH)', () => {
   it('step should produce same results as batch', () => {
     const toNum = mapOperator(toNumber)
     const batchResult = stoch(values, { kPeriod: 12, dPeriod: 2 })
-    const next = stoch.step({ kPeriod: 12, dPeriod: 2 })
+    const next = stoch.next({ kPeriod: 12, dPeriod: 2 })
     const streamResults = values.map(v => next(v))
     expect(streamResults.map(r => r.k)).toMatchNumberArray(
       toNum(batchResult.k, { digits: 2 }),

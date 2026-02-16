@@ -22,7 +22,7 @@ describe('rollingMovingAverage', () => {
 
   it('step should produce same results as batch', () => {
     const batchResult = mapOperator(toNumber)(rma(values), { digits: 2 })
-    const next = rma.step()
+    const next = rma.next()
     const streamResult = values.map(v => next(v))
     expect(streamResult).toMatchNumberArray(batchResult)
   })

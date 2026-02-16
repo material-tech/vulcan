@@ -131,7 +131,7 @@ describe('percentage price oscillator (PPO)', () => {
   it('step should produce same results as batch', () => {
     const toNum = mapOperator(toNumber)
     const batchResult = ppo(values)
-    const next = ppo.step()
+    const next = ppo.next()
     const streamResults = values.map(v => next(v))
     expect(streamResults.map(r => r.ppo)).toMatchNumberArray(
       toNum(batchResult.ppo, { digits: 2 }),

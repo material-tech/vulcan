@@ -23,8 +23,8 @@ export const trima = createSignal(({ period }) => {
     n2 = n1
   }
 
-  const innerSma = sma.step({ period: n2 })
-  const outerSma = sma.step({ period: n1 })
+  const innerSma = sma.next({ period: n2 })
+  const outerSma = sma.next({ period: n1 })
 
   return (value: Numberish): Dnum => {
     const inner = innerSma(value)

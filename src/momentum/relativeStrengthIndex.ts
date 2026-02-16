@@ -21,8 +21,8 @@ export const defaultRSIOptions: RSIOptions = {
  * RSI = 100 - (100 / (1 + RS))
  */
 export const rsi = createSignal(({ period }) => {
-  const gainRma = rma.step({ period })
-  const lossRma = rma.step({ period })
+  const gainRma = rma.next({ period })
+  const lossRma = rma.next({ period })
   let prev: Dnum | null = null
   let first = true
   return (value: Numberish): Dnum => {

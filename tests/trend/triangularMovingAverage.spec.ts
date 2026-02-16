@@ -24,7 +24,7 @@ describe('triangular moving average (trima)', () => {
 
   it('step should produce same results as batch', () => {
     const batchResult = mapOperator(toNumber)(trima(values), { digits: 2 })
-    const next = trima.step()
+    const next = trima.next()
     const streamResult = values.map(v => next(v))
     expect(streamResult).toMatchNumberArray(batchResult)
   })
