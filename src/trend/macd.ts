@@ -1,6 +1,7 @@
 import type { Dnum, Numberish } from 'dnum'
-import { defu } from 'defu'
+import type { Processor } from '~/types'
 import { sub } from 'dnum'
+import { createGenerator } from '~/base'
 import { ema } from './exponentialMovingAverage'
 
 export interface MACDOptions {
@@ -42,22 +43,19 @@ export interface MACDPoint {
  * @param options.signalPeriod - Period for the signal EMA (default: 9)
  * @returns Generator yielding MACDPoint objects
  */
-export function* macd(
-  source: Iterable<Numberish>,
-  options?: Partial<MACDOptions>,
-): Generator<MACDPoint> {
-  const { fastPeriod, slowPeriod, signalPeriod } = defu(options, defaultMACDOptions) as Required<MACDOptions>
+function createMacdProcessor({ fastPeriod, slowPeriod, signalPeriod }: Required<MACDOptions>): Processor<Numberish, MACDPoint> {
   const fastProc = ema.create({ period: fastPeriod })
   const slowProc = ema.create({ period: slowPeriod })
   const signalProc = ema.create({ period: signalPeriod })
-
-  for (const value of source) {
+  return (value) => {
     const fast = fastProc(value)
     const slow = slowProc(value)
     const m = sub(fast, slow)
     const sig = signalProc(m)
-    yield { macd: m, signal: sig, histogram: sub(m, sig) }
+    return { macd: m, signal: sig, histogram: sub(m, sig) }
   }
 }
+
+export const macd = createGenerator(createMacdProcessor, defaultMACDOptions)
 
 export { macd as movingAverageConvergenceDivergence }

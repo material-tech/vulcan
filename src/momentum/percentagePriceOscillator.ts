@@ -1,6 +1,7 @@
 import type { Dnum, Numberish } from 'dnum'
-import { defu } from 'defu'
+import type { Processor } from '~/types'
 import { div, from, mul, sub } from 'dnum'
+import { createGenerator } from '~/base'
 import { ema } from '../trend/exponentialMovingAverage'
 
 export interface PercentagePriceOscillatorOptions {
@@ -42,23 +43,19 @@ export interface PercentagePriceOscillatorPoint {
  * @param options.signalPeriod - Period for the signal EMA (default: 9)
  * @returns Generator yielding PPO point objects
  */
-export function* ppo(
-  source: Iterable<Numberish>,
-  options?: Partial<PercentagePriceOscillatorOptions>,
-): Generator<PercentagePriceOscillatorPoint> {
-  const { fastPeriod, slowPeriod, signalPeriod } = defu(options, defaultPercentagePriceOscillatorOptions) as Required<PercentagePriceOscillatorOptions>
+function createPpoProcessor({ fastPeriod, slowPeriod, signalPeriod }: Required<PercentagePriceOscillatorOptions>): Processor<Numberish, PercentagePriceOscillatorPoint> {
   const fastProc = ema.create({ period: fastPeriod })
   const slowProc = ema.create({ period: slowPeriod })
   const signalProc = ema.create({ period: signalPeriod })
-
-  for (const value of source) {
+  return (value) => {
     const fast = fastProc(from(value))
     const slow = slowProc(from(value))
-
     const ppoVal = mul(div(sub(fast, slow), slow, 18), 100, 18)
     const sig = signalProc(ppoVal)
-    yield { ppo: ppoVal, signal: sig, histogram: sub(ppoVal, sig) }
+    return { ppo: ppoVal, signal: sig, histogram: sub(ppoVal, sig) }
   }
 }
+
+export const ppo = createGenerator(createPpoProcessor, defaultPercentagePriceOscillatorOptions)
 
 export { ppo as percentagePriceOscillator }

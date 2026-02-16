@@ -1,7 +1,7 @@
 import type { Dnum } from 'dnum'
-import type { KlineData, RequiredProperties } from '~/types'
-import { defu } from 'defu'
+import type { KlineData, Processor, RequiredProperties } from '~/types'
 import { from, gt, lt } from 'dnum'
+import { createGenerator } from '~/base'
 
 export interface AroonOptions {
   period: number
@@ -24,16 +24,11 @@ export interface AroonPoint {
  * Aroon Down = ((period - days since lowest low) / period) * 100
  * Oscillator = Aroon Up - Aroon Down
  */
-export function* aroon(
-  source: Iterable<RequiredProperties<KlineData, 'h' | 'l'>>,
-  options?: Partial<AroonOptions>,
-): Generator<AroonPoint> {
-  const { period } = defu(options, defaultAroonOptions) as Required<AroonOptions>
-
+function createAroonProcessor({ period }: Required<AroonOptions>): Processor<RequiredProperties<KlineData, 'h' | 'l'>, AroonPoint> {
   const highBuffer: Dnum[] = []
   const lowBuffer: Dnum[] = []
 
-  for (const bar of source) {
+  return (bar) => {
     const h = from(bar.h)
     const l = from(bar.l)
 
@@ -59,10 +54,12 @@ export function* aroon(
     const aroonUpValue = ((period - daysSinceHigh) * 100) / period
     const aroonDownValue = ((period - daysSinceLow) * 100) / period
 
-    yield {
+    return {
       up: from(aroonUpValue),
       down: from(aroonDownValue),
       oscillator: from(aroonUpValue - aroonDownValue),
     }
   }
 }
+
+export const aroon = createGenerator(createAroonProcessor, defaultAroonOptions)

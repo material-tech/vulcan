@@ -1,6 +1,7 @@
 import type { Dnum, Numberish } from 'dnum'
-import { defu } from 'defu'
+import type { Processor } from '~/types'
 import { add, div, eq, from, gt, mul, sub } from 'dnum'
+import { createGenerator } from '~/base'
 import { rma } from '~/trend/rollingMovingAverage'
 
 export interface RSIOptions {
@@ -20,26 +21,19 @@ export const defaultRSIOptions: RSIOptions = {
  *
  * RSI = 100 - (100 / (1 + RS))
  */
-export function* rsi(
-  source: Iterable<Numberish>,
-  options?: Partial<RSIOptions>,
-): Generator<Dnum> {
-  const { period } = defu(options, defaultRSIOptions) as Required<RSIOptions>
+function createRsiProcessor({ period }: Required<RSIOptions>): Processor<Numberish, Dnum> {
   const gainProc = rma.create({ period })
   const lossProc = rma.create({ period })
-
   let prev: Dnum | undefined
 
-  for (const value of source) {
+  return (value) => {
     const price = from(value)
 
     if (prev === undefined) {
       prev = price
-      // Feed zero to both RMA processors for the first element
       gainProc(from(0))
       lossProc(from(0))
-      yield from(0)
-      continue
+      return from(0)
     }
 
     const change = sub(price, prev)
@@ -52,13 +46,14 @@ export function* rsi(
     const avgLoss = lossProc(loss)
 
     if (eq(avgLoss, 0)) {
-      yield from(100)
+      return from(100)
     }
-    else {
-      const rs = div(avgGain, avgLoss)
-      yield sub(100, div(100, add(1, rs), 18))
-    }
+
+    const rs = div(avgGain, avgLoss)
+    return sub(100, div(100, add(1, rs), 18))
   }
 }
+
+export const rsi = createGenerator(createRsiProcessor, defaultRSIOptions)
 
 export { rsi as relativeStrengthIndex }
