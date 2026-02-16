@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest'
-import { collect, createGenerator } from '../src/base'
+import { collect, createSignal } from '../src/base'
 
 describe('createGenerator', () => {
   it('should create a generator function with createProcessor and defaultOptions', () => {
-    const gen = createGenerator(
+    const gen = createSignal(
       () => (v: number) => v * 2,
       { factor: 1 },
     )
@@ -14,7 +14,7 @@ describe('createGenerator', () => {
   })
 
   it('should yield transformed values from source', () => {
-    const gen = createGenerator(
+    const gen = createSignal(
       () => (v: number) => v * 2,
     )
 
@@ -23,7 +23,7 @@ describe('createGenerator', () => {
   })
 
   it('should return empty array when source is empty', () => {
-    const gen = createGenerator(
+    const gen = createSignal(
       () => (v: number) => v,
     )
 
@@ -31,7 +31,7 @@ describe('createGenerator', () => {
   })
 
   it('should merge options with defaults', () => {
-    const gen = createGenerator(
+    const gen = createSignal(
       (opts: Required<{ multiplier: number }>) => (v: number) => v * opts.multiplier,
       { multiplier: 2 },
     )
@@ -41,7 +41,7 @@ describe('createGenerator', () => {
   })
 
   it('should create independent processors via createProcessor', () => {
-    const gen = createGenerator(
+    const gen = createSignal(
       () => {
         let sum = 0
         return (v: number) => {
@@ -60,7 +60,7 @@ describe('createGenerator', () => {
   })
 
   it('should apply options override in create()', () => {
-    const gen = createGenerator(
+    const gen = createSignal(
       (opts: Required<{ multiplier: number }>) => (v: number) => v * opts.multiplier,
       { multiplier: 2 },
     )
@@ -70,7 +70,7 @@ describe('createGenerator', () => {
   })
 
   it('should return empty object when no defaultOptions provided', () => {
-    const gen = createGenerator(
+    const gen = createSignal(
       () => (v: number) => v,
     )
 
@@ -78,7 +78,7 @@ describe('createGenerator', () => {
   })
 
   it('should return a shallow copy from defaultOptions getter', () => {
-    const gen = createGenerator(
+    const gen = createSignal(
       () => (v: number) => v,
       { period: 14 },
     )
@@ -90,7 +90,7 @@ describe('createGenerator', () => {
   })
 
   it('should work with for...of iteration', () => {
-    const gen = createGenerator(
+    const gen = createSignal(
       () => (v: number) => v + 1,
     )
 

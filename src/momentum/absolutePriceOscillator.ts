@@ -1,6 +1,6 @@
 import type { Numberish } from 'dnum'
 import { sub } from 'dnum'
-import { createGenerator } from '~/base'
+import { createSignal } from '~/base'
 import { ema } from '../trend/exponentialMovingAverage'
 
 export interface AbsolutePriceOscillatorOptions {
@@ -13,7 +13,7 @@ export const defaultAbsolutePriceOscillatorOptions: AbsolutePriceOscillatorOptio
   slowPeriod: 26,
 }
 
-export const apo = createGenerator(
+export const apo = createSignal(
   ({ fastPeriod, slowPeriod }: Required<AbsolutePriceOscillatorOptions>) => {
     const fastProc = ema.create({ period: fastPeriod })
     const slowProc = ema.create({ period: slowPeriod })

@@ -1,6 +1,6 @@
 import type { Dnum, Numberish } from 'dnum'
 import { from, lt } from 'dnum'
-import { createGenerator } from '~/base'
+import { createSignal } from '~/base'
 
 export interface MovingMinOptions {
   /**
@@ -16,7 +16,7 @@ export const defaultMovingMinOptions: MovingMinOptions = {
 /**
  * Moving Minimum (MovingMin)
  */
-export const mmin = createGenerator(
+export const mmin = createSignal(
   ({ period }: Required<MovingMinOptions>) => {
     const buffer: Dnum[] = []
     return (value: Numberish) => {

@@ -1,6 +1,6 @@
 import type { Dnum, Numberish } from 'dnum'
 import { add, from } from 'dnum'
-import { createGenerator } from '~/base'
+import { createSignal } from '~/base'
 
 export interface MovingSumOptions {
   period: number
@@ -15,7 +15,7 @@ export const defaultMovingSumOptions: MovingSumOptions = {
  *
  * Calculates the sum of values in a sliding window of the specified period.
  */
-export const msum = createGenerator(
+export const msum = createSignal(
   ({ period }: Required<MovingSumOptions>) => {
     const buffer: Dnum[] = []
     return (value: Numberish) => {

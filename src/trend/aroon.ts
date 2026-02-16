@@ -1,7 +1,7 @@
 import type { Dnum } from 'dnum'
 import type { KlineData, RequiredProperties } from '~/types'
 import { from, gt, lt } from 'dnum'
-import { createGenerator } from '~/base'
+import { createSignal } from '~/base'
 
 export interface AroonOptions {
   period: number
@@ -24,7 +24,7 @@ export interface AroonPoint {
  * Aroon Down = ((period - days since lowest low) / period) * 100
  * Oscillator = Aroon Up - Aroon Down
  */
-export const aroon = createGenerator(
+export const aroon = createSignal(
   ({ period }: Required<AroonOptions>) => {
     const highBuffer: Dnum[] = []
     const lowBuffer: Dnum[] = []

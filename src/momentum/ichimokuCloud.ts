@@ -1,7 +1,7 @@
 import type { Dnum } from 'dnum'
 import type { KlineData, RequiredProperties } from '~/types'
 import { add, div, from } from 'dnum'
-import { createGenerator } from '~/base'
+import { createSignal } from '~/base'
 import { mmax } from '~/trend/movingMax'
 import { mmin } from '~/trend/movingMin'
 
@@ -41,7 +41,7 @@ export interface IchimokuCloudPoint {
  * - Leading Span B (Senkou B): (highest high + lowest low) / 2 over leadingBPeriod
  * - Lagging (Chikou): current close price
  */
-export const ichimokuCloud = createGenerator(
+export const ichimokuCloud = createSignal(
   ({ conversionPeriod, basePeriod, leadingBPeriod }: Required<IchimokuCloudOptions>) => {
     const convHighProc = mmax.create({ period: conversionPeriod })
     const convLowProc = mmin.create({ period: conversionPeriod })

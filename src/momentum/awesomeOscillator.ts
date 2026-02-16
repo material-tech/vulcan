@@ -1,6 +1,6 @@
 import type { KlineData, RequiredProperties } from '~/types'
 import { add, div, from, sub } from 'dnum'
-import { createGenerator } from '~/base'
+import { createSignal } from '~/base'
 import { sma } from '~/trend/simpleMovingAverage'
 
 export interface AwesomeOscillatorOptions {
@@ -19,7 +19,7 @@ export const defaultAwesomeOscillatorOptions: AwesomeOscillatorOptions = {
  * AO = SMA(median, fastPeriod) - SMA(median, slowPeriod)
  * Where median = (high + low) / 2
  */
-export const ao = createGenerator(
+export const ao = createSignal(
   ({ fastPeriod, slowPeriod }: Required<AwesomeOscillatorOptions>) => {
     const fastProc = sma.create({ period: fastPeriod })
     const slowProc = sma.create({ period: slowPeriod })

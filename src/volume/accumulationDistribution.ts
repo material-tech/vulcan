@@ -1,7 +1,7 @@
 import type { Dnum } from 'dnum'
 import type { KlineData, RequiredProperties } from '~/types'
 import { add, divide, from, multiply, subtract } from 'dnum'
-import { createGenerator } from '~/base'
+import { createSignal } from '~/base'
 
 /**
  * Accumulation/Distribution Indicator (A/D). Cumulative indicator
@@ -12,7 +12,7 @@ import { createGenerator } from '~/base'
  * MFV = MFM * Period Volume
  * AD = Previous AD + CMFV
  */
-export const ad = createGenerator(
+export const ad = createSignal(
   () => {
     let prevAD: Dnum = from(0)
     return (bar: RequiredProperties<KlineData, 'h' | 'l' | 'c' | 'v'>) => {

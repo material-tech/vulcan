@@ -1,6 +1,6 @@
 import type { Dnum, Numberish } from 'dnum'
 import { add, div, from } from 'dnum'
-import { createGenerator } from '~/base'
+import { createSignal } from '~/base'
 
 export interface SimpleMovingAverageOptions {
   /**
@@ -28,7 +28,7 @@ export const defaultSMAOptions: SimpleMovingAverageOptions = {
  * @param options.period - The period for calculating the moving average (default: 2)
  * @returns Generator yielding SMA values
  */
-export const sma = createGenerator(
+export const sma = createSignal(
   ({ period }: Required<SimpleMovingAverageOptions>) => {
     const buffer: Dnum[] = []
     return (value: Numberish) => {

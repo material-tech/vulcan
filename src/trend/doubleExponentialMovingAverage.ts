@@ -1,6 +1,6 @@
 import type { Numberish } from 'dnum'
 import { mul, sub } from 'dnum'
-import { createGenerator } from '~/base'
+import { createSignal } from '~/base'
 import { ema } from './exponentialMovingAverage'
 
 export interface DoubleExponentialMovingAverageOptions {
@@ -22,7 +22,7 @@ export const defaultDoubleExponentialMovingAverageOptions: DoubleExponentialMovi
  * @param options.period - The lookback period (default: 12)
  * @returns Generator yielding DEMA values
  */
-export const dema = createGenerator(
+export const dema = createSignal(
   ({ period }: Required<DoubleExponentialMovingAverageOptions>) => {
     const ema1 = ema.create({ period })
     const ema2 = ema.create({ period })

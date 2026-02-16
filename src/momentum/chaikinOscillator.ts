@@ -1,6 +1,6 @@
 import type { KlineData, RequiredProperties } from '~/types'
 import { sub } from 'dnum'
-import { createGenerator } from '~/base'
+import { createSignal } from '~/base'
 import { ema } from '~/trend/exponentialMovingAverage'
 import { ad } from '~/volume/accumulationDistribution'
 
@@ -23,7 +23,7 @@ export const defaultChaikinOscillatorOptions: ChaikinOscillatorOptions = {
  *
  * CO = Ema(fastPeriod, AD) - Ema(slowPeriod, AD)
  */
-export const cmo = createGenerator(
+export const cmo = createSignal(
   ({ fastPeriod, slowPeriod }: Required<ChaikinOscillatorOptions>) => {
     const adProc = ad.create()
     const fastProc = ema.create({ period: fastPeriod })

@@ -1,6 +1,6 @@
 import type { Dnum, Numberish } from 'dnum'
 import { from, gt } from 'dnum'
-import { createGenerator } from '~/base'
+import { createSignal } from '~/base'
 
 export interface MovingMaxOptions {
   /**
@@ -16,7 +16,7 @@ export const defaultMovingMaxOptions: MovingMaxOptions = {
 /**
  * Moving Maximum (MovingMax)
  */
-export const mmax = createGenerator(
+export const mmax = createSignal(
   ({ period }: Required<MovingMaxOptions>) => {
     const buffer: Dnum[] = []
     return (value: Numberish) => {

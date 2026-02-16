@@ -1,6 +1,6 @@
 import type { Dnum, Numberish } from 'dnum'
 import { add, from, mul } from 'dnum'
-import { createGenerator } from '~/base'
+import { createSignal } from '~/base'
 
 export interface ExponentialMovingAverageOptions {
   period: number
@@ -16,7 +16,7 @@ export const defaultExponentialMovingAverageOptions: ExponentialMovingAverageOpt
  * EMA = Price * k + PrevEMA * (1 - k)
  * Where k = 2 / (period + 1)
  */
-export const ema = createGenerator(
+export const ema = createSignal(
   ({ period }: Required<ExponentialMovingAverageOptions>) => {
     const k = 2 / (1 + period)
     const m = 1 - k

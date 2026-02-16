@@ -1,7 +1,7 @@
 import type { Dnum } from 'dnum'
 import type { KlineData, RequiredProperties } from '~/types'
 import { div, from, mul, sub } from 'dnum'
-import { createGenerator } from '~/base'
+import { createSignal } from '~/base'
 import { mmax } from '~/trend/movingMax'
 import { mmin } from '~/trend/movingMin'
 import { sma } from '~/trend/simpleMovingAverage'
@@ -32,7 +32,7 @@ export interface StochPoint {
  * %K = ((Close - Lowest Low) / (Highest High - Lowest Low)) * 100
  * %D = SMA(%K, dPeriod)
  */
-export const stoch = createGenerator(
+export const stoch = createSignal(
   ({ kPeriod, slowingPeriod, dPeriod }: Required<StochasticOscillatorOptions>) => {
     const mmaxProc = mmax.create({ period: kPeriod })
     const mminProc = mmin.create({ period: kPeriod })

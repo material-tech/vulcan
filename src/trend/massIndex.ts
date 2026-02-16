@@ -1,6 +1,6 @@
 import type { KlineData, RequiredProperties } from '~/types'
 import { divide, from, subtract } from 'dnum'
-import { createGenerator } from '~/base'
+import { createSignal } from '~/base'
 import { ema } from './exponentialMovingAverage'
 import { msum } from './movingSum'
 
@@ -42,7 +42,7 @@ export const defaultMassIndexOptions: MassIndexOptions = {
  * @param options.miPeriod - The moving sum period (default: 25)
  * @returns Generator yielding Mass Index values
  */
-export const mi = createGenerator(
+export const mi = createSignal(
   ({ emaPeriod, miPeriod }: Required<MassIndexOptions>) => {
     const ema1Proc = ema.create({ period: emaPeriod })
     const ema2Proc = ema.create({ period: emaPeriod })

@@ -1,8 +1,8 @@
 import type { KlineData, RequiredProperties } from '~/types'
 import { divide, equal, from, subtract } from 'dnum'
-import { createGenerator } from '~/base'
+import { createSignal } from '~/base'
 
-export const bop = createGenerator(
+export const bop = createSignal(
   () => {
     return (bar: RequiredProperties<KlineData, 'o' | 'h' | 'l' | 'c'>) => {
       const o = from(bar.o)

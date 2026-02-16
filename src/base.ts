@@ -6,7 +6,7 @@ import { defu } from 'defu'
  *
  * Returns a generator function with `.createProcessor()` and `.defaultOptions`.
  */
-export function createGenerator<Input, Output, Options extends Record<string, any>>(
+export function createSignal<Input, Output, Options extends Record<string, any>>(
   factory: (options: Required<Options>) => Processor<Input, Output>,
   defaultOptions?: Options,
 ): IndicatorGenerator<Input, Output, Options> {

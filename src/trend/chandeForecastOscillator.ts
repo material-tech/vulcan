@@ -1,6 +1,6 @@
 import type { Dnum, Numberish } from 'dnum'
 import { add, divide, equal, from, multiply, subtract } from 'dnum'
-import { createGenerator } from '~/base'
+import { createSignal } from '~/base'
 
 export interface ChandeForecastOscillatorOptions {
   /**
@@ -29,7 +29,7 @@ export const defaultCFOOptions: ChandeForecastOscillatorOptions = {
  * @param options.period - The period for linear regression (default: 14)
  * @returns Generator yielding CFO values as percentages
  */
-export const cfo = createGenerator(
+export const cfo = createSignal(
   ({ period }: Required<ChandeForecastOscillatorOptions>) => {
     const buffer: Dnum[] = []
 

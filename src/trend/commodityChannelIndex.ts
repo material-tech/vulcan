@@ -1,7 +1,7 @@
 import type { Dnum } from 'dnum'
 import type { KlineData, RequiredProperties } from '~/types'
 import { add, divide, equal, from, subtract } from 'dnum'
-import { createGenerator } from '~/base'
+import { createSignal } from '~/base'
 
 export interface CommodityChannelIndexOptions {
   /**
@@ -45,7 +45,7 @@ function multiply015(value: Dnum): Dnum {
  * @param options.period - The period for CCI calculation (default: 20)
  * @returns Generator yielding CCI values
  */
-export const cci = createGenerator(
+export const cci = createSignal(
   ({ period }: Required<CommodityChannelIndexOptions>) => {
     const buffer: Dnum[] = []
 

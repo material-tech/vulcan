@@ -1,6 +1,6 @@
 import type { Dnum, Numberish } from 'dnum'
 import { sub } from 'dnum'
-import { createGenerator } from '~/base'
+import { createSignal } from '~/base'
 import { ema } from './exponentialMovingAverage'
 
 export interface MACDOptions {
@@ -42,7 +42,7 @@ export interface MACDPoint {
  * @param options.signalPeriod - Period for the signal EMA (default: 9)
  * @returns Generator yielding MACDPoint objects
  */
-export const macd = createGenerator(
+export const macd = createSignal(
   ({ fastPeriod, slowPeriod, signalPeriod }: Required<MACDOptions>) => {
     const fastProc = ema.create({ period: fastPeriod })
     const slowProc = ema.create({ period: slowPeriod })

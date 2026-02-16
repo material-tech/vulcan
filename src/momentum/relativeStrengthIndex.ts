@@ -1,6 +1,6 @@
 import type { Dnum, Numberish } from 'dnum'
 import { add, div, eq, from, gt, mul, sub } from 'dnum'
-import { createGenerator } from '~/base'
+import { createSignal } from '~/base'
 import { rma } from '~/trend/rollingMovingAverage'
 
 export interface RSIOptions {
@@ -20,7 +20,7 @@ export const defaultRSIOptions: RSIOptions = {
  *
  * RSI = 100 - (100 / (1 + RS))
  */
-export const rsi = createGenerator(
+export const rsi = createSignal(
   ({ period }: Required<RSIOptions>) => {
     const gainProc = rma.create({ period })
     const lossProc = rma.create({ period })
