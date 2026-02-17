@@ -1,7 +1,7 @@
 import type { KlineData, RequiredProperties } from '@material-tech/alloy-core'
 import type { Dnum } from 'dnum'
 import { createSignal } from '@material-tech/alloy-core'
-import { add, divide, equal, from, subtract } from 'dnum'
+import { abs, add, divide, equal, from, subtract } from 'dnum'
 
 export interface CommodityChannelIndexOptions {
   /**
@@ -13,10 +13,6 @@ export interface CommodityChannelIndexOptions {
 
 export const defaultCCIOptions: CommodityChannelIndexOptions = {
   period: 20,
-}
-
-function absDnum(value: Dnum): Dnum {
-  return value[0] < 0n ? [-value[0], value[1]] : value
 }
 
 /**
@@ -65,7 +61,7 @@ export const cci = createSignal(
 
       let devSum: Dnum = from(0, 18)
       for (const v of buffer) {
-        devSum = add(devSum, absDnum(subtract(v, smaVal)))
+        devSum = add(devSum, abs(subtract(v, smaVal)))
       }
       const meanDev = divide(devSum, n, 18)
 
