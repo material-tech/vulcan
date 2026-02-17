@@ -1,6 +1,6 @@
+import { collect } from '@material-tech/alloy-core'
+import { msum } from '@material-tech/alloy-indicators'
 import { describe, expect, it } from 'vitest'
-import { collect } from '~/base'
-import { msum } from '~/trend/movingSum'
 
 describe('movingSum', () => {
   const values = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]

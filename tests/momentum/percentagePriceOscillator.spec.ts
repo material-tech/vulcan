@@ -1,7 +1,7 @@
 /* eslint-disable antfu/consistent-list-newline */
+import { collect } from '@material-tech/alloy-core'
+import { ppo } from '@material-tech/alloy-indicators'
 import { describe, expect, it } from 'vitest'
-import { collect } from '~/base'
-import { ppo } from '~/momentum/percentagePriceOscillator'
 
 describe('percentage price oscillator (PPO)', () => {
   const values = [

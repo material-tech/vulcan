@@ -1,6 +1,6 @@
+import { collect } from '@material-tech/alloy-core'
+import { ema } from '@material-tech/alloy-indicators'
 import { describe, expect, it } from 'vitest'
-import { collect } from '~/base'
-import { ema } from '~/trend/exponentialMovingAverage'
 
 describe('exponential moving average (ema)', () => {
   const values = [2, 4, 6, 8, 12, 14, 16, 18, 20]

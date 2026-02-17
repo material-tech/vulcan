@@ -1,6 +1,6 @@
+import { collect } from '@material-tech/alloy-core'
+import { trima } from '@material-tech/alloy-indicators'
 import { describe, expect, it } from 'vitest'
-import { collect } from '~/base'
-import { trima } from '~/trend/triangularMovingAverage'
 
 describe('triangular moving average (trima)', () => {
   const values = [1, 2, 1, 5, 8, 10, 4, 6, 5, 2]

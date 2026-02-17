@@ -4,20 +4,26 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Alloy is a TypeScript technical analysis indicator library using `dnum` for high-precision decimal arithmetic (`[value: bigint, decimals: number]` tuples). Indicators are organized by category: `src/trend/`, `src/momentum/`, `src/volume/`.
+Alloy is a TypeScript technical analysis indicator library using `dnum` for high-precision decimal arithmetic (`[value: bigint, decimals: number]` tuples). The project is organized as a **pnpm monorepo** with three packages:
+
+- **`@material-tech/alloy-core`** (`packages/core/`) — core types (`KlineData`, `Processor`, `IndicatorGenerator`) and factory function (`createSignal`, `collect`)
+- **`@material-tech/alloy-indicators`** (`packages/indicators/`) — all indicators organized by category: `trend/`, `momentum/`, `volume/`
+- **`@material-tech/alloy-adapters`** (`packages/adapters/`) — adapters for batch processing, Node.js streams, and Web streams
+
+**Dependency graph:** `indicators` → `core`, `adapters` → `core`
 
 **Key technologies:**
 
-- **tsdown**: Core bundler
-- **pnpm**: Package manager (v10.28.1)
-- **vitest**: Testing framework
-- **TypeScript**: Strict mode with isolated declarations enabled
-- **ESM**: Pure ESM package (`"type": "module"`)
+- **tsdown**: Core bundler (per-package config)
+- **pnpm**: Package manager with workspace support
+- **vitest**: Testing framework (root-level, unified)
+- **TypeScript**: Strict mode
+- **ESM**: Pure ESM packages (`"type": "module"`)
 
 ## Commands
 
 ```bash
-pnpm build              # Build with tsdown
+pnpm build              # Recursively build all packages (core → indicators/adapters)
 pnpm test --run         # Run all tests (with typecheck)
 pnpm test run <path>    # Run a single test file
 pnpm test:coverage      # Run tests with coverage
@@ -27,33 +33,44 @@ pnpm lint:fix           # Lint with auto-fix
 
 ## Architecture
 
-### Core Types (`src/types.ts`, `src/base.ts`)
+### Core Package (`packages/core/`)
 
-- `TechnicalSignal<Data, Result, Options>` — callable function object with `defaultOptions` property
-- `createSignal(fn, defaultOptions)` — wraps an indicator function, handles empty arrays (returns `[]`), merges options with `defu`
+- `createSignal(fn, defaultOptions)` — creates a generator-based indicator with `.create()` and `.defaultOptions`
+- `collect(iterable)` — collects all values from an iterable into an array
 - `KlineData` — OHLCV candle data: `{ h, l, o, c, v }` (all `Numberish`)
+- `Processor<I, O>` — stateful function `(value: I) => O`
+- `IndicatorGenerator<I, O, Opts>` — generator function with `.create()` factory
 
-### Helpers (`src/helpers/`)
+### Indicators Package (`packages/indicators/`)
 
-- `mapOperator(action)` — lifts a scalar dnum operation to work on arrays (element-wise). Pre-built: `add`, `subtract`, `multiply`, `divide` (and aliases `sub`, `mul`, `div`)
-- `movingAction(values, action, period)` — sliding window operation over an array
-- `mapPick(array, key, transform?)` — extract and optionally transform a field from object arrays
-- `max`, `min` — find extremes with optional period/start
+- `trend/` — 14 indicators (SMA, EMA, DEMA, MACD, Aroon, etc.)
+- `momentum/` — 7 indicators (RSI, STOCH, APO, PPO, etc.)
+- `volume/` — 1 indicator (Accumulation/Distribution)
 
-### Path Alias
+Imports from core use `@material-tech/alloy-core`. Cross-category imports use relative paths (e.g., `../trend/exponentialMovingAverage`).
 
-`~/*` maps to `./src/*` (configured in tsconfig.json, supported in tests via `vite-tsconfig-paths`).
+### Adapters Package (`packages/adapters/`)
+
+- `batch` — wraps generators for array-in/array-out processing
+- `node-stream` — Node.js Transform streams (object mode)
+- `web-stream` — Web TransformStreams
+
+Subpath exports: `@material-tech/alloy-adapters/batch`, `@material-tech/alloy-adapters/node-stream`, `@material-tech/alloy-adapters/web-stream`
+
+### Module Resolution
+
+Root `tsconfig.json` maps workspace packages via `paths` for development. `vite-tsconfig-paths` enables vitest to resolve these paths at test time.
 
 ## Implementing a New Indicator
 
-1. **Create** `src/<category>/<indicatorName>.ts` — define `Options` interface, `defaultOptions`, implement with `createSignal`, export short name + long alias (e.g., `export { cfo as chandeForecastOscillator }`)
-2. **Export** from `src/<category>/index.ts` — add `export * from './<indicatorName>'`
-3. **Test** in `tests/<category>/<indicatorName>.spec.ts` — two test cases: default options and custom options, using `toMatchNumberArray` matcher
+1. **Create** `packages/indicators/src/<category>/<indicatorName>.ts` — define `Options` interface, `defaultOptions`, implement with `createSignal` (from `@material-tech/alloy-core`), export short name + long alias
+2. **Export** from `packages/indicators/src/<category>/index.ts` — add `export * from './<indicatorName>'`
+3. **Test** in `tests/<category>/<indicatorName>.spec.ts` — import from `@material-tech/alloy-core` (for `collect`) and `@material-tech/alloy-indicators` (for the indicator)
 4. **Update** README.md (and README_zh.md) — change `[ ]` to `[x]` for the indicator
 
 ## Testing Conventions
 
-- Use vitest with `*.spec.ts` files
+- Use vitest with `*.spec.ts` files in root `tests/` directory
 - Custom matchers in `vitest-setup.ts`:
   - `toMatchNumberArray(expected, { digits?: 2 })` — compares `Dnum[]` to `number[]`
   - `toMatchNumber(expected, { digits?: 2 })` — compares single `Dnum` to `number`

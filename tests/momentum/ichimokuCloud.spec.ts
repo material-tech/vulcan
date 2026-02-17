@@ -1,9 +1,9 @@
 /* eslint-disable antfu/consistent-list-newline */
 
+import { collect } from '@material-tech/alloy-core'
+import { ichimokuCloud } from '@material-tech/alloy-indicators'
 import { toNumber } from 'dnum'
 import { describe, expect, it } from 'vitest'
-import { collect } from '~/base'
-import { ichimokuCloud } from '~/momentum/ichimokuCloud'
 import ohlcv from '../ohlcv.json' with { type: 'json' }
 
 describe('ichimoku cloud', () => {

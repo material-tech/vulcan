@@ -1,6 +1,6 @@
+import { collect } from '@material-tech/alloy-core'
+import { mi } from '@material-tech/alloy-indicators'
 import { describe, expect, it } from 'vitest'
-import { collect } from '~/base'
-import { mi } from '~/trend/massIndex'
 
 describe('mass index (MI)', () => {
   // Constant range data (all ranges = 1.0)

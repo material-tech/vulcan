@@ -1,7 +1,7 @@
+import { collect } from '@material-tech/alloy-core'
+import { stoch } from '@material-tech/alloy-indicators'
 import { toNumber } from 'dnum'
 import { describe, expect, it } from 'vitest'
-import { collect } from '~/base'
-import { stoch } from '~/momentum/stochasticOscillator'
 
 describe('stochastic oscillator (STOCH)', () => {
   const values = [

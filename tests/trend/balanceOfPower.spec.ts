@@ -1,6 +1,6 @@
+import { collect } from '@material-tech/alloy-core'
+import { bop } from '@material-tech/alloy-indicators'
 import { describe, expect, it } from 'vitest'
-import { collect } from '~/base'
-import { bop } from '~/trend/balanceOfPower'
 
 describe('balance of power (BOP)', () => {
   it('should calculate BOP correctly', () => {

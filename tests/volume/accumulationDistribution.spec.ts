@@ -1,6 +1,6 @@
+import { collect } from '@material-tech/alloy-core'
+import { ad } from '@material-tech/alloy-indicators'
 import { describe, expect, it } from 'vitest'
-import { collect } from '~/base'
-import { ad } from '~/volume/accumulationDistribution'
 
 describe('accumulation distribution (A/D)', () => {
   const values = [

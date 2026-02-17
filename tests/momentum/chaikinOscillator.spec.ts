@@ -1,6 +1,6 @@
+import { collect } from '@material-tech/alloy-core'
+import { cmo } from '@material-tech/alloy-indicators'
 import { describe, expect, it } from 'vitest'
-import { collect } from '~/base'
-import { cmo } from '~/momentum/chaikinOscillator'
 
 describe('chaikin money flow oscillator (CMO)', () => {
   const values = [

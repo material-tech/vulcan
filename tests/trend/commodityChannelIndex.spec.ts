@@ -1,6 +1,6 @@
+import { collect } from '@material-tech/alloy-core'
+import { cci } from '@material-tech/alloy-indicators'
 import { describe, expect, it } from 'vitest'
-import { collect } from '~/base'
-import { cci } from '~/trend/commodityChannelIndex'
 
 describe('commodity channel index (CCI)', () => {
   // Sample OHLC data

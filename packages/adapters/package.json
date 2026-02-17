@@ -1,0 +1,21 @@
+{
+  "name": "@material-tech/alloy-adapters",
+  "type": "module",
+  "version": "0.1.0",
+  "exports": {
+    ".": "./dist/index.js",
+    "./batch": "./dist/batch.js",
+    "./node-stream": "./dist/node-stream.js",
+    "./web-stream": "./dist/web-stream.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsdown"
+  },
+  "dependencies": {
+    "@material-tech/alloy-core": "workspace:^"
+  }
+}
