@@ -1,0 +1,28 @@
+{
+  "name": "@material-tech/alloy",
+  "type": "module",
+  "version": "0.1.0",
+  "exports": {
+    ".": "./dist/index.js",
+    "./node-stream": "./dist/node-stream.js",
+    "./web-stream": "./dist/web-stream.js",
+    "./package.json": "./package.json"
+  },
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsdown"
+  },
+  "dependencies": {
+    "@material-tech/alloy-core": "workspace:^",
+    "@material-tech/alloy-indicators": "workspace:^",
+    "@material-tech/alloy-adapters": "workspace:^"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:build",
+    "tsdown": "catalog:build",
+    "typescript": "catalog:build"
+  }
+}
