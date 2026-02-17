@@ -23,8 +23,8 @@ export const defaultRMAOptions: RMAOptions = {
 export const rma = createSignal(
   ({ period }: Required<RMAOptions>) => {
     let count = 0
-    let sum: Dnum = from(0)
-    let prev: Dnum = from(0)
+    let sum: Dnum = from(0, 18)
+    let prev: Dnum = from(0, 18)
 
     return (value: Numberish) => {
       if (count < period) {

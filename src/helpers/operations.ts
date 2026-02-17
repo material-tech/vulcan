@@ -4,9 +4,7 @@ import {
   divide as dnumDivide,
   multiply as dnumMultiply,
   subtract as dnumSubtract,
-  gt,
   isDnum,
-  lt,
 } from 'dnum'
 import { assert } from './assert'
 
@@ -49,37 +47,6 @@ export function mapOperator(action: any) {
     return args0.map(num => action(num, args1, ...rest))
   }
   return impl
-}
-
-export interface PeriodCompareOptions {
-  period?: number
-  start?: number
-}
-
-export function max<T extends Numberish>(
-  numbers: T[],
-  { period = numbers.length, start = 0 }: PeriodCompareOptions = {},
-): T {
-  const filtered = numbers.filter((_, index) => index >= start && index < start + period)
-  return filtered.reduce(
-    (max, current) => {
-      return gt(max, current) ? max : current
-    },
-    numbers.at(0) as T,
-  )
-}
-
-export function min<T extends Numberish>(
-  numbers: T[],
-  { period = numbers.length, start = 0 }: PeriodCompareOptions = {},
-): T {
-  const filtered = numbers.filter((_, index) => index >= start && index < start + period)
-  return filtered.reduce(
-    (min, current) => {
-      return lt(min, current) ? min : current
-    },
-    numbers.at(0) as T,
-  )
 }
 
 export const add = mapOperator(dnumAdd)

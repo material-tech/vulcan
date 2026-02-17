@@ -19,10 +19,10 @@ export const msum = createSignal(
   ({ period }: Required<MovingSumOptions>) => {
     const buffer: Dnum[] = []
     return (value: Numberish) => {
-      buffer.push(from(value))
+      buffer.push(from(value, 18))
       if (buffer.length > period)
         buffer.shift()
-      return buffer.reduce((sum, cur) => add(sum, cur), from(0))
+      return buffer.reduce((sum, cur) => add(sum, cur), from(0, 18))
     }
   },
   defaultMovingSumOptions,

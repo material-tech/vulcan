@@ -51,15 +51,15 @@ export const ichimokuCloud = createSignal(
     const leadBLowProc = mmin.create({ period: leadingBPeriod })
 
     return (bar: RequiredProperties<KlineData, 'h' | 'l' | 'c'>) => {
-      const h = from(bar.h)
-      const l = from(bar.l)
+      const h = from(bar.h, 18)
+      const l = from(bar.l, 18)
 
       const conversion = div(add(convHighProc(h), convLowProc(l)), 2, 18)
       const base = div(add(baseHighProc(h), baseLowProc(l)), 2, 18)
       const leadingA = div(add(conversion, base), 2, 18)
       const leadingB = div(add(leadBHighProc(h), leadBLowProc(l)), 2, 18)
 
-      return { conversion, base, leadingA, leadingB, lagging: from(bar.c) }
+      return { conversion, base, leadingA, leadingB, lagging: from(bar.c, 18) }
     }
   },
   defaultIchimokuCloudOptions,

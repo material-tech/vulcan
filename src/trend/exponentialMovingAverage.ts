@@ -23,7 +23,7 @@ export const ema = createSignal(
     let prev: Dnum | undefined
     return (value: Numberish) => {
       if (prev === undefined) {
-        prev = from(value)
+        prev = from(value, 18)
         return prev
       }
       prev = add(

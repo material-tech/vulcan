@@ -14,7 +14,7 @@ import { createSignal } from '~/base'
  */
 export const ad = createSignal(
   () => {
-    let prevAD: Dnum = from(0)
+    let prevAD: Dnum = from(0, 18)
     return (bar: RequiredProperties<KlineData, 'h' | 'l' | 'c' | 'v'>) => {
       const h = from(bar.h, 18)
       const l = from(bar.l, 18)

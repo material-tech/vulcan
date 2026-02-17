@@ -77,7 +77,7 @@ describe('mass index (MI)', () => {
 
     expect(result.length).toBe(8)
     // MI accumulates up to miPeriod window then remains bounded
-    expect(result).toMatchNumberArray([1, 2, 3, 4, 4, 4, 4, 4])
+    expect(result).toMatchNumberArray([1, 2.2, 3.64, 5.14, 5.31, 4.98, 4.24, 3.4])
   })
 
   it('should return empty array for empty input', () => {

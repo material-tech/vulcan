@@ -24,7 +24,7 @@ export const ao = createSignal(
     const fastProc = sma.create({ period: fastPeriod })
     const slowProc = sma.create({ period: slowPeriod })
     return (bar: RequiredProperties<KlineData, 'h' | 'l'>) => {
-      const median = div(add(from(bar.h), from(bar.l)), 2, 18)
+      const median = div(add(from(bar.h, 18), from(bar.l, 18)), 2, 18)
       return sub(fastProc(median), slowProc(median))
     }
   },

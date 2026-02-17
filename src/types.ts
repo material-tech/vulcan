@@ -3,9 +3,9 @@ import type { Numberish } from 'dnum'
 export type Processor<Input, Output> = (value: Input) => Output
 
 export interface IndicatorGenerator<Input, Output, Options extends Record<string, any>> {
-  (source: Iterable<Input>, options?: Partial<Options>): Generator<Output, void, Input | undefined>
+  (source: Iterable<Input>, options?: Partial<Options>): Generator<Output>
   create: (options?: Partial<Options>) => Processor<Input, Output>
-  defaultOptions: Options
+  readonly defaultOptions: Options
 }
 
 export interface KlineData {

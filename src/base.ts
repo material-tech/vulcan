@@ -10,7 +10,7 @@ export function createSignal<Input, Output, Options extends Record<string, any>>
   factory: (options: Required<Options>) => Processor<Input, Output>,
   defaultOptions?: Options,
 ): IndicatorGenerator<Input, Output, Options> {
-  function* generator(source: Iterable<Input>, options?: Partial<Options>): Generator<Output, void, Input | undefined> {
+  function* generator(source: Iterable<Input>, options?: Partial<Options>): Generator<Output> {
     const opt = defu(options, defaultOptions) as Required<Options>
     const process = factory(opt)
     for (const value of source) {

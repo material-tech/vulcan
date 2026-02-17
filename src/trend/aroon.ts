@@ -30,8 +30,8 @@ export const aroon = createSignal(
     const lowBuffer: Dnum[] = []
 
     return (bar: RequiredProperties<KlineData, 'h' | 'l'>) => {
-      const h = from(bar.h)
-      const l = from(bar.l)
+      const h = from(bar.h, 18)
+      const l = from(bar.l, 18)
 
       highBuffer.push(h)
       lowBuffer.push(l)

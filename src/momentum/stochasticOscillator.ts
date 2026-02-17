@@ -1,6 +1,6 @@
 import type { Dnum } from 'dnum'
 import type { KlineData, RequiredProperties } from '~/types'
-import { div, from, mul, sub } from 'dnum'
+import { div, eq, from, mul, sub } from 'dnum'
 import { createSignal } from '~/base'
 import { mmax } from '~/trend/movingMax'
 import { mmin } from '~/trend/movingMin'
@@ -39,14 +39,15 @@ export const stoch = createSignal(
     const slowingProc = slowingPeriod > 1 ? sma.create({ period: slowingPeriod }) : null
     const dProc = sma.create({ period: dPeriod })
     return (bar: RequiredProperties<KlineData, 'h' | 'l' | 'c'>) => {
-      const h = from(bar.h)
-      const l = from(bar.l)
-      const c = from(bar.c)
+      const h = from(bar.h, 18)
+      const l = from(bar.l, 18)
+      const c = from(bar.c, 18)
 
       const highestHigh = mmaxProc(h)
       const lowestLow = mminProc(l)
 
-      const rawK = mul(div(sub(c, lowestLow, 18), sub(highestHigh, lowestLow, 18), 18), 100, 18)
+      const range = sub(highestHigh, lowestLow, 18)
+      const rawK = eq(range, 0) ? from(0, 18) : mul(div(sub(c, lowestLow, 18), range, 18), 100, 18)
       const k = slowingProc ? slowingProc(rawK) : rawK
       return { k, d: dProc(k) }
     }

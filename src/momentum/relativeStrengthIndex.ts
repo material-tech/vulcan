@@ -27,26 +27,26 @@ export const rsi = createSignal(
     let prev: Dnum | undefined
 
     return (value: Numberish) => {
-      const price = from(value)
+      const price = from(value, 18)
 
       if (prev === undefined) {
         prev = price
-        gainProc(from(0))
-        lossProc(from(0))
-        return from(0)
+        gainProc(from(0, 18))
+        lossProc(from(0, 18))
+        return from(0, 18)
       }
 
       const change = sub(price, prev)
       prev = price
 
-      const gain = gt(change, 0) ? change : from(0)
-      const loss = gt(change, 0) ? from(0) : mul(change, -1, 18)
+      const gain = gt(change, 0) ? change : from(0, 18)
+      const loss = gt(change, 0) ? from(0, 18) : mul(change, -1, 18)
 
       const avgGain = gainProc(gain)
       const avgLoss = lossProc(loss)
 
       if (eq(avgLoss, 0)) {
-        return from(100)
+        return from(100, 18)
       }
 
       const rs = div(avgGain, avgLoss)
