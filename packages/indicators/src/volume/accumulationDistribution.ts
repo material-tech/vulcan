@@ -1,4 +1,4 @@
-import type { KlineData, RequiredProperties } from '@material-tech/alloy-core'
+import type { CandleData, RequiredProperties } from '@material-tech/alloy-core'
 import type { Dnum } from 'dnum'
 import { createSignal } from '@material-tech/alloy-core'
 import { add, divide, from, multiply, subtract } from 'dnum'
@@ -15,7 +15,7 @@ import { add, divide, from, multiply, subtract } from 'dnum'
 export const ad = createSignal(
   () => {
     let prevAD: Dnum = from(0, 18)
-    return (bar: RequiredProperties<KlineData, 'h' | 'l' | 'c' | 'v'>) => {
+    return (bar: RequiredProperties<CandleData, 'h' | 'l' | 'c' | 'v'>) => {
       const h = from(bar.h, 18)
       const l = from(bar.l, 18)
       const c = from(bar.c, 18)

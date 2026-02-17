@@ -1,8 +1,8 @@
-import type { IndicatorGenerator, Processor } from '@material-tech/alloy-core'
+import type { Processor, SignalGenerator } from '@material-tech/alloy-core'
 
-/** Wrap an IndicatorGenerator to accept an array and return an array */
+/** Wrap an SignalGenerator to accept an array and return an array */
 export function batch<I, O, Opts extends Record<string, any>>(
-  indicator: IndicatorGenerator<I, O, Opts>,
+  indicator: SignalGenerator<I, O, Opts>,
 ): (source: I[], options?: Partial<Opts>) => O[] {
   return (source, options) => Array.from(indicator(source, options))
 }

@@ -1,8 +1,8 @@
-import type { IndicatorGenerator, Processor } from '@material-tech/alloy-core'
+import type { Processor, SignalGenerator } from '@material-tech/alloy-core'
 
-/** Create a Web TransformStream from an IndicatorGenerator */
+/** Create a Web TransformStream from an SignalGenerator */
 export function toWebStream<I, O, Opts extends Record<string, any>>(
-  indicator: IndicatorGenerator<I, O, Opts>,
+  indicator: SignalGenerator<I, O, Opts>,
   options?: Partial<Opts>,
 ): TransformStream<I, O> {
   const processor = indicator.create(options)

@@ -1,4 +1,4 @@
-import type { IndicatorGenerator, KlineData, Processor } from '@material-tech/alloy-core'
+import type { CandleData, Processor, SignalGenerator } from '@material-tech/alloy-core'
 
 /**
  * The action a strategy recommends.
@@ -34,9 +34,9 @@ export interface BaseStrategyOptions {
  */
 export interface StrategyContext {
   /** The current bar */
-  bar: KlineData
+  bar: CandleData
   /** Historical bars in the rolling window (oldest first, includes current bar) */
-  bars: readonly KlineData[]
+  bars: readonly CandleData[]
   /** Zero-based index of the current bar since the strategy started */
   index: number
 }
@@ -45,9 +45,9 @@ export interface StrategyContext {
  * A strategy generator — type alias ensuring compatibility with all existing adapters.
  */
 export type StrategyGenerator<Opts extends BaseStrategyOptions>
-  = IndicatorGenerator<KlineData, StrategySignal, Opts>
+  = SignalGenerator<CandleData, StrategySignal, Opts>
 
 export type StrategyFactory<Opts extends BaseStrategyOptions>
   = (opts: Required<Opts>) => (ctx: StrategyContext) => StrategySignal
 
-export type { KlineData, Processor }
+export type { CandleData, Processor }

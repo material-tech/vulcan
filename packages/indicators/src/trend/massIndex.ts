@@ -1,4 +1,4 @@
-import type { KlineData, RequiredProperties } from '@material-tech/alloy-core'
+import type { CandleData, RequiredProperties } from '@material-tech/alloy-core'
 import { createSignal } from '@material-tech/alloy-core'
 import { divide, from, subtract } from 'dnum'
 import { ema } from './exponentialMovingAverage'
@@ -48,7 +48,7 @@ export const mi = createSignal(
     const ema2Proc = ema.create({ period: emaPeriod })
     const msumProc = msum.create({ period: miPeriod })
 
-    return (bar: RequiredProperties<KlineData, 'h' | 'l'>) => {
+    return (bar: RequiredProperties<CandleData, 'h' | 'l'>) => {
       const range = subtract(from(bar.h, 18), from(bar.l, 18))
       const e1 = ema1Proc(range)
       const e2 = ema2Proc(e1)

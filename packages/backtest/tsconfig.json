@@ -5,10 +5,8 @@
       "@material-tech/alloy-core": ["../core/src/index.ts"],
       "@material-tech/alloy-indicators": ["../indicators/src/index.ts"],
       "@material-tech/alloy-strategies": ["../strategies/src/index.ts"],
-      "@material-tech/alloy-backtest": ["../backtest/src/index.ts"],
-      "@material-tech/alloy-adapters": ["../adapters/src/index.ts"],
-      "@material-tech/alloy-adapters/*": ["../adapters/src/*.ts"]
+      "@material-tech/alloy-backtest": ["./src/index.ts"]
     }
   },
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts", "tests/**/*.spec.ts"]
 }

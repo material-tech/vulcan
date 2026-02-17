@@ -1,9 +1,9 @@
-import type { IndicatorGenerator, Processor } from '@material-tech/alloy-core'
+import type { Processor, SignalGenerator } from '@material-tech/alloy-core'
 import { Transform } from 'node:stream'
 
-/** Create a Node.js Transform stream (object mode) from an IndicatorGenerator */
+/** Create a Node.js Transform stream (object mode) from an SignalGenerator */
 export function toNodeStream<I, O, Opts extends Record<string, any>>(
-  indicator: IndicatorGenerator<I, O, Opts>,
+  indicator: SignalGenerator<I, O, Opts>,
   options?: Partial<Opts>,
 ): Transform {
   const processor = indicator.create(options)

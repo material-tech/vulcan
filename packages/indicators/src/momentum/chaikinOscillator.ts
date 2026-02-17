@@ -1,4 +1,4 @@
-import type { KlineData, RequiredProperties } from '@material-tech/alloy-core'
+import type { CandleData, RequiredProperties } from '@material-tech/alloy-core'
 import { createSignal } from '@material-tech/alloy-core'
 import { sub } from 'dnum'
 import { ema } from '../trend/exponentialMovingAverage'
@@ -28,7 +28,7 @@ export const cmo = createSignal(
     const adProc = ad.create()
     const fastProc = ema.create({ period: fastPeriod })
     const slowProc = ema.create({ period: slowPeriod })
-    return (bar: RequiredProperties<KlineData, 'h' | 'l' | 'c' | 'v'>) => {
+    return (bar: RequiredProperties<CandleData, 'h' | 'l' | 'c' | 'v'>) => {
       const adVal = adProc(bar)
       return sub(fastProc(adVal), slowProc(adVal))
     }
