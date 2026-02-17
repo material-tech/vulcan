@@ -4,6 +4,7 @@
     "paths": {
       "@material-tech/alloy-core": ["./packages/core/src/index.ts"],
       "@material-tech/alloy-indicators": ["./packages/indicators/src/index.ts"],
+      "@material-tech/alloy-strategies": ["./packages/strategies/src/index.ts"],
       "@material-tech/alloy-adapters": ["./packages/adapters/src/index.ts"],
       "@material-tech/alloy-adapters/*": ["./packages/adapters/src/*.ts"],
       "@material-tech/alloy": ["./packages/alloy/src/index.ts"],
