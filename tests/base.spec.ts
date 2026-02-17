@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { collect, createSignal } from '../src/base'
 
-describe('createGenerator', () => {
+describe('createSignal', () => {
   it('should create a generator function with createProcessor and defaultOptions', () => {
     const gen = createSignal(
       () => (v: number) => v * 2,
