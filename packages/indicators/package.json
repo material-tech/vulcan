@@ -1,0 +1,19 @@
+{
+  "name": "@material-tech/alloy-indicators",
+  "type": "module",
+  "version": "0.1.0",
+  "exports": {
+    ".": "./dist/index.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsdown"
+  },
+  "dependencies": {
+    "@material-tech/alloy-core": "workspace:^",
+    "dnum": "^2.17.0"
+  }
+}

@@ -1,7 +1,7 @@
 /* eslint-disable antfu/consistent-list-newline */
+import { collect } from '@material-tech/alloy-core'
+import { macd } from '@material-tech/alloy-indicators'
 import { describe, expect, it } from 'vitest'
-import { collect } from '~/base'
-import { macd } from '~/trend/macd'
 
 describe('moving average convergence divergence (MACD)', () => {
   const values = [

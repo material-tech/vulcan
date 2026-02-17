@@ -1,6 +1,6 @@
+import { collect } from '@material-tech/alloy-core'
+import { rma } from '@material-tech/alloy-indicators'
 import { describe, expect, it } from 'vitest'
-import { collect } from '~/base'
-import { rma } from '~/trend/rollingMovingAverage'
 
 describe('rollingMovingAverage', () => {
   const values = [2, 4, 6, 8, 10, 12]

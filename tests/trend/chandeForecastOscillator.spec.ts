@@ -1,6 +1,6 @@
+import { collect } from '@material-tech/alloy-core'
+import { cfo } from '@material-tech/alloy-indicators'
 import { describe, expect, it } from 'vitest'
-import { collect } from '~/base'
-import { cfo } from '~/trend/chandeForecastOscillator'
 
 describe('chande forecast oscillator (CFO)', () => {
   const values = [10, 14, 12, 16, 20]

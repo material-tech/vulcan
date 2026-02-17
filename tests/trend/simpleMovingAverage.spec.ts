@@ -1,6 +1,6 @@
+import { collect } from '@material-tech/alloy-core'
+import { sma } from '@material-tech/alloy-indicators'
 import { describe, expect, it } from 'vitest'
-import { collect } from '~/base'
-import { sma } from '~/trend/simpleMovingAverage'
 
 describe('sma', () => {
   const values = [2, 4, 6, 8, 10]

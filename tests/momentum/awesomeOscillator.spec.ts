@@ -1,6 +1,6 @@
+import { collect } from '@material-tech/alloy-core'
+import { ao } from '@material-tech/alloy-indicators'
 import { describe, expect, it } from 'vitest'
-import { collect } from '~/base'
-import { ao } from '~/momentum/awesomeOscillator'
 
 describe('awesomeOscillator (AO)', () => {
   const data = [

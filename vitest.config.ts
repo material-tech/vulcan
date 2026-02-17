@@ -7,10 +7,9 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'html'],
-      include: ['src/**/*.ts'],
-      exclude: ['src/**/index.ts', 'src/types.ts'],
+      include: ['packages/*/src/**/*.ts'],
+      exclude: ['packages/*/src/**/index.ts', 'packages/core/src/types.ts'],
     },
     setupFiles: ['vitest-setup.ts'],
   },
-
 })

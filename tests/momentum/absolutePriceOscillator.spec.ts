@@ -1,6 +1,6 @@
+import { collect } from '@material-tech/alloy-core'
+import { apo } from '@material-tech/alloy-indicators'
 import { describe, expect, it } from 'vitest'
-import { collect } from '~/base'
-import { apo } from '~/momentum/absolutePriceOscillator'
 
 describe('absolute price oscillator (APO)', () => {
   const values = [1, 2, 1, 5, 8, 10, 4, 6, 5, 2]

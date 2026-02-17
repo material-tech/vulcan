@@ -2,6 +2,7 @@
   "name": "alloy",
   "type": "module",
   "version": "0.1.0",
+  "private": true,
   "packageManager": "pnpm@10.29.3",
   "description": "A library for technical indicators",
   "author": "enpitsulin <enpitsulin@gmail.com>",
@@ -11,31 +12,20 @@
     "indicator",
     "technical-indicator"
   ],
-  "exports": {
-    ".": "./dist/index.js",
-    "./package.json": "./package.json"
-  },
-  "types": "./dist/index.d.mts",
-  "files": [
-    "dist"
-  ],
   "scripts": {
-    "build": "tsdown",
-    "prepack": "tsdown",
+    "build": "pnpm -r run build",
     "test": "vitest --typecheck",
     "test:coverage": "vitest --coverage",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "prepare": "simple-git-hooks"
   },
-  "dependencies": {
-    "defu": "^6.1.4",
-    "dnum": "^2.17.0"
-  },
   "devDependencies": {
     "@antfu/eslint-config": "^7.4.3",
     "@types/node": "^25.2.3",
     "@vitest/coverage-v8": "^4.0.18",
+    "defu": "^6.1.4",
+    "dnum": "^2.17.0",
     "eslint": "^10.0.0",
     "lint-staged": "^16.2.7",
     "simple-git-hooks": "^2.13.1",

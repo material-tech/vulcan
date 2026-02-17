@@ -1,6 +1,6 @@
+import { collect } from '@material-tech/alloy-core'
+import { aroon } from '@material-tech/alloy-indicators'
 import { describe, expect, it } from 'vitest'
-import { collect } from '~/base'
-import { aroon } from '~/trend/aroon'
 
 describe('aroon indicator', () => {
   const values = [

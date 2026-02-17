@@ -1,6 +1,6 @@
+import { collect } from '@material-tech/alloy-core'
+import { mmax } from '@material-tech/alloy-indicators'
 import { describe, expect, it } from 'vitest'
-import { collect } from '~/base'
-import { mmax } from '~/trend/movingMax'
 
 describe('movingMax (mmax)', () => {
   const values = [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
