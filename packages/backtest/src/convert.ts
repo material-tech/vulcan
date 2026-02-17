@@ -1,5 +1,5 @@
 import type { Numberish } from 'dnum'
-import type { KlineData, NormalizedBar } from './types'
+import type { CandleData, NormalizedBar } from './types'
 import { from, toNumber } from 'dnum'
 
 function toNum(value: Numberish): number {
@@ -8,7 +8,7 @@ function toNum(value: Numberish): number {
   return toNumber(from(value))
 }
 
-export function normalizeBar(bar: KlineData): NormalizedBar {
+export function normalizeBar(bar: CandleData): NormalizedBar {
   return {
     o: toNum(bar.o),
     h: toNum(bar.h),

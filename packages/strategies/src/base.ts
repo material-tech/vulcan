@@ -1,4 +1,4 @@
-import type { BaseStrategyOptions, KlineData, Processor, StrategyContext, StrategyFactory, StrategyGenerator, StrategySignal } from './types'
+import type { BaseStrategyOptions, CandleData, Processor, StrategyContext, StrategyFactory, StrategyGenerator, StrategySignal } from './types'
 import { defu } from 'defu'
 
 /**
@@ -35,19 +35,19 @@ function createRingBuffer<T>(capacity: number) {
  * Mirrors `createSignal` from core, but manages a rolling window of bars
  * and constructs a `StrategyContext` for each evaluation.
  *
- * The returned generator is fully compatible with `SignalGenerator<KlineData, StrategySignal, Opts>`,
+ * The returned generator is fully compatible with `SignalGenerator<CandleData, StrategySignal, Opts>`,
  * so all existing adapters (batch, node-stream, web-stream) work out of the box.
  */
 export function createStrategy<Opts extends BaseStrategyOptions>(
   factory: StrategyFactory<Opts>,
   defaultOptions: Opts,
 ): StrategyGenerator<Opts> {
-  function buildProcessor(options?: Partial<Opts>): Processor<KlineData, StrategySignal> {
+  function buildProcessor(options?: Partial<Opts>): Processor<CandleData, StrategySignal> {
     const opt = defu(options, defaultOptions) as Required<Opts>
-    const ring = createRingBuffer<KlineData>(opt.windowSize)
+    const ring = createRingBuffer<CandleData>(opt.windowSize)
     const process = factory(opt)
     let index = 0
-    return (bar: KlineData) => {
+    return (bar: CandleData) => {
       ring.push(bar)
       const ctx: StrategyContext = { bar, bars: ring.toArray(), index }
       const signal = process(ctx)
@@ -57,7 +57,7 @@ export function createStrategy<Opts extends BaseStrategyOptions>(
   }
 
   function* generator(
-    source: Iterable<KlineData>,
+    source: Iterable<CandleData>,
     options?: Partial<Opts>,
   ): Generator<StrategySignal, void, unknown> {
     const process = buildProcessor(options)
@@ -66,7 +66,7 @@ export function createStrategy<Opts extends BaseStrategyOptions>(
     }
   }
 
-  generator.create = (options?: Partial<Opts>): Processor<KlineData, StrategySignal> => {
+  generator.create = (options?: Partial<Opts>): Processor<CandleData, StrategySignal> => {
     return buildProcessor(options)
   }
 

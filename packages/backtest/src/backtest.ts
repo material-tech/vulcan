@@ -1,5 +1,5 @@
 import type { BaseStrategyOptions, StrategyGenerator } from '@material-tech/alloy-strategies'
-import type { BacktestOptions, BacktestResult, BacktestSnapshot, KlineData, Position, Trade } from './types'
+import type { BacktestOptions, BacktestResult, BacktestSnapshot, CandleData, Position, Trade } from './types'
 import { defu } from 'defu'
 import { normalizeBar } from './convert'
 import { closePositionAtEnd, updatePosition } from './position'
@@ -30,7 +30,7 @@ function computeUnrealizedPnl(position: Position | null, closePrice: number): nu
  */
 export async function* backtestStream<Opts extends BaseStrategyOptions>(
   strategy: StrategyGenerator<Opts>,
-  data: AsyncIterable<KlineData> | Iterable<KlineData>,
+  data: AsyncIterable<CandleData> | Iterable<CandleData>,
   options?: Partial<BacktestOptions>,
   strategyOptions?: Partial<Opts>,
 ): AsyncGenerator<BacktestSnapshot, void, unknown> {
@@ -76,7 +76,7 @@ export async function* backtestStream<Opts extends BaseStrategyOptions>(
  */
 export function backtest<Opts extends BaseStrategyOptions>(
   strategy: StrategyGenerator<Opts>,
-  data: KlineData[],
+  data: CandleData[],
   options?: Partial<BacktestOptions>,
   strategyOptions?: Partial<Opts>,
 ): BacktestResult {

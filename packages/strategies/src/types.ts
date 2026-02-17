@@ -50,4 +50,4 @@ export type StrategyGenerator<Opts extends BaseStrategyOptions>
 export type StrategyFactory<Opts extends BaseStrategyOptions>
   = (opts: Required<Opts>) => (ctx: StrategyContext) => StrategySignal
 
-export type { CandleData as KlineData, Processor }
+export type { CandleData, Processor }
