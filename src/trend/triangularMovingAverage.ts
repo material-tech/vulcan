@@ -11,9 +11,9 @@ export const defaultTriangularMovingAverageOptions: TriangularMovingAverageOptio
 }
 
 export const trima = createSignal(
-  (values: Numberish[], { period }) => {
-    let n1 = 0
-    let n2 = 0
+  ({ period }) => {
+    let n1: number
+    let n2: number
 
     if (period % 2 === 0) {
       n1 = period / 2
@@ -24,12 +24,13 @@ export const trima = createSignal(
       n2 = n1
     }
 
-    const result = sma(
-      sma(values, { period: n2 }),
-      { period: n1 },
-    )
+    const sma1 = sma.create({ period: n2 })
+    const sma2 = sma.create({ period: n1 })
 
-    return result
+    return (value: Numberish) => {
+      const s1 = sma1(value)
+      return sma2(s1)
+    }
   },
   defaultTriangularMovingAverageOptions,
 )

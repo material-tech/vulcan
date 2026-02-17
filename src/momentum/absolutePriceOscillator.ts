@@ -1,7 +1,6 @@
 import type { Numberish } from 'dnum'
-import { from } from 'dnum'
+import { sub } from 'dnum'
 import { createSignal } from '~/base'
-import { subtract } from '../helpers/operations'
 import { ema } from '../trend/exponentialMovingAverage'
 
 export interface AbsolutePriceOscillatorOptions {
@@ -14,16 +13,13 @@ export const defaultAbsolutePriceOscillatorOptions: AbsolutePriceOscillatorOptio
   slowPeriod: 26,
 }
 
-export const apo = createSignal((
-  data: Numberish[],
-  { fastPeriod, slowPeriod },
-) => {
-  const closes = data.map(v => from(v))
-
-  const fastEMA = ema(closes, { period: fastPeriod })
-  const slowEMA = ema(closes, { period: slowPeriod })
-
-  return subtract(fastEMA, slowEMA, 18)
-}, defaultAbsolutePriceOscillatorOptions)
+export const apo = createSignal(
+  ({ fastPeriod, slowPeriod }) => {
+    const fastProc = ema.create({ period: fastPeriod })
+    const slowProc = ema.create({ period: slowPeriod })
+    return (value: Numberish) => sub(fastProc(value), slowProc(value))
+  },
+  defaultAbsolutePriceOscillatorOptions,
+)
 
 export { apo as absolutePriceOscillator }

@@ -1,11 +1,12 @@
 import { describe, expect, it } from 'vitest'
+import { collect } from '~/base'
 import { rsi } from '~/momentum/relativeStrengthIndex'
 
 describe('relativeStrengthIndex (RSI)', () => {
   const values = [10, 12, 11, 11, 14, 16, 18, 17, 18, 19, 16, 14, 14, 15, 16, 19, 20, 22]
 
   it('should be able to calculate RSI with options', () => {
-    const result = rsi(values, { period: 9 })
+    const result = collect(rsi(values, { period: 9 }))
 
     const expected = [
       0,
@@ -32,7 +33,7 @@ describe('relativeStrengthIndex (RSI)', () => {
   })
 
   it('should be able to calculate RSI ', () => {
-    const result = rsi(values)
+    const result = collect(rsi(values))
 
     const expected = [
       0,

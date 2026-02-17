@@ -1,11 +1,10 @@
 import type { Dnum } from 'dnum'
 import type { KlineData, RequiredProperties } from '~/types'
-import { from } from 'dnum'
+import { div, eq, from, mul, sub } from 'dnum'
 import { createSignal } from '~/base'
-import { mapPick } from '~/helpers/array'
-import { divide, multiply, subtract } from '~/helpers/operations'
-import { mmin, sma } from '~/trend'
 import { mmax } from '~/trend/movingMax'
+import { mmin } from '~/trend/movingMin'
+import { sma } from '~/trend/simpleMovingAverage'
 
 export interface StochasticOscillatorOptions {
   /** The %k period */
@@ -22,40 +21,38 @@ export const defaultStochasticOscillatorOptions: StochasticOscillatorOptions = {
   dPeriod: 3,
 }
 
-export interface StochResult {
-  k: Dnum[]
-  d: Dnum[]
+export interface StochPoint {
+  k: Dnum
+  d: Dnum
 }
 
-export const stoch = createSignal((data: RequiredProperties<KlineData, 'h' | 'l' | 'c'>[], { kPeriod, slowingPeriod, dPeriod }) => {
-  const highs = mapPick(data, 'h', v => from(v))
-  const lows = mapPick(data, 'l', v => from(v))
-  const closings = mapPick(data, 'c', v => from(v))
+/**
+ * Stochastic Oscillator
+ *
+ * %K = ((Close - Lowest Low) / (Highest High - Lowest Low)) * 100
+ * %D = SMA(%K, dPeriod)
+ */
+export const stoch = createSignal(
+  ({ kPeriod, slowingPeriod, dPeriod }) => {
+    const mmaxProc = mmax.create({ period: kPeriod })
+    const mminProc = mmin.create({ period: kPeriod })
+    const slowingProc = slowingPeriod > 1 ? sma.create({ period: slowingPeriod }) : null
+    const dProc = sma.create({ period: dPeriod })
+    return (bar: RequiredProperties<KlineData, 'h' | 'l' | 'c'>) => {
+      const h = from(bar.h, 18)
+      const l = from(bar.l, 18)
+      const c = from(bar.c, 18)
 
-  const highestHigh = mmax(highs, { period: kPeriod })
-  const lowestLow = mmin(lows, { period: kPeriod })
+      const highestHigh = mmaxProc(h)
+      const lowestLow = mminProc(l)
 
-  const rawK = multiply(
-    divide(
-      subtract(closings, lowestLow, 18),
-      subtract(highestHigh, lowestLow, 18),
-      18,
-    ),
-    100,
-    18,
-  )
-
-  // 应用平滑度处理
-  const kValue = slowingPeriod > 1
-    ? sma(rawK, { period: slowingPeriod })
-    : rawK
-
-  const dValue = sma(kValue, { period: dPeriod })
-
-  return {
-    k: kValue,
-    d: dValue,
-  } as StochResult
-}, defaultStochasticOscillatorOptions)
+      const range = sub(highestHigh, lowestLow, 18)
+      const rawK = eq(range, 0) ? from(0, 18) : mul(div(sub(c, lowestLow, 18), range, 18), 100, 18)
+      const k = slowingProc ? slowingProc(rawK) : rawK
+      return { k, d: dProc(k) }
+    }
+  },
+  defaultStochasticOscillatorOptions,
+)
 
 export { stoch as stochasticOscillator }

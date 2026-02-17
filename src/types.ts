@@ -1,12 +1,11 @@
 import type { Numberish } from 'dnum'
 
-export interface TechnicalSignal<Data, Result, Options extends Record<string, any>> {
-  readonly defaultOptions: Options
-  (dataset: Data[], options?: Partial<Options>): Result
-}
+export type Processor<Input, Output> = (value: Input) => Output
 
-export interface CreateSignalFunc<Data, Result, Options extends Record<string, any>> {
-  (dataset: Data[], options: Required<Options>): Result
+export interface IndicatorGenerator<Input, Output, Options extends Record<string, any>> {
+  (source: Iterable<Input>, options?: Partial<Options>): Generator<Output>
+  create: (options?: Partial<Options>) => Processor<Input, Output>
+  readonly defaultOptions: Options
 }
 
 export interface KlineData {

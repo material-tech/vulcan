@@ -1,5 +1,6 @@
 /* eslint-disable antfu/consistent-list-newline */
 import { describe, expect, it } from 'vitest'
+import { collect } from '~/base'
 import { macd } from '~/trend/macd'
 
 describe('moving average convergence divergence (MACD)', () => {
@@ -19,7 +20,7 @@ describe('moving average convergence divergence (MACD)', () => {
   ]
 
   it('should able get MACD with default options', () => {
-    const result = macd(values)
+    const result = collect(macd(values))
 
     const expectedMACD = [
       0, -0.64, 8.69, 11.55, 14.79, 29.23, 49.54, 72.69,
@@ -66,17 +67,17 @@ describe('moving average convergence divergence (MACD)', () => {
       19.85, 26.42,
     ]
 
-    expect(result.macd).toMatchNumberArray(expectedMACD)
-    expect(result.signal).toMatchNumberArray(expectedSignal)
-    expect(result.histogram).toMatchNumberArray(expectedHistogram)
+    expect(result.map(p => p.macd)).toMatchNumberArray(expectedMACD)
+    expect(result.map(p => p.signal)).toMatchNumberArray(expectedSignal)
+    expect(result.map(p => p.histogram)).toMatchNumberArray(expectedHistogram)
   })
 
   it('should able get MACD with custom options', () => {
-    const result = macd(values, {
+    const result = collect(macd(values, {
       fastPeriod: 6,
       slowPeriod: 13,
       signalPeriod: 7,
-    })
+    }))
 
     const expectedMACD = [
       0, -1.15, 15.79, 17.73, 20.22, 42.52, 71.15, 99.76,
@@ -123,8 +124,8 @@ describe('moving average convergence divergence (MACD)', () => {
       14.83, 23.38,
     ]
 
-    expect(result.macd).toMatchNumberArray(expectedMACD)
-    expect(result.signal).toMatchNumberArray(expectedSignal)
-    expect(result.histogram).toMatchNumberArray(expectedHistogram)
+    expect(result.map(p => p.macd)).toMatchNumberArray(expectedMACD)
+    expect(result.map(p => p.signal)).toMatchNumberArray(expectedSignal)
+    expect(result.map(p => p.histogram)).toMatchNumberArray(expectedHistogram)
   })
 })

@@ -1,23 +1,20 @@
-import type { Dnum } from 'dnum'
 import type { KlineData, RequiredProperties } from '~/types'
 import { divide, equal, from, subtract } from 'dnum'
 import { createSignal } from '~/base'
-import { mapPick } from '~/helpers/array'
 
 export const bop = createSignal(
-  (data: RequiredProperties<KlineData, 'o' | 'h' | 'l' | 'c'>[]) => {
-    const opens = mapPick(data, 'o', v => from(v))
-    const highs = mapPick(data, 'h', v => from(v))
-    const lows = mapPick(data, 'l', v => from(v))
-    const closings = mapPick(data, 'c', v => from(v))
-
-    return data.map((_, i): Dnum => {
-      const range = subtract(highs[i], lows[i])
+  () => {
+    return (bar: RequiredProperties<KlineData, 'o' | 'h' | 'l' | 'c'>) => {
+      const o = from(bar.o, 18)
+      const h = from(bar.h, 18)
+      const l = from(bar.l, 18)
+      const c = from(bar.c, 18)
+      const range = subtract(h, l)
       if (equal(range, 0)) {
         return from(0, 18)
       }
-      return divide(subtract(closings[i], opens[i]), range, 18)
-    })
+      return divide(subtract(c, o), range, 18)
+    }
   },
 )
 

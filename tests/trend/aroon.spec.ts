@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { collect } from '~/base'
 import { aroon } from '~/trend/aroon'
 
 describe('aroon indicator', () => {
@@ -16,18 +17,18 @@ describe('aroon indicator', () => {
   ]
 
   it('should calculate aroon up, down, and oscillator', () => {
-    const result = aroon(values, { period: 5 })
+    const result = collect(aroon(values, { period: 5 }))
 
-    expect(result.up).toMatchNumberArray([100, 100, 80, 100, 80, 60, 100, 80, 60, 40])
-    expect(result.down).toMatchNumberArray([100, 80, 100, 80, 100, 100, 80, 100, 80, 60])
-    expect(result.oscillator).toMatchNumberArray([0, 20, -20, 20, -20, -40, 20, -20, -20, -20])
+    expect(result.map(p => p.up)).toMatchNumberArray([100, 100, 80, 100, 80, 60, 100, 80, 60, 40])
+    expect(result.map(p => p.down)).toMatchNumberArray([100, 80, 100, 80, 100, 100, 80, 100, 80, 60])
+    expect(result.map(p => p.oscillator)).toMatchNumberArray([0, 20, -20, 20, -20, -40, 20, -20, -20, -20])
   })
 
   it('should calculate with custom period', () => {
-    const result = aroon(values, { period: 3 })
+    const result = collect(aroon(values, { period: 3 }))
 
-    expect(result.up).toMatchNumberArray([100, 100, 66.67, 100, 66.67, 33.33, 100, 66.67, 33.33, 0])
-    expect(result.down).toMatchNumberArray([100, 66.67, 100, 66.67, 100, 100, 66.67, 100, 66.67, 33.33])
-    expect(result.oscillator).toMatchNumberArray([0, 33.33, -33.33, 33.33, -33.33, -66.67, 33.33, -33.33, -33.33, -33.33])
+    expect(result.map(p => p.up)).toMatchNumberArray([100, 100, 66.67, 100, 66.67, 33.33, 100, 66.67, 33.33, 0])
+    expect(result.map(p => p.down)).toMatchNumberArray([100, 66.67, 100, 66.67, 100, 100, 66.67, 100, 66.67, 33.33])
+    expect(result.map(p => p.oscillator)).toMatchNumberArray([0, 33.33, -33.33, 33.33, -33.33, -66.67, 33.33, -33.33, -33.33, -33.33])
   })
 })

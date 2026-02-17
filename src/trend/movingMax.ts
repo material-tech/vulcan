@@ -1,7 +1,6 @@
-import type { Numberish } from 'dnum'
-import { from } from 'dnum'
+import type { Dnum, Numberish } from 'dnum'
+import { from, gt } from 'dnum'
 import { createSignal } from '~/base'
-import { max, movingAction } from '~/helpers/operations'
 
 export interface MovingMaxOptions {
   /**
@@ -18,14 +17,14 @@ export const defaultMovingMaxOptions: MovingMaxOptions = {
  * Moving Maximum (MovingMax)
  */
 export const mmax = createSignal(
-  (values: Numberish[], { period }) => {
-    const dnumValues = values.map(item => from(item))
-
-    return movingAction(
-      dnumValues,
-      window => max(window),
-      period,
-    )
+  ({ period }) => {
+    const buffer: Dnum[] = []
+    return (value: Numberish) => {
+      buffer.push(from(value, 18))
+      if (buffer.length > period)
+        buffer.shift()
+      return buffer.reduce((max, cur) => gt(max, cur) ? max : cur)
+    }
   },
   defaultMovingMaxOptions,
 )

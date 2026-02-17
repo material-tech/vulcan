@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { collect } from '~/base'
 import { ad } from '~/volume/accumulationDistribution'
 
 describe('accumulation distribution (A/D)', () => {
@@ -13,7 +14,7 @@ describe('accumulation distribution (A/D)', () => {
   it('should be able to compute accumulation distribution', () => {
     const expected = [50, 650, -48, -1248, -2748]
 
-    const result = ad(values)
+    const result = collect(ad(values))
     expect(result).toMatchNumberArray(expected)
   })
 })

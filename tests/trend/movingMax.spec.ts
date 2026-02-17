@@ -1,18 +1,19 @@
 import { describe, expect, it } from 'vitest'
+import { collect } from '~/base'
 import { mmax } from '~/trend/movingMax'
 
 describe('movingMax (mmax)', () => {
   const values = [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
 
   it('should be able to calculate moving maximum', () => {
-    const result = mmax(values)
+    const result = collect(mmax(values))
 
     expect(result)
       .toMatchNumberArray([10, 10, 10, 10, 9, 8, 7, 6, 5, 4])
   })
 
   it('should be able to calculate moving maximum with period option', () => {
-    const result = mmax(values, { period: 8 })
+    const result = collect(mmax(values, { period: 8 }))
 
     expect(result)
       .toMatchNumberArray([10, 10, 10, 10, 10, 10, 10, 10, 9, 8])

@@ -1,7 +1,6 @@
 import type { Dnum, Numberish } from 'dnum'
 import { add, divide, equal, from, multiply, subtract } from 'dnum'
 import { createSignal } from '~/base'
-import { movingAction } from '~/helpers/operations'
 
 export interface ChandeForecastOscillatorOptions {
   /**
@@ -25,55 +24,55 @@ export const defaultCFOOptions: ChandeForecastOscillatorOptions = {
  * Formula: CFO = ((Close - Forecast) / Close) * 100
  * Where: Forecast = Linear regression value at current point
  *
- * @param values - Array of price values
+ * @param source - Iterable of price values
  * @param options - Configuration options
  * @param options.period - The period for linear regression (default: 14)
- * @returns Array of CFO values as percentages
+ * @returns Generator yielding CFO values as percentages
  */
 export const cfo = createSignal(
-  (values: Numberish[], { period }: Required<ChandeForecastOscillatorOptions>) => {
-    return movingAction(
-      values,
-      (window): Dnum => {
-        const n = window.length
-        if (n < 2) {
-          return from(0, 18)
-        }
+  ({ period }) => {
+    const buffer: Dnum[] = []
 
-        const dnumValues = window.map(v => from(v, 18))
+    return (value: Numberish) => {
+      buffer.push(from(value, 18))
+      if (buffer.length > period)
+        buffer.shift()
 
-        // Precompute X-related sums as plain integers
-        const xSum = n * (n + 1) / 2
-        const x2Sum = n * (n + 1) * (2 * n + 1) / 6
-        const denom = n * x2Sum - xSum * xSum
+      const n = buffer.length
+      if (n < 2) {
+        return from(0, 18)
+      }
 
-        // Compute Y-dependent sums (keep all Dnum at 18 decimals)
-        let sumY: Dnum = from(0, 18)
-        let sumXY: Dnum = from(0, 18)
-        for (let i = 0; i < n; i++) {
-          sumY = add(sumY, dnumValues[i])
-          sumXY = add(sumXY, multiply(dnumValues[i], i + 1))
-        }
+      // Precompute X-related sums as plain integers
+      const xSum = n * (n + 1) / 2
+      const x2Sum = n * (n + 1) * (2 * n + 1) / 6
+      const denom = n * x2Sum - xSum * xSum
 
-        // slope = (n * SUM(XY) - SUM(X) * SUM(Y)) / denom
-        const num = subtract(multiply(sumXY, n), multiply(sumY, xSum))
-        const slope = divide(num, denom, 18)
+      // Compute Y-dependent sums (keep all Dnum at 18 decimals)
+      let sumY: Dnum = from(0, 18)
+      let sumXY: Dnum = from(0, 18)
+      for (let i = 0; i < n; i++) {
+        sumY = add(sumY, buffer[i])
+        sumXY = add(sumXY, multiply(buffer[i], i + 1))
+      }
 
-        // intercept = (SUM(Y) - slope * SUM(X)) / n
-        const intercept = divide(subtract(sumY, multiply(slope, xSum)), n, 18)
+      // slope = (n * SUM(XY) - SUM(X) * SUM(Y)) / denom
+      const num = subtract(multiply(sumXY, n), multiply(sumY, xSum))
+      const slope = divide(num, denom, 18)
 
-        // forecast = slope * n + intercept
-        const forecast = add(multiply(slope, n), intercept)
+      // intercept = (SUM(Y) - slope * SUM(X)) / n
+      const intercept = divide(subtract(sumY, multiply(slope, xSum)), n, 18)
 
-        const close = dnumValues[n - 1]
-        if (equal(close, 0)) {
-          return from(0, 18)
-        }
+      // forecast = slope * n + intercept
+      const forecast = add(multiply(slope, n), intercept)
 
-        return divide(multiply(subtract(close, forecast), 100), close, 18)
-      },
-      period,
-    )
+      const close = buffer[n - 1]
+      if (equal(close, 0)) {
+        return from(0, 18)
+      }
+
+      return divide(multiply(subtract(close, forecast), 100), close, 18)
+    }
   },
   defaultCFOOptions,
 )

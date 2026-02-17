@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { collect } from '~/base'
 import { apo } from '~/momentum/absolutePriceOscillator'
 
 describe('absolute price oscillator (APO)', () => {
@@ -7,7 +8,7 @@ describe('absolute price oscillator (APO)', () => {
   it('should able get APO', () => {
     const expected = [0, 0.08, 0.06, 0.37, 0.84, 1.36, 1.27, 1.35, 1.32, 1.04]
 
-    const result = apo(values)
+    const result = collect(apo(values))
 
     expect(result).toMatchNumberArray(expected)
   })
@@ -26,7 +27,7 @@ describe('absolute price oscillator (APO)', () => {
       -1.19,
     ]
 
-    const result = apo(values, { fastPeriod: 2, slowPeriod: 5 })
+    const result = collect(apo(values, { fastPeriod: 2, slowPeriod: 5 }))
 
     expect(result).toMatchNumberArray(expected)
   })

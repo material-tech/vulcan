@@ -1,7 +1,6 @@
 import type { Dnum, Numberish } from 'dnum'
-import { from } from 'dnum'
+import { div, eq, from, mul, sub } from 'dnum'
 import { createSignal } from '~/base'
-import { divide, multiply, subtract } from '../helpers/operations'
 import { ema } from '../trend/exponentialMovingAverage'
 
 export interface PercentagePriceOscillatorOptions {
@@ -16,10 +15,10 @@ export const defaultPercentagePriceOscillatorOptions: PercentagePriceOscillatorO
   signalPeriod: 9,
 }
 
-export interface PercentagePriceOscillatorResult {
-  ppo: Dnum[]
-  signal: Dnum[]
-  histogram: Dnum[]
+export interface PercentagePriceOscillatorPoint {
+  ppo: Dnum
+  signal: Dnum
+  histogram: Dnum
 }
 
 /**
@@ -36,38 +35,27 @@ export interface PercentagePriceOscillatorResult {
  * - Signal = EMA(signalPeriod, PPO)
  * - Histogram = PPO - Signal
  *
- * @param data - Array of price values
+ * @param source - Iterable of price values
  * @param options - Configuration options
  * @param options.fastPeriod - Period for the fast EMA (default: 12)
  * @param options.slowPeriod - Period for the slow EMA (default: 26)
  * @param options.signalPeriod - Period for the signal EMA (default: 9)
- * @returns Object containing ppo, signal, and histogram arrays
+ * @returns Generator yielding PPO point objects
  */
-export const ppo = createSignal((
-  data: Numberish[],
-  { fastPeriod, slowPeriod, signalPeriod },
-): PercentagePriceOscillatorResult => {
-  const closes = data.map(v => from(v))
-
-  const fastEMA = ema(closes, { period: fastPeriod })
-  const slowEMA = ema(closes, { period: slowPeriod })
-
-  // Calculate PPO = ((Fast EMA - Slow EMA) / Slow EMA) * 100
-  const emaDiff = subtract(fastEMA, slowEMA, 18)
-  const emaPercent = divide(emaDiff, slowEMA, 18)
-  const ppoValues = multiply(emaPercent, 100, 18)
-
-  // Calculate Signal = EMA(signalPeriod, PPO)
-  const signal = ema(ppoValues, { period: signalPeriod })
-
-  // Calculate Histogram = PPO - Signal
-  const histogram = subtract(ppoValues, signal, 18)
-
-  return {
-    ppo: ppoValues,
-    signal,
-    histogram,
-  }
-}, defaultPercentagePriceOscillatorOptions)
+export const ppo = createSignal(
+  ({ fastPeriod, slowPeriod, signalPeriod }) => {
+    const fastProc = ema.create({ period: fastPeriod })
+    const slowProc = ema.create({ period: slowPeriod })
+    const signalProc = ema.create({ period: signalPeriod })
+    return (value: Numberish) => {
+      const fast = fastProc(from(value, 18))
+      const slow = slowProc(from(value, 18))
+      const ppoVal = eq(slow, 0) ? from(0, 18) : mul(div(sub(fast, slow), slow, 18), 100, 18)
+      const sig = signalProc(ppoVal)
+      return { ppo: ppoVal, signal: sig, histogram: sub(ppoVal, sig) }
+    }
+  },
+  defaultPercentagePriceOscillatorOptions,
+)
 
 export { ppo as percentagePriceOscillator }
