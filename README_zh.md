@@ -13,8 +13,10 @@
 
 | 包名 | 说明 |
 | --- | --- |
-| [`@material-tech/alloy-core`](./packages/core/) | 核心类型（`KlineData`、`Processor`、`IndicatorGenerator`）及工具函数（`createSignal`、`collect`） |
+| [`@material-tech/alloy-core`](./packages/core/) | 核心类型（`CandleData`、`Processor`、`SignalGenerator`）及工具函数（`createSignal`、`collect`） |
 | [`@material-tech/alloy-indicators`](./packages/indicators/) | 全部技术指标（趋势、动量、成交量） |
+| [`@material-tech/alloy-strategies`](./packages/strategies/) | 可组合的交易策略，输出结构化信号 |
+| [`@material-tech/alloy-backtest`](./packages/backtest/) | 回测引擎，含仓位管理和统计分析 |
 | [`@material-tech/alloy-adapters`](./packages/adapters/) | 批处理、Node.js 流和 Web 流的适配器 |
 
 ## 安装

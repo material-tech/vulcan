@@ -16,7 +16,7 @@ pnpm add @material-tech/alloy-core
 
 Creates a generator-based indicator from a processor factory function.
 
-Returns an `IndicatorGenerator` with:
+Returns a `SignalGenerator` with:
 - **Generator iteration** — `indicator(source, options?)` yields results one by one
 - **`.create(options?)`** — returns a stateful `Processor` for point-by-point feeding
 - **`.defaultOptions`** — the default options for the indicator
@@ -63,8 +63,8 @@ const results = collect(sma([10, 11, 12, 13, 14], { period: 3 }))
 | Type | Description |
 | --- | --- |
 | `Processor<Input, Output>` | Stateful function `(value: Input) => Output` |
-| `IndicatorGenerator<Input, Output, Options>` | Generator function with `.create()` factory and `.defaultOptions` |
-| `KlineData` | OHLCV candle data: `{ h, l, o, c, v, timestamp? }` |
+| `SignalGenerator<Input, Output, Options>` | Generator function with `.create()` factory and `.defaultOptions` |
+| `CandleData` | OHLCV candle data: `{ h, l, o, c, v, timestamp? }` |
 | `RequiredProperties<T, K>` | Makes specified properties of `T` required |
 
 ## License

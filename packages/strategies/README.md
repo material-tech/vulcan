@@ -73,7 +73,7 @@ const myStrategy = createStrategy(
 
 ### Adapter compatibility
 
-Strategies are fully compatible with all existing adapters since `StrategyGenerator` is a type alias for `IndicatorGenerator<KlineData, StrategySignal, Opts>`:
+Strategies are fully compatible with all existing adapters since `StrategyGenerator` is a type alias for `SignalGenerator<CandleData, StrategySignal, Opts>`:
 
 ```ts
 import { batch } from '@material-tech/alloy-adapters/batch'
@@ -97,15 +97,15 @@ Creates a generator-based strategy from a factory function.
 
 Returns a `StrategyGenerator` with:
 - **Generator iteration** — `strategy(source, options?)` yields `StrategySignal` for each bar
-- **`.create(options?)`** — returns a stateful `Processor<KlineData, StrategySignal>` for point-by-point feeding
+- **`.create(options?)`** — returns a stateful `Processor<CandleData, StrategySignal>` for point-by-point feeding
 - **`.defaultOptions`** — the default options for the strategy
 
 The factory receives resolved options and returns a function `(ctx: StrategyContext) => StrategySignal`. The `StrategyContext` provides:
 
 | Property | Type | Description |
 | --- | --- | --- |
-| `bar` | `KlineData` | The current OHLCV bar |
-| `bars` | `readonly KlineData[]` | Rolling window of historical bars (oldest first, includes current bar) |
+| `bar` | `CandleData` | The current OHLCV bar |
+| `bars` | `readonly CandleData[]` | Rolling window of historical bars (oldest first, includes current bar) |
 | `index` | `number` | Zero-based index of the current bar since the strategy started |
 
 ### `StrategySignal`

@@ -13,9 +13,10 @@ A TypeScript library for technical analysis indicators, built on generator-based
 
 | Package | Description |
 | --- | --- |
-| [`@material-tech/alloy-core`](./packages/core/) | Core types (`KlineData`, `Processor`, `IndicatorGenerator`) and utilities (`createSignal`, `collect`) |
+| [`@material-tech/alloy-core`](./packages/core/) | Core types (`CandleData`, `Processor`, `SignalGenerator`) and utilities (`createSignal`, `collect`) |
 | [`@material-tech/alloy-indicators`](./packages/indicators/) | All technical indicators (trend, momentum, volume) |
 | [`@material-tech/alloy-strategies`](./packages/strategies/) | Composable trading strategies with structured signal output |
+| [`@material-tech/alloy-backtest`](./packages/backtest/) | Backtesting engine with position management and statistics |
 | [`@material-tech/alloy-adapters`](./packages/adapters/) | Adapters for batch processing, Node.js streams, and Web streams |
 
 ## Installation

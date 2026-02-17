@@ -26,7 +26,7 @@ Array-in, array-out processing.
 
 #### `batch(indicator)`
 
-Wraps an `IndicatorGenerator` to accept an array and return an array.
+Wraps an `SignalGenerator` to accept an array and return an array.
 
 ```ts
 import { batch } from '@material-tech/alloy-adapters/batch'
@@ -55,7 +55,7 @@ Node.js `Transform` streams in object mode.
 
 #### `toNodeStream(indicator, options?)`
 
-Creates a Transform stream from an `IndicatorGenerator`.
+Creates a Transform stream from an `SignalGenerator`.
 
 ```ts
 import { toNodeStream } from '@material-tech/alloy-adapters/node-stream'
@@ -83,7 +83,7 @@ Standard Web `TransformStream` adapters.
 
 #### `toWebStream(indicator, options?)`
 
-Creates a `TransformStream` from an `IndicatorGenerator`.
+Creates a `TransformStream` from an `SignalGenerator`.
 
 ```ts
 import { toWebStream } from '@material-tech/alloy-adapters/web-stream'

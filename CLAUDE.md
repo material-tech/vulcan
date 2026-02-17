@@ -4,13 +4,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Alloy is a TypeScript technical analysis indicator library using `dnum` for high-precision decimal arithmetic (`[value: bigint, decimals: number]` tuples). The project is organized as a **pnpm monorepo** with three packages:
+Alloy is a TypeScript technical analysis indicator library using `dnum` for high-precision decimal arithmetic (`[value: bigint, decimals: number]` tuples). The project is organized as a **pnpm monorepo** with the following packages:
 
-- **`@material-tech/alloy-core`** (`packages/core/`) — core types (`KlineData`, `Processor`, `IndicatorGenerator`) and factory function (`createSignal`, `collect`)
+- **`@material-tech/alloy-core`** (`packages/core/`) — core types (`CandleData`, `Processor`, `SignalGenerator`) and factory function (`createSignal`, `collect`)
 - **`@material-tech/alloy-indicators`** (`packages/indicators/`) — all indicators organized by category: `trend/`, `momentum/`, `volume/`
+- **`@material-tech/alloy-strategies`** (`packages/strategies/`) — composable trading strategies with structured signal output
+- **`@material-tech/alloy-backtest`** (`packages/backtest/`) — backtesting engine with position management and statistics
 - **`@material-tech/alloy-adapters`** (`packages/adapters/`) — adapters for batch processing, Node.js streams, and Web streams
 
-**Dependency graph:** `indicators` → `core`, `adapters` → `core`
+**Dependency graph:** `indicators` → `core`, `strategies` → `core` + `indicators`, `backtest` → `core` + `strategies`, `adapters` → `core`
 
 **Key technologies:**
 
@@ -37,9 +39,9 @@ pnpm lint:fix           # Lint with auto-fix
 
 - `createSignal(fn, defaultOptions)` — creates a generator-based indicator with `.create()` and `.defaultOptions`
 - `collect(iterable)` — collects all values from an iterable into an array
-- `KlineData` — OHLCV candle data: `{ h, l, o, c, v }` (all `Numberish`)
+- `CandleData` — OHLCV candle data: `{ h, l, o, c, v }` (all `Numberish`)
 - `Processor<I, O>` — stateful function `(value: I) => O`
-- `IndicatorGenerator<I, O, Opts>` — generator function with `.create()` factory
+- `SignalGenerator<I, O, Opts>` — generator function with `.create()` factory
 
 ### Indicators Package (`packages/indicators/`)
 
