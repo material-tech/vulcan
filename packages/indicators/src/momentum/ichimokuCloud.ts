@@ -1,4 +1,4 @@
-import type { KlineData, RequiredProperties } from '@material-tech/alloy-core'
+import type { CandleData, RequiredProperties } from '@material-tech/alloy-core'
 import type { Dnum } from 'dnum'
 import { createSignal } from '@material-tech/alloy-core'
 import { add, div, from } from 'dnum'
@@ -50,7 +50,7 @@ export const ichimokuCloud = createSignal(
     const leadBHighProc = mmax.create({ period: leadingBPeriod })
     const leadBLowProc = mmin.create({ period: leadingBPeriod })
 
-    return (bar: RequiredProperties<KlineData, 'h' | 'l' | 'c'>) => {
+    return (bar: RequiredProperties<CandleData, 'h' | 'l' | 'c'>) => {
       const h = from(bar.h, 18)
       const l = from(bar.l, 18)
 

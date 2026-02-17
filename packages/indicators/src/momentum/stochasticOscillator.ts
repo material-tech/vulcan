@@ -1,4 +1,4 @@
-import type { KlineData, RequiredProperties } from '@material-tech/alloy-core'
+import type { CandleData, RequiredProperties } from '@material-tech/alloy-core'
 import type { Dnum } from 'dnum'
 import { createSignal } from '@material-tech/alloy-core'
 import { div, eq, from, mul, sub } from 'dnum'
@@ -38,7 +38,7 @@ export const stoch = createSignal(
     const mminProc = mmin.create({ period: kPeriod })
     const slowingProc = slowingPeriod > 1 ? sma.create({ period: slowingPeriod }) : null
     const dProc = sma.create({ period: dPeriod })
-    return (bar: RequiredProperties<KlineData, 'h' | 'l' | 'c'>) => {
+    return (bar: RequiredProperties<CandleData, 'h' | 'l' | 'c'>) => {
       const h = from(bar.h, 18)
       const l = from(bar.l, 18)
       const c = from(bar.c, 18)

@@ -8,7 +8,7 @@ export interface SignalGenerator<Input, Output, Options extends Record<string, a
   readonly defaultOptions: Options
 }
 
-export interface KlineData {
+export interface CandleData {
   /** High price */
   h: Numberish
   /** Low price */

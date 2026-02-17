@@ -1,10 +1,10 @@
-import type { KlineData, RequiredProperties } from '@material-tech/alloy-core'
+import type { CandleData, RequiredProperties } from '@material-tech/alloy-core'
 import { createSignal } from '@material-tech/alloy-core'
 import { divide, equal, from, subtract } from 'dnum'
 
 export const bop = createSignal(
   () => {
-    return (bar: RequiredProperties<KlineData, 'o' | 'h' | 'l' | 'c'>) => {
+    return (bar: RequiredProperties<CandleData, 'o' | 'h' | 'l' | 'c'>) => {
       const o = from(bar.o, 18)
       const h = from(bar.h, 18)
       const l = from(bar.l, 18)

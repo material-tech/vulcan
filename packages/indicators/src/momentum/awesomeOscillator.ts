@@ -1,4 +1,4 @@
-import type { KlineData, RequiredProperties } from '@material-tech/alloy-core'
+import type { CandleData, RequiredProperties } from '@material-tech/alloy-core'
 import { createSignal } from '@material-tech/alloy-core'
 import { add, div, from, sub } from 'dnum'
 import { sma } from '../trend/simpleMovingAverage'
@@ -23,7 +23,7 @@ export const ao = createSignal(
   ({ fastPeriod, slowPeriod }) => {
     const fastProc = sma.create({ period: fastPeriod })
     const slowProc = sma.create({ period: slowPeriod })
-    return (bar: RequiredProperties<KlineData, 'h' | 'l'>) => {
+    return (bar: RequiredProperties<CandleData, 'h' | 'l'>) => {
       const median = div(add(from(bar.h, 18), from(bar.l, 18)), 2, 18)
       return sub(fastProc(median), slowProc(median))
     }

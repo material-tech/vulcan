@@ -1,4 +1,4 @@
-import type { KlineData, RequiredProperties } from '@material-tech/alloy-core'
+import type { CandleData, RequiredProperties } from '@material-tech/alloy-core'
 import type { Dnum } from 'dnum'
 import { createSignal } from '@material-tech/alloy-core'
 import { divide, from, gt, lt, multiply, subtract } from 'dnum'
@@ -29,7 +29,7 @@ export const aroon = createSignal(
     const highBuffer: Dnum[] = []
     const lowBuffer: Dnum[] = []
 
-    return (bar: RequiredProperties<KlineData, 'h' | 'l'>) => {
+    return (bar: RequiredProperties<CandleData, 'h' | 'l'>) => {
       const h = from(bar.h, 18)
       const l = from(bar.l, 18)
 

@@ -1,4 +1,4 @@
-import type { KlineData } from '@material-tech/alloy-core'
+import type { CandleData } from '@material-tech/alloy-core'
 import { createStrategy, goldenCross } from '@material-tech/alloy-strategies'
 import { describe, expect, it } from 'vitest'
 import { backtest, backtestStream } from '../src/backtest'
@@ -23,7 +23,7 @@ const alternating = createStrategy(
   { windowSize: 1 },
 )
 
-function makeKline(c: number, o?: number, h?: number, l?: number): KlineData {
+function makeKline(c: number, o?: number, h?: number, l?: number): CandleData {
   return {
     o: o ?? c,
     h: h ?? c + 2,
@@ -158,7 +158,7 @@ describe('backtestStream', () => {
 describe('backtest — smoke test with built-in strategy', () => {
   it('runs goldenCross strategy without errors', () => {
     // Generate enough data for SMA periods to warm up
-    const data: KlineData[] = Array.from({ length: 250 }, (_, i) => ({
+    const data: CandleData[] = Array.from({ length: 250 }, (_, i) => ({
       o: 100 + Math.sin(i * 0.1) * 10,
       h: 105 + Math.sin(i * 0.1) * 10,
       l: 95 + Math.sin(i * 0.1) * 10,

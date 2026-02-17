@@ -1,7 +1,7 @@
-import type { KlineData } from '@material-tech/alloy-core'
+import type { CandleData } from '@material-tech/alloy-core'
 import type { StrategySignal } from '@material-tech/alloy-strategies'
 
-export type { KlineData, StrategySignal }
+export type { CandleData as KlineData, StrategySignal }
 
 export interface NormalizedBar {
   o: number
