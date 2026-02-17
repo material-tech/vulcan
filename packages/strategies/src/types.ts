@@ -1,4 +1,4 @@
-import type { IndicatorGenerator, KlineData, Processor } from '@material-tech/alloy-core'
+import type { KlineData, Processor, SignalGenerator } from '@material-tech/alloy-core'
 
 /**
  * The action a strategy recommends.
@@ -45,7 +45,7 @@ export interface StrategyContext {
  * A strategy generator — type alias ensuring compatibility with all existing adapters.
  */
 export type StrategyGenerator<Opts extends BaseStrategyOptions>
-  = IndicatorGenerator<KlineData, StrategySignal, Opts>
+  = SignalGenerator<KlineData, StrategySignal, Opts>
 
 export type StrategyFactory<Opts extends BaseStrategyOptions>
   = (opts: Required<Opts>) => (ctx: StrategyContext) => StrategySignal
