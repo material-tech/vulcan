@@ -1,6 +1,6 @@
 import type { Dnum, Numberish } from 'dnum'
 import { createSignal } from '@material-tech/alloy-core'
-import { add, from, mul } from 'dnum'
+import { add, divide, from, mul, subtract } from 'dnum'
 
 export interface ExponentialMovingAverageOptions {
   period: number
@@ -18,8 +18,8 @@ export const defaultExponentialMovingAverageOptions: ExponentialMovingAverageOpt
  */
 export const ema = createSignal(
   ({ period }) => {
-    const k = 2 / (1 + period)
-    const m = 1 - k
+    const k = divide(from(2, 18), from(1 + period, 18), 18)
+    const m = subtract(from(1, 18), k)
     let prev: Dnum | undefined
     return (value: Numberish) => {
       if (prev === undefined) {

@@ -8,7 +8,12 @@ export function toWebStream<I, O, Opts extends Record<string, any>>(
   const processor = indicator.create(options)
   return new TransformStream<I, O>({
     transform(chunk, controller) {
-      controller.enqueue(processor(chunk))
+      try {
+        controller.enqueue(processor(chunk))
+      }
+      catch (e) {
+        controller.error(e)
+      }
     },
   })
 }
@@ -19,7 +24,12 @@ export function processorToWebStream<I, O>(
 ): TransformStream<I, O> {
   return new TransformStream<I, O>({
     transform(chunk, controller) {
-      controller.enqueue(processor(chunk))
+      try {
+        controller.enqueue(processor(chunk))
+      }
+      catch (e) {
+        controller.error(e)
+      }
     },
   })
 }

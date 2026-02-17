@@ -34,8 +34,9 @@ export const rma = createSignal(
         return prev
       }
       prev = div(
-        add(mul(prev, from(period - 1), 18), value),
-        from(period),
+        add(mul(prev, period - 1, 18), value),
+        period,
+        18,
       )
       return prev
     }

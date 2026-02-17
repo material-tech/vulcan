@@ -17,7 +17,7 @@ describe('absolute price oscillator (APO)', () => {
     const expected = [
       0,
       0.33,
-      -0,
+      0,
       1.26,
       2.26,
       2.65,

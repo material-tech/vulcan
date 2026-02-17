@@ -1,6 +1,6 @@
 import type { Dnum, Numberish } from 'dnum'
 import { createSignal } from '@material-tech/alloy-core'
-import { add, div, from } from 'dnum'
+import { add, div, from, subtract } from 'dnum'
 
 export interface SimpleMovingAverageOptions {
   /**
@@ -30,13 +30,25 @@ export const defaultSMAOptions: SimpleMovingAverageOptions = {
  */
 export const sma = createSignal(
   ({ period }) => {
-    const buffer: Dnum[] = []
+    const buffer: Dnum[] = Array.from({ length: period })
+    let head = 0
+    let count = 0
+    let runningSum: Dnum = from(0, 18)
+
     return (value: Numberish) => {
-      buffer.push(from(value, 18))
-      if (buffer.length > period)
-        buffer.shift()
-      const sum = buffer.reduce((acc, cur) => add(acc, cur), from(0, 18))
-      return div(sum, buffer.length, 18)
+      const v = from(value, 18)
+      if (count < period) {
+        buffer[count] = v
+        runningSum = add(runningSum, v)
+        count++
+      }
+      else {
+        runningSum = subtract(runningSum, buffer[head])
+        runningSum = add(runningSum, v)
+        buffer[head] = v
+        head = (head + 1) % period
+      }
+      return div(runningSum, count, 18)
     }
   },
   defaultSMAOptions,
