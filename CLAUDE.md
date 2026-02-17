@@ -16,7 +16,7 @@ Alloy is a TypeScript technical analysis indicator library using `dnum` for high
 
 - **tsdown**: Core bundler (per-package config)
 - **pnpm**: Package manager with workspace support
-- **vitest**: Testing framework (root-level, unified)
+- **vitest**: Testing framework (per-package, coordinated via root `projects` config)
 - **TypeScript**: Strict mode
 - **ESM**: Pure ESM packages (`"type": "module"`)
 
@@ -24,8 +24,8 @@ Alloy is a TypeScript technical analysis indicator library using `dnum` for high
 
 ```bash
 pnpm build              # Recursively build all packages (core → indicators/adapters)
-pnpm test --run         # Run all tests (with typecheck)
-pnpm test run <path>    # Run a single test file
+pnpm test --run         # Run all tests (with typecheck) across all packages
+pnpm -r run test        # Run tests independently in each package
 pnpm test:coverage      # Run tests with coverage
 pnpm lint               # Lint
 pnpm lint:fix           # Lint with auto-fix
@@ -59,21 +59,23 @@ Subpath exports: `@material-tech/alloy-adapters/batch`, `@material-tech/alloy-ad
 
 ### Module Resolution
 
-Root `tsconfig.json` maps workspace packages via `paths` for development. `vite-tsconfig-paths` enables vitest to resolve these paths at test time.
+Root `tsconfig.json` maps workspace packages via `paths` for development. Each package has its own `tsconfig.json` with `paths` for self-reference and cross-package imports. `vite-tsconfig-paths` (in indicators/adapters) enables vitest to resolve these paths at test time.
 
 ## Implementing a New Indicator
 
 1. **Create** `packages/indicators/src/<category>/<indicatorName>.ts` — define `Options` interface, `defaultOptions`, implement with `createSignal` (from `@material-tech/alloy-core`), export short name + long alias
 2. **Export** from `packages/indicators/src/<category>/index.ts` — add `export * from './<indicatorName>'`
-3. **Test** in `tests/<category>/<indicatorName>.spec.ts` — import from `@material-tech/alloy-core` (for `collect`) and `@material-tech/alloy-indicators` (for the indicator)
+3. **Test** in `packages/indicators/tests/<category>/<indicatorName>.spec.ts` — import from `@material-tech/alloy-core` (for `collect`) and `@material-tech/alloy-indicators` (for the indicator)
 4. **Update** README.md (and README_zh.md) — change `[ ]` to `[x]` for the indicator
 
 ## Testing Conventions
 
-- Use vitest with `*.spec.ts` files in root `tests/` directory
-- Custom matchers in `vitest-setup.ts`:
+- Each package has its own `tests/` directory and `vitest.config.ts`
+- Root `vitest.config.ts` uses `projects: ['packages/*']` to coordinate all packages
+- Custom matchers in `packages/indicators/vitest-setup.ts`:
   - `toMatchNumberArray(expected, { digits?: 2 })` — compares `Dnum[]` to `number[]`
   - `toMatchNumber(expected, { digits?: 2 })` — compares single `Dnum` to `number`
+- Core tests use relative imports (`../src/index`); indicators/adapters tests use package names resolved via `vite-tsconfig-paths`
 - Write code comments and test names in English
 - Each indicator should have complete JSDoc documentation
 

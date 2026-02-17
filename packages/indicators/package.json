@@ -10,10 +10,16 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsdown"
+    "build": "tsdown",
+    "test": "vitest run"
   },
   "dependencies": {
     "@material-tech/alloy-core": "workspace:^",
     "dnum": "catalog:runtime"
+  },
+  "devDependencies": {
+    "defu": "catalog:runtime",
+    "vite-tsconfig-paths": "catalog:test",
+    "vitest": "catalog:test"
   }
 }

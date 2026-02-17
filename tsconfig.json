@@ -8,10 +8,5 @@
       "@material-tech/alloy-adapters/*": ["./packages/adapters/src/*.ts"]
     }
   },
-  "include": [
-    "packages/*/src/**/*.ts",
-    "tests/**/*.spec.ts",
-    "tests/ohlcv.json",
-    "vitest-setup.ts"
-  ]
+  "include": ["packages/*/src/**/*.ts"]
 }

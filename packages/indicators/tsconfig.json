@@ -2,8 +2,9 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "paths": {
-      "@material-tech/alloy-core": ["../core/src/index.ts"]
+      "@material-tech/alloy-core": ["../core/src/index.ts"],
+      "@material-tech/alloy-indicators": ["./src/index.ts"]
     }
   },
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts", "tests/**/*.spec.ts", "tests/ohlcv.json", "vitest-setup.ts"]
 }

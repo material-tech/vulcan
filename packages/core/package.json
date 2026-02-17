@@ -10,10 +10,14 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsdown"
+    "build": "tsdown",
+    "test": "vitest run"
   },
   "dependencies": {
     "defu": "catalog:runtime",
     "dnum": "catalog:runtime"
+  },
+  "devDependencies": {
+    "vitest": "catalog:test"
   }
 }

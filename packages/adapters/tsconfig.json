@@ -2,8 +2,10 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "paths": {
-      "@material-tech/alloy-core": ["../core/src/index.ts"]
+      "@material-tech/alloy-core": ["../core/src/index.ts"],
+      "@material-tech/alloy-adapters": ["./src/index.ts"],
+      "@material-tech/alloy-adapters/*": ["./src/*.ts"]
     }
   },
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts", "tests/**/*.spec.ts"]
 }

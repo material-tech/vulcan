@@ -1,5 +1,5 @@
-import { collect, createSignal } from '@material-tech/alloy-core'
 import { describe, expect, it } from 'vitest'
+import { collect, createSignal } from '../src/index'
 
 describe('createSignal', () => {
   it('should create a generator function with createProcessor and defaultOptions', () => {
