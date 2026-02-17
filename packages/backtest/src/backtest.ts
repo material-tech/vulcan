@@ -23,14 +23,17 @@ function computeUnrealizedPnl(position: Position | null, closePrice: number): nu
 /**
  * Stream-based backtest — yields a snapshot for each bar.
  *
+ * Accepts both sync and async iterables, enabling real-time data sources
+ * such as WebSocket streams or async generators.
+ *
  * Does NOT auto-close positions at end of data (caller decides).
  */
-export function* backtestStream<Opts extends BaseStrategyOptions>(
+export async function* backtestStream<Opts extends BaseStrategyOptions>(
   strategy: StrategyGenerator<Opts>,
-  data: Iterable<KlineData>,
+  data: AsyncIterable<KlineData> | Iterable<KlineData>,
   options?: Partial<BacktestOptions>,
   strategyOptions?: Partial<Opts>,
-): Generator<BacktestSnapshot, void, unknown> {
+): AsyncGenerator<BacktestSnapshot, void, unknown> {
   const opts = defu(options, defaultBacktestOptions) as BacktestOptions
   const process = strategy.create(strategyOptions)
 
@@ -38,7 +41,7 @@ export function* backtestStream<Opts extends BaseStrategyOptions>(
   let position: Position | null = null
   let index = 0
 
-  for (const kline of data) {
+  for await (const kline of data) {
     const bar = normalizeBar(kline)
     const signal = process(kline)
 

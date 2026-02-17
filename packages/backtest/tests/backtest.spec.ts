@@ -3,6 +3,12 @@ import { createStrategy, goldenCross } from '@material-tech/alloy-strategies'
 import { describe, expect, it } from 'vitest'
 import { backtest, backtestStream } from '../src/backtest'
 
+async function collectAsync<T>(gen: AsyncIterable<T>): Promise<T[]> {
+  const result: T[] = []
+  for await (const item of gen) result.push(item)
+  return result
+}
+
 /**
  * Deterministic "always long" strategy for testing.
  */
@@ -116,16 +122,16 @@ describe('backtest — no short allowed', () => {
 })
 
 describe('backtestStream', () => {
-  it('yields correct number of snapshots', () => {
+  it('yields correct number of snapshots', async () => {
     const data = [makeKline(100), makeKline(105), makeKline(110)]
-    const snapshots = [...backtestStream(alwaysLong, data)]
+    const snapshots = await collectAsync(backtestStream(alwaysLong, data))
 
     expect(snapshots).toHaveLength(3)
   })
 
-  it('tracks unrealized PnL correctly', () => {
+  it('tracks unrealized PnL correctly', async () => {
     const data = [makeKline(100), makeKline(110)]
-    const snapshots = [...backtestStream(alwaysLong, data)]
+    const snapshots = await collectAsync(backtestStream(alwaysLong, data))
 
     // Bar 0: just opened, close = entry price → unrealizedPnl ≈ 0
     expect(snapshots[0].unrealizedPnl).toBeCloseTo(0)
@@ -135,23 +141,37 @@ describe('backtestStream', () => {
     expect(snapshots[1].totalEquity).toBeCloseTo(snapshots[1].equity + snapshots[1].unrealizedPnl)
   })
 
-  it('yields closedTrade when a trade closes', () => {
+  it('yields closedTrade when a trade closes', async () => {
     const data = [makeKline(100), makeKline(110)]
-    const snapshots = [...backtestStream(alternating, data)]
+    const snapshots = await collectAsync(backtestStream(alternating, data))
 
     expect(snapshots[0].closedTrade).toBeNull()
     expect(snapshots[1].closedTrade).not.toBeNull()
     expect(snapshots[1].closedTrade!.pnl).toBeGreaterThan(0)
   })
 
-  it('does not auto-close at end of data', () => {
+  it('does not auto-close at end of data', async () => {
     const data = [makeKline(100), makeKline(110)]
-    const snapshots = [...backtestStream(alwaysLong, data)]
+    const snapshots = await collectAsync(backtestStream(alwaysLong, data))
 
     // Position should still be open at last snapshot
     expect(snapshots[1].position).not.toBeNull()
     // No closed trade on last bar (no auto-close)
     expect(snapshots[1].closedTrade).toBeNull()
+  })
+
+  it('works with async iterable data source', async () => {
+    async function* asyncData() {
+      yield makeKline(100)
+      yield makeKline(105)
+      yield makeKline(110)
+    }
+
+    const snapshots = await collectAsync(backtestStream(alwaysLong, asyncData()))
+
+    expect(snapshots).toHaveLength(3)
+    expect(snapshots[2].position).not.toBeNull()
+    expect(snapshots[2].unrealizedPnl).toBeGreaterThan(0)
   })
 })
 
