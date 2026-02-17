@@ -13,7 +13,7 @@
     "build": "tsdown"
   },
   "dependencies": {
-    "defu": "^6.1.4",
-    "dnum": "^2.17.0"
+    "defu": "catalog:runtime",
+    "dnum": "catalog:runtime"
   }
 }

@@ -21,18 +21,18 @@
     "prepare": "simple-git-hooks"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^7.4.3",
-    "@types/node": "^25.2.3",
-    "@vitest/coverage-v8": "^4.0.18",
-    "defu": "^6.1.4",
-    "dnum": "^2.17.0",
-    "eslint": "^10.0.0",
-    "lint-staged": "^16.2.7",
-    "simple-git-hooks": "^2.13.1",
-    "tsdown": "^0.20.3",
-    "typescript": "^5.9.3",
-    "vite-tsconfig-paths": "^6.1.1",
-    "vitest": "^4.0.18"
+    "@antfu/eslint-config": "catalog:lint",
+    "@types/node": "catalog:build",
+    "@vitest/coverage-v8": "catalog:test",
+    "defu": "catalog:runtime",
+    "dnum": "catalog:runtime",
+    "eslint": "catalog:lint",
+    "lint-staged": "catalog:lint",
+    "simple-git-hooks": "catalog:lint",
+    "tsdown": "catalog:build",
+    "typescript": "catalog:build",
+    "vite-tsconfig-paths": "catalog:test",
+    "vitest": "catalog:test"
   },
   "simple-git-hooks": {
     "pre-commit": "npx lint-staged"
