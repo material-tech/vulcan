@@ -1,5 +1,5 @@
 {
-  "name": "alloy",
+  "name": "@material-tech/alloy-monorepo",
   "type": "module",
   "version": "0.1.0",
   "private": true,
