@@ -1,0 +1,72 @@
+# @material-tech/alloy-core
+
+Core types and utilities for the [Alloy](../../README.md) technical analysis library.
+
+## Installation
+
+```bash
+pnpm add @material-tech/alloy-core
+```
+
+> **Note:** You typically don't need to install this package directly — it's included as a dependency of `@material-tech/alloy-indicators`.
+
+## API
+
+### `createSignal(factory, defaultOptions?)`
+
+Creates a generator-based indicator from a processor factory function.
+
+Returns an `IndicatorGenerator` with:
+- **Generator iteration** — `indicator(source, options?)` yields results one by one
+- **`.create(options?)`** — returns a stateful `Processor` for point-by-point feeding
+- **`.defaultOptions`** — the default options for the indicator
+
+```ts
+import { createSignal } from '@material-tech/alloy-core'
+
+const myIndicator = createSignal(
+  (options) => {
+    // Initialize state
+    let sum = 0
+    return (value: number) => {
+      sum += value
+      return sum
+    }
+  },
+  { period: 14 },
+)
+
+// Use as generator
+for (const result of myIndicator([1, 2, 3])) {
+  console.log(result)
+}
+
+// Use as stateful processor
+const process = myIndicator.create({ period: 10 })
+process(1) // => 1
+process(2) // => 3
+```
+
+### `collect(iterable)`
+
+Collects all values from an iterable into an array.
+
+```ts
+import { collect } from '@material-tech/alloy-core'
+import { sma } from '@material-tech/alloy-indicators'
+
+const results = collect(sma([10, 11, 12, 13, 14], { period: 3 }))
+```
+
+### Types
+
+| Type | Description |
+| --- | --- |
+| `Processor<Input, Output>` | Stateful function `(value: Input) => Output` |
+| `IndicatorGenerator<Input, Output, Options>` | Generator function with `.create()` factory and `.defaultOptions` |
+| `KlineData` | OHLCV candle data: `{ h, l, o, c, v, timestamp? }` |
+| `RequiredProperties<T, K>` | Makes specified properties of `T` required |
+
+## License
+
+MIT
