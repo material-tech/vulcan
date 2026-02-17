@@ -96,6 +96,9 @@ importers:
       '@material-tech/alloy-adapters':
         specifier: workspace:^
         version: link:../adapters
+      '@material-tech/alloy-backtest':
+        specifier: workspace:^
+        version: link:../backtest
       '@material-tech/alloy-core':
         specifier: workspace:^
         version: link:../core
@@ -115,6 +118,28 @@ importers:
       typescript:
         specifier: catalog:build
         version: 5.9.3
+
+  packages/backtest:
+    dependencies:
+      '@material-tech/alloy-core':
+        specifier: workspace:^
+        version: link:../core
+      '@material-tech/alloy-strategies':
+        specifier: workspace:^
+        version: link:../strategies
+      defu:
+        specifier: catalog:runtime
+        version: 6.1.4
+      dnum:
+        specifier: catalog:runtime
+        version: 2.17.0
+    devDependencies:
+      vite-tsconfig-paths:
+        specifier: catalog:test
+        version: 6.1.1(typescript@5.9.3)(vite@6.3.3(@types/node@25.2.3)(jiti@2.5.1)(yaml@2.8.2))
+      vitest:
+        specifier: catalog:test
+        version: 4.0.18(@types/node@25.2.3)(jiti@2.5.1)(yaml@2.8.2)
 
   packages/core:
     dependencies:

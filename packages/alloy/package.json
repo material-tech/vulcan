@@ -19,6 +19,7 @@
     "@material-tech/alloy-core": "workspace:^",
     "@material-tech/alloy-indicators": "workspace:^",
     "@material-tech/alloy-strategies": "workspace:^",
+    "@material-tech/alloy-backtest": "workspace:^",
     "@material-tech/alloy-adapters": "workspace:^"
   },
   "devDependencies": {
