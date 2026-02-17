@@ -1,0 +1,26 @@
+{
+  "name": "@material-tech/alloy-strategies",
+  "type": "module",
+  "version": "0.1.0",
+  "exports": {
+    ".": "./dist/index.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsdown",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@material-tech/alloy-core": "workspace:^",
+    "@material-tech/alloy-indicators": "workspace:^",
+    "defu": "catalog:runtime",
+    "dnum": "catalog:runtime"
+  },
+  "devDependencies": {
+    "vite-tsconfig-paths": "catalog:test",
+    "vitest": "catalog:test"
+  }
+}
