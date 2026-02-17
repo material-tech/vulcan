@@ -14,7 +14,7 @@ export const defaultAbsolutePriceOscillatorOptions: AbsolutePriceOscillatorOptio
 }
 
 export const apo = createSignal(
-  ({ fastPeriod, slowPeriod }: Required<AbsolutePriceOscillatorOptions>) => {
+  ({ fastPeriod, slowPeriod }) => {
     const fastProc = ema.create({ period: fastPeriod })
     const slowProc = ema.create({ period: slowPeriod })
     return (value: Numberish) => sub(fastProc(value), slowProc(value))

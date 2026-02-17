@@ -46,7 +46,7 @@ function multiply015(value: Dnum): Dnum {
  * @returns Generator yielding CCI values
  */
 export const cci = createSignal(
-  ({ period }: Required<CommodityChannelIndexOptions>) => {
+  ({ period }) => {
     const buffer: Dnum[] = []
 
     return (bar: RequiredProperties<KlineData, 'h' | 'l' | 'c'>) => {

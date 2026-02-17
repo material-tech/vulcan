@@ -43,7 +43,7 @@ export interface MACDPoint {
  * @returns Generator yielding MACDPoint objects
  */
 export const macd = createSignal(
-  ({ fastPeriod, slowPeriod, signalPeriod }: Required<MACDOptions>) => {
+  ({ fastPeriod, slowPeriod, signalPeriod }) => {
     const fastProc = ema.create({ period: fastPeriod })
     const slowProc = ema.create({ period: slowPeriod })
     const signalProc = ema.create({ period: signalPeriod })

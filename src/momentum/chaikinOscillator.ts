@@ -24,7 +24,7 @@ export const defaultChaikinOscillatorOptions: ChaikinOscillatorOptions = {
  * CO = Ema(fastPeriod, AD) - Ema(slowPeriod, AD)
  */
 export const cmo = createSignal(
-  ({ fastPeriod, slowPeriod }: Required<ChaikinOscillatorOptions>) => {
+  ({ fastPeriod, slowPeriod }) => {
     const adProc = ad.create()
     const fastProc = ema.create({ period: fastPeriod })
     const slowProc = ema.create({ period: slowPeriod })

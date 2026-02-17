@@ -17,7 +17,7 @@ export const defaultMovingMaxOptions: MovingMaxOptions = {
  * Moving Maximum (MovingMax)
  */
 export const mmax = createSignal(
-  ({ period }: Required<MovingMaxOptions>) => {
+  ({ period }) => {
     const buffer: Dnum[] = []
     return (value: Numberish) => {
       buffer.push(from(value, 18))

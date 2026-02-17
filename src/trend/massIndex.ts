@@ -43,7 +43,7 @@ export const defaultMassIndexOptions: MassIndexOptions = {
  * @returns Generator yielding Mass Index values
  */
 export const mi = createSignal(
-  ({ emaPeriod, miPeriod }: Required<MassIndexOptions>) => {
+  ({ emaPeriod, miPeriod }) => {
     const ema1Proc = ema.create({ period: emaPeriod })
     const ema2Proc = ema.create({ period: emaPeriod })
     const msumProc = msum.create({ period: miPeriod })

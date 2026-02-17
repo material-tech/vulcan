@@ -16,7 +16,7 @@ export const defaultMovingSumOptions: MovingSumOptions = {
  * Calculates the sum of values in a sliding window of the specified period.
  */
 export const msum = createSignal(
-  ({ period }: Required<MovingSumOptions>) => {
+  ({ period }) => {
     const buffer: Dnum[] = []
     return (value: Numberish) => {
       buffer.push(from(value, 18))

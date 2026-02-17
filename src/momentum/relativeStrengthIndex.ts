@@ -21,7 +21,7 @@ export const defaultRSIOptions: RSIOptions = {
  * RSI = 100 - (100 / (1 + RS))
  */
 export const rsi = createSignal(
-  ({ period }: Required<RSIOptions>) => {
+  ({ period }) => {
     const gainProc = rma.create({ period })
     const lossProc = rma.create({ period })
     let prev: Dnum | undefined

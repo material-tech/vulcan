@@ -20,7 +20,7 @@ export const defaultAwesomeOscillatorOptions: AwesomeOscillatorOptions = {
  * Where median = (high + low) / 2
  */
 export const ao = createSignal(
-  ({ fastPeriod, slowPeriod }: Required<AwesomeOscillatorOptions>) => {
+  ({ fastPeriod, slowPeriod }) => {
     const fastProc = sma.create({ period: fastPeriod })
     const slowProc = sma.create({ period: slowPeriod })
     return (bar: RequiredProperties<KlineData, 'h' | 'l'>) => {

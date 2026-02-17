@@ -17,7 +17,7 @@ export const defaultExponentialMovingAverageOptions: ExponentialMovingAverageOpt
  * Where k = 2 / (period + 1)
  */
 export const ema = createSignal(
-  ({ period }: Required<ExponentialMovingAverageOptions>) => {
+  ({ period }) => {
     const k = 2 / (1 + period)
     const m = 1 - k
     let prev: Dnum | undefined

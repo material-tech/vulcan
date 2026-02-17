@@ -42,7 +42,7 @@ export interface IchimokuCloudPoint {
  * - Lagging (Chikou): current close price
  */
 export const ichimokuCloud = createSignal(
-  ({ conversionPeriod, basePeriod, leadingBPeriod }: Required<IchimokuCloudOptions>) => {
+  ({ conversionPeriod, basePeriod, leadingBPeriod }) => {
     const convHighProc = mmax.create({ period: conversionPeriod })
     const convLowProc = mmin.create({ period: conversionPeriod })
     const baseHighProc = mmax.create({ period: basePeriod })

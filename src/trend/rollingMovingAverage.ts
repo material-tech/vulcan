@@ -21,7 +21,7 @@ export const defaultRMAOptions: RMAOptions = {
  * R[p] and after is R[i] = ((R[i-1]*(p-1)) + v[i]) / p
  */
 export const rma = createSignal(
-  ({ period }: Required<RMAOptions>) => {
+  ({ period }) => {
     let count = 0
     let sum: Dnum = from(0, 18)
     let prev: Dnum = from(0, 18)

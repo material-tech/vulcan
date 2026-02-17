@@ -30,7 +30,7 @@ export const defaultCFOOptions: ChandeForecastOscillatorOptions = {
  * @returns Generator yielding CFO values as percentages
  */
 export const cfo = createSignal(
-  ({ period }: Required<ChandeForecastOscillatorOptions>) => {
+  ({ period }) => {
     const buffer: Dnum[] = []
 
     return (value: Numberish) => {

@@ -23,7 +23,7 @@ export const defaultDoubleExponentialMovingAverageOptions: DoubleExponentialMovi
  * @returns Generator yielding DEMA values
  */
 export const dema = createSignal(
-  ({ period }: Required<DoubleExponentialMovingAverageOptions>) => {
+  ({ period }) => {
     const ema1 = ema.create({ period })
     const ema2 = ema.create({ period })
     return (value: Numberish) => {

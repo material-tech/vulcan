@@ -11,7 +11,7 @@ export const defaultTriangularMovingAverageOptions: TriangularMovingAverageOptio
 }
 
 export const trima = createSignal(
-  ({ period }: Required<TriangularMovingAverageOptions>) => {
+  ({ period }) => {
     let n1: number
     let n2: number
 

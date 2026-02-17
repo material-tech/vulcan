@@ -29,7 +29,7 @@ export const defaultSMAOptions: SimpleMovingAverageOptions = {
  * @returns Generator yielding SMA values
  */
 export const sma = createSignal(
-  ({ period }: Required<SimpleMovingAverageOptions>) => {
+  ({ period }) => {
     const buffer: Dnum[] = []
     return (value: Numberish) => {
       buffer.push(from(value, 18))

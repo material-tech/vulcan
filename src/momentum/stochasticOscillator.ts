@@ -33,7 +33,7 @@ export interface StochPoint {
  * %D = SMA(%K, dPeriod)
  */
 export const stoch = createSignal(
-  ({ kPeriod, slowingPeriod, dPeriod }: Required<StochasticOscillatorOptions>) => {
+  ({ kPeriod, slowingPeriod, dPeriod }) => {
     const mmaxProc = mmax.create({ period: kPeriod })
     const mminProc = mmin.create({ period: kPeriod })
     const slowingProc = slowingPeriod > 1 ? sma.create({ period: slowingPeriod }) : null

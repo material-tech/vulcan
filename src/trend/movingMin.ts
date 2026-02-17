@@ -17,7 +17,7 @@ export const defaultMovingMinOptions: MovingMinOptions = {
  * Moving Minimum (MovingMin)
  */
 export const mmin = createSignal(
-  ({ period }: Required<MovingMinOptions>) => {
+  ({ period }) => {
     const buffer: Dnum[] = []
     return (value: Numberish) => {
       buffer.push(from(value, 18))

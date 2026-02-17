@@ -25,7 +25,7 @@ export interface AroonPoint {
  * Oscillator = Aroon Up - Aroon Down
  */
 export const aroon = createSignal(
-  ({ period }: Required<AroonOptions>) => {
+  ({ period }) => {
     const highBuffer: Dnum[] = []
     const lowBuffer: Dnum[] = []
 

@@ -43,7 +43,7 @@ export interface PercentagePriceOscillatorPoint {
  * @returns Generator yielding PPO point objects
  */
 export const ppo = createSignal(
-  ({ fastPeriod, slowPeriod, signalPeriod }: Required<PercentagePriceOscillatorOptions>) => {
+  ({ fastPeriod, slowPeriod, signalPeriod }) => {
     const fastProc = ema.create({ period: fastPeriod })
     const slowProc = ema.create({ period: slowPeriod })
     const signalProc = ema.create({ period: signalPeriod })
