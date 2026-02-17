@@ -1,29 +1,102 @@
-# alloy
+# Alloy
 
-`alloy` is a JavaScript library that provides various technical analysis indicators.
+A TypeScript library for technical analysis indicators, built on generator-based streaming architecture with high-precision decimal arithmetic.
 
-## Advantages
+## Features
 
-- Full TypeScript support
-- No limitation on decimal libraries; internally uses [`dnum`](https://github.com/bpierre/dnum) library to represent precise numbers as tuples in the form of `[value: bigint, decimals: number]`, allowing quick integration with libraries like `big.js`, `bignumber.js`, etc. without additional dependencies.
+- **Generator-based streaming** — Process data point-by-point via standard iterators, naturally composable with for-of loops, pipelines, and adapters
+- **High-precision arithmetic** — Powered by [`dnum`](https://github.com/bpierre/dnum), representing numbers as `[value: bigint, decimals: number]` tuples — no floating-point rounding errors
+- **Full TypeScript support** — Strict types for all indicators, options, and outputs
+- **Modular packages** — Pick only what you need: core primitives, indicators, or stream adapters
 
-### Usage
+## Packages
 
-```ts
-import { rsi } from 'alloy'
+| Package | Description |
+| --- | --- |
+| [`@material-tech/alloy-core`](./packages/core/) | Core types (`KlineData`, `Processor`, `IndicatorGenerator`) and utilities (`createSignal`, `collect`) |
+| [`@material-tech/alloy-indicators`](./packages/indicators/) | All technical indicators (trend, momentum, volume) |
+| [`@material-tech/alloy-adapters`](./packages/adapters/) | Adapters for batch processing, Node.js streams, and Web streams |
 
-const data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-const result = rsi(data, { period: 4, decimals: 18 })
+## Installation
+
+```bash
+# Indicators (includes core as dependency)
+pnpm add @material-tech/alloy-indicators
+
+# Adapters (optional)
+pnpm add @material-tech/alloy-adapters
 ```
 
-### Supported Indicators
+## Usage
 
-Most common technical indicators are targeted for support, some are still being implemented.
+### Basic — Generator iteration
 
-<details>
-<summary>Currently Supported Technical Indicators</summary>
+Every indicator is a generator function. Pass an iterable source and iterate over the results:
 
-#### Trend Indicators
+```ts
+import { collect } from '@material-tech/alloy-core'
+import { sma } from '@material-tech/alloy-indicators'
+
+const prices = [10, 11, 12, 13, 14, 15]
+
+// Collect all results into an array
+const results = collect(sma(prices, { period: 3 }))
+
+// Or iterate lazily
+for (const value of sma(prices, { period: 3 })) {
+  console.log(value) // Dnum tuple: [bigint, number]
+}
+```
+
+### Stateful processor — Real-time / streaming
+
+Use `.create()` to get a stateful processor for feeding data point-by-point:
+
+```ts
+import { rsi } from '@material-tech/alloy-indicators'
+
+const process = rsi.create({ period: 14 })
+
+// Feed new prices as they arrive
+const result1 = process(100)
+const result2 = process(102)
+const result3 = process(98)
+```
+
+### Batch adapter
+
+```ts
+import { batch } from '@material-tech/alloy-adapters/batch'
+import { ema } from '@material-tech/alloy-indicators'
+
+const batchEma = batch(ema)
+const results = batchEma([10, 11, 12, 13, 14], { period: 3 })
+// results: Dnum[]
+```
+
+### Node.js streams
+
+```ts
+import { toNodeStream } from '@material-tech/alloy-adapters/node-stream'
+import { sma } from '@material-tech/alloy-indicators'
+
+const transform = toNodeStream(sma, { period: 5 })
+readable.pipe(transform).pipe(writable)
+```
+
+### Web streams
+
+```ts
+import { toWebStream } from '@material-tech/alloy-adapters/web-stream'
+import { rsi } from '@material-tech/alloy-indicators'
+
+const transform = toWebStream(rsi, { period: 14 })
+readable.pipeThrough(transform).pipeTo(writable)
+```
+
+## Supported Indicators
+
+### Trend
 
 - [x] Aroon Indicator
 - [x] Balance of Power (BOP)
@@ -49,7 +122,7 @@ Most common technical indicators are targeted for support, some are still being 
 - [ ] Volume Weighted Moving Average (VWMA)
 - [ ] Vortex Indicator
 
-#### Momentum Indicators
+### Momentum
 
 - [x] Absolute Price Oscillator (APO)
 - [x] Awesome Oscillator (AO)
@@ -62,4 +135,10 @@ Most common technical indicators are targeted for support, some are still being 
 - [x] Stochastic Oscillator (STOCH)
 - [ ] Williams R (WILLR)
 
-</details>
+### Volume
+
+- [x] Accumulation/Distribution (AD)
+
+## License
+
+MIT

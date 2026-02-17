@@ -1,7 +1,7 @@
 import type { KlineData, RequiredProperties } from '@material-tech/alloy-core'
 import type { Dnum } from 'dnum'
 import { createSignal } from '@material-tech/alloy-core'
-import { from, gt, lt } from 'dnum'
+import { divide, from, gt, lt, multiply, subtract } from 'dnum'
 
 export interface AroonOptions {
   period: number
@@ -52,13 +52,14 @@ export const aroon = createSignal(
       const daysSinceHigh = highBuffer.length - 1 - highestIdx
       const daysSinceLow = lowBuffer.length - 1 - lowestIdx
 
-      const aroonUpValue = ((period - daysSinceHigh) * 100) / period
-      const aroonDownValue = ((period - daysSinceLow) * 100) / period
+      const periodDnum = from(period, 18)
+      const up = divide(multiply(from(period - daysSinceHigh, 18), 100, 18), periodDnum, 18)
+      const down = divide(multiply(from(period - daysSinceLow, 18), 100, 18), periodDnum, 18)
 
       return {
-        up: from(aroonUpValue),
-        down: from(aroonDownValue),
-        oscillator: from(aroonUpValue - aroonDownValue),
+        up,
+        down,
+        oscillator: subtract(up, down),
       }
     }
   },

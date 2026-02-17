@@ -1,7 +1,7 @@
 import type { KlineData, RequiredProperties } from '@material-tech/alloy-core'
 import type { Dnum } from 'dnum'
 import { createSignal } from '@material-tech/alloy-core'
-import { add, divide, equal, from, subtract } from 'dnum'
+import { abs, add, divide, equal, from, subtract } from 'dnum'
 
 export interface CommodityChannelIndexOptions {
   /**
@@ -13,18 +13,6 @@ export interface CommodityChannelIndexOptions {
 
 export const defaultCCIOptions: CommodityChannelIndexOptions = {
   period: 20,
-}
-
-/**
- * Multiply a Dnum value by 0.015 (the Lambert constant)
- */
-function multiply015(value: Dnum): Dnum {
-  // 0.015 = 15/1000, use integer math to avoid precision issues
-  return divide(
-    [value[0] * 15n, value[1]],
-    [1000n, 0],
-    18,
-  )
 }
 
 /**
@@ -64,19 +52,16 @@ export const cci = createSignal(
         return from(0, 18)
       }
 
-      // SMA of typical prices in the window
+      // SMA and Mean Deviation in a single pass
       let sum: Dnum = from(0, 18)
       for (const v of buffer) {
         sum = add(sum, v)
       }
       const smaVal = divide(sum, n, 18)
 
-      // Mean Deviation
       let devSum: Dnum = from(0, 18)
       for (const v of buffer) {
-        const diff = subtract(v, smaVal)
-        const absDiff: Dnum = diff[0] < 0n ? [-diff[0], diff[1]] : diff
-        devSum = add(devSum, absDiff)
+        devSum = add(devSum, abs(subtract(v, smaVal)))
       }
       const meanDev = divide(devSum, n, 18)
 
@@ -86,7 +71,13 @@ export const cci = createSignal(
 
       const currentTP = buffer[n - 1]
       const numerator = subtract(currentTP, smaVal)
-      return divide(numerator, multiply015(meanDev), 18)
+      // 0.015 = 15/1000, the Lambert constant
+      const lambertMeanDev = divide(
+        [meanDev[0] * 15n, meanDev[1]],
+        [1000n, 0],
+        18,
+      )
+      return divide(numerator, lambertMeanDev, 18)
     }
   },
   defaultCCIOptions,
