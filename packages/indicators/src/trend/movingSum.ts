@@ -1,5 +1,5 @@
 import type { Dnum, Numberish } from 'dnum'
-import { createSignal } from '@material-tech/alloy-core'
+import { createSignal } from '@material-tech/vulcan-core'
 import { add, from, subtract } from 'dnum'
 
 export interface MovingSumOptions {

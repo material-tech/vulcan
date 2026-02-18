@@ -1,5 +1,5 @@
-import type { BacktestOptions, NormalizedBar, Position } from '@material-tech/alloy-backtest'
-import type { StrategySignal } from '@material-tech/alloy-strategies'
+import type { BacktestOptions, NormalizedBar, Position } from '@material-tech/vulcan-backtest'
+import type { StrategySignal } from '@material-tech/vulcan-strategies'
 import { describe, expect, it } from 'vitest'
 import { applySlippage, closePositionAtEnd, updatePosition } from '../src/position'
 

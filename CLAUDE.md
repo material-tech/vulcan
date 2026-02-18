@@ -4,15 +4,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Alloy is a TypeScript technical analysis indicator library using `dnum` for high-precision decimal arithmetic (`[value: bigint, decimals: number]` tuples). The project is organized as a **pnpm monorepo** with the following packages:
+Vulcan is a TypeScript technical analysis indicator library using `dnum` for high-precision decimal arithmetic (`[value: bigint, decimals: number]` tuples). The project is organized as a **pnpm monorepo** with the following packages:
 
-- **`@material-tech/alloy-core`** (`packages/core/`) — core types (`CandleData`, `Processor`, `SignalGenerator`) and factory function (`createSignal`, `collect`)
-- **`@material-tech/alloy-indicators`** (`packages/indicators/`) — all indicators organized by category: `trend/`, `momentum/`, `volume/`
-- **`@material-tech/alloy-strategies`** (`packages/strategies/`) — composable trading strategies with structured signal output
-- **`@material-tech/alloy-backtest`** (`packages/backtest/`) — backtesting engine with position management and statistics
-- **`@material-tech/alloy-adapters`** (`packages/adapters/`) — adapters for batch processing, Node.js streams, and Web streams
+- **`@material-tech/vulcan-core`** (`packages/core/`) — core types (`CandleData`, `Processor`, `SignalGenerator`) and factory function (`createSignal`, `collect`)
+- **`@material-tech/vulcan-indicators`** (`packages/indicators/`) — all indicators organized by category: `trend/`, `momentum/`, `volume/`
+- **`@material-tech/vulcan-strategies`** (`packages/strategies/`) — composable trading strategies with structured signal output
+- **`@material-tech/vulcan-backtest`** (`packages/backtest/`) — backtesting engine with position management and statistics
 
-**Dependency graph:** `indicators` → `core`, `strategies` → `core` + `indicators`, `backtest` → `core` + `strategies`, `adapters` → `core`
+**Dependency graph:** `indicators` → `core`, `strategies` → `core` + `indicators`, `backtest` → `core` + `strategies`
 
 **Key technologies:**
 
@@ -25,7 +24,7 @@ Alloy is a TypeScript technical analysis indicator library using `dnum` for high
 ## Commands
 
 ```bash
-pnpm build              # Recursively build all packages (core → indicators/adapters)
+pnpm build              # Recursively build all packages
 pnpm test --run         # Run all tests (with typecheck) across all packages
 pnpm -r run test        # Run tests independently in each package
 pnpm test:coverage      # Run tests with coverage
@@ -49,25 +48,17 @@ pnpm lint:fix           # Lint with auto-fix
 - `momentum/` — 7 indicators (RSI, STOCH, APO, PPO, etc.)
 - `volume/` — 1 indicator (Accumulation/Distribution)
 
-Imports from core use `@material-tech/alloy-core`. Cross-category imports use relative paths (e.g., `../trend/exponentialMovingAverage`).
-
-### Adapters Package (`packages/adapters/`)
-
-- `batch` — wraps generators for array-in/array-out processing
-- `node-stream` — Node.js Transform streams (object mode)
-- `web-stream` — Web TransformStreams
-
-Subpath exports: `@material-tech/alloy-adapters/batch`, `@material-tech/alloy-adapters/node-stream`, `@material-tech/alloy-adapters/web-stream`
+Imports from core use `@material-tech/vulcan-core`. Cross-category imports use relative paths (e.g., `../trend/exponentialMovingAverage`).
 
 ### Module Resolution
 
-Root `tsconfig.json` maps workspace packages via `paths` for development. Each package has its own `tsconfig.json` with `paths` for self-reference and cross-package imports. `vite-tsconfig-paths` (in indicators/adapters) enables vitest to resolve these paths at test time.
+Root `tsconfig.json` maps workspace packages via `paths` for development. Each package has its own `tsconfig.json` with `paths` for self-reference and cross-package imports. `vite-tsconfig-paths` (in indicators) enables vitest to resolve these paths at test time.
 
 ## Implementing a New Indicator
 
-1. **Create** `packages/indicators/src/<category>/<indicatorName>.ts` — define `Options` interface, `defaultOptions`, implement with `createSignal` (from `@material-tech/alloy-core`), export short name + long alias
+1. **Create** `packages/indicators/src/<category>/<indicatorName>.ts` — define `Options` interface, `defaultOptions`, implement with `createSignal` (from `@material-tech/vulcan-core`), export short name + long alias
 2. **Export** from `packages/indicators/src/<category>/index.ts` — add `export * from './<indicatorName>'`
-3. **Test** in `packages/indicators/tests/<category>/<indicatorName>.spec.ts` — import from `@material-tech/alloy-core` (for `collect`) and `@material-tech/alloy-indicators` (for the indicator)
+3. **Test** in `packages/indicators/tests/<category>/<indicatorName>.spec.ts` — import from `@material-tech/vulcan-core` (for `collect`) and `@material-tech/vulcan-indicators` (for the indicator)
 4. **Update** README.md (and README_zh.md) — change `[ ]` to `[x]` for the indicator
 
 ## Testing Conventions
@@ -77,7 +68,7 @@ Root `tsconfig.json` maps workspace packages via `paths` for development. Each p
 - Custom matchers in `packages/indicators/vitest-setup.ts`:
   - `toMatchNumberArray(expected, { digits?: 2 })` — compares `Dnum[]` to `number[]`
   - `toMatchNumber(expected, { digits?: 2 })` — compares single `Dnum` to `number`
-- Core tests use relative imports (`../src/index`); indicators/adapters tests use package names resolved via `vite-tsconfig-paths`
+- Core tests use relative imports (`../src/index`); indicators tests use package names resolved via `vite-tsconfig-paths`
 - Write code comments and test names in English
 - Each indicator should have complete JSDoc documentation
 

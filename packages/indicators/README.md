@@ -1,11 +1,11 @@
-# @material-tech/alloy-indicators
+# @material-tech/vulcan-indicators
 
-Technical analysis indicators for the [Alloy](../../README.md) library, built on generator-based streaming with high-precision decimal arithmetic ([`dnum`](https://github.com/bpierre/dnum)).
+Technical analysis indicators for the [Vulcan](../../README.md) library, built on generator-based streaming with high-precision decimal arithmetic ([`dnum`](https://github.com/bpierre/dnum)).
 
 ## Installation
 
 ```bash
-pnpm add @material-tech/alloy-indicators
+pnpm add @material-tech/vulcan-indicators
 ```
 
 ## Usage
@@ -13,8 +13,8 @@ pnpm add @material-tech/alloy-indicators
 Every indicator is a generator function. Pass an iterable source and iterate over the results:
 
 ```ts
-import { collect } from '@material-tech/alloy-core'
-import { sma } from '@material-tech/alloy-indicators'
+import { collect } from '@material-tech/vulcan-core'
+import { sma } from '@material-tech/vulcan-indicators'
 
 const prices = [10, 11, 12, 13, 14, 15]
 
@@ -30,7 +30,7 @@ for (const value of sma(prices, { period: 3 })) {
 Use `.create()` to get a stateful processor for real-time / streaming scenarios:
 
 ```ts
-import { rsi } from '@material-tech/alloy-indicators'
+import { rsi } from '@material-tech/vulcan-indicators'
 
 const process = rsi.create({ period: 14 })
 

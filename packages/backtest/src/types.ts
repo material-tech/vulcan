@@ -1,5 +1,5 @@
-import type { CandleData } from '@material-tech/alloy-core'
-import type { StrategySignal } from '@material-tech/alloy-strategies'
+import type { CandleData } from '@material-tech/vulcan-core'
+import type { StrategySignal } from '@material-tech/vulcan-strategies'
 
 export type { CandleData, StrategySignal }
 

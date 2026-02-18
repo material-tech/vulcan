@@ -1,4 +1,4 @@
-import type { CandleData, Processor, SignalGenerator } from '@material-tech/alloy-core'
+import type { CandleData, Processor, SignalGenerator } from '@material-tech/vulcan-core'
 
 /**
  * The action a strategy recommends.
@@ -42,7 +42,7 @@ export interface StrategyContext {
 }
 
 /**
- * A strategy generator — type alias ensuring compatibility with all existing adapters.
+ * A strategy generator — type alias for `SignalGenerator<CandleData, StrategySignal, Opts>`.
  */
 export type StrategyGenerator<Opts extends BaseStrategyOptions>
   = SignalGenerator<CandleData, StrategySignal, Opts>

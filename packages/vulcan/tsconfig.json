@@ -5,8 +5,8 @@
       "@material-tech/vulcan-core": ["../core/src/index.ts"],
       "@material-tech/vulcan-indicators": ["../indicators/src/index.ts"],
       "@material-tech/vulcan-strategies": ["../strategies/src/index.ts"],
-      "@material-tech/vulcan-backtest": ["./src/index.ts"]
+      "@material-tech/vulcan-backtest": ["../backtest/src/index.ts"]
     }
   },
-  "include": ["src/**/*.ts", "tests/**/*.spec.ts"]
+  "include": ["src/**/*.ts"]
 }

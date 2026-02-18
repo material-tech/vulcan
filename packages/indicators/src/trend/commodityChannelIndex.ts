@@ -1,6 +1,6 @@
-import type { CandleData, RequiredProperties } from '@material-tech/alloy-core'
+import type { CandleData, RequiredProperties } from '@material-tech/vulcan-core'
 import type { Dnum } from 'dnum'
-import { createSignal } from '@material-tech/alloy-core'
+import { createSignal } from '@material-tech/vulcan-core'
 import { abs, add, divide, equal, from, subtract } from 'dnum'
 
 export interface CommodityChannelIndexOptions {

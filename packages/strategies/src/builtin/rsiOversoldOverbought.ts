@@ -1,6 +1,6 @@
 import type { Dnum, Numberish } from 'dnum'
 import type { BaseStrategyOptions, StrategySignal } from '../types'
-import { rsi } from '@material-tech/alloy-indicators'
+import { rsi } from '@material-tech/vulcan-indicators'
 import { from, gt, lt } from 'dnum'
 import { createStrategy } from '../base'
 

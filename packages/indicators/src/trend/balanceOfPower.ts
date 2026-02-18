@@ -1,5 +1,5 @@
-import type { CandleData, RequiredProperties } from '@material-tech/alloy-core'
-import { createSignal } from '@material-tech/alloy-core'
+import type { CandleData, RequiredProperties } from '@material-tech/vulcan-core'
+import { createSignal } from '@material-tech/vulcan-core'
 import { divide, equal, from, subtract } from 'dnum'
 
 export const bop = createSignal(

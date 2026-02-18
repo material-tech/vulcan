@@ -1,11 +1,9 @@
 {
-  "name": "@material-tech/alloy",
+  "name": "@material-tech/vulcan",
   "type": "module",
   "version": "0.1.0",
   "exports": {
     ".": "./dist/index.js",
-    "./node-stream": "./dist/node-stream.js",
-    "./web-stream": "./dist/web-stream.js",
     "./package.json": "./package.json"
   },
   "types": "./dist/index.d.ts",
@@ -16,11 +14,10 @@
     "build": "tsdown"
   },
   "dependencies": {
-    "@material-tech/alloy-core": "workspace:^",
-    "@material-tech/alloy-indicators": "workspace:^",
-    "@material-tech/alloy-strategies": "workspace:^",
-    "@material-tech/alloy-backtest": "workspace:^",
-    "@material-tech/alloy-adapters": "workspace:^"
+    "@material-tech/vulcan-backtest": "workspace:^",
+    "@material-tech/vulcan-core": "workspace:^",
+    "@material-tech/vulcan-indicators": "workspace:^",
+    "@material-tech/vulcan-strategies": "workspace:^"
   },
   "devDependencies": {
     "@types/node": "catalog:build",

@@ -1,5 +1,5 @@
 {
-  "name": "@material-tech/alloy-strategies",
+  "name": "@material-tech/vulcan-strategies",
   "type": "module",
   "version": "0.1.0",
   "exports": {
@@ -14,8 +14,8 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@material-tech/alloy-core": "workspace:^",
-    "@material-tech/alloy-indicators": "workspace:^",
+    "@material-tech/vulcan-core": "workspace:^",
+    "@material-tech/vulcan-indicators": "workspace:^",
     "defu": "catalog:runtime",
     "dnum": "catalog:runtime"
   },

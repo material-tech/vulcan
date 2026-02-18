@@ -2,9 +2,9 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "paths": {
-      "@material-tech/alloy-core": ["../core/src/index.ts"],
-      "@material-tech/alloy-indicators": ["../indicators/src/index.ts"],
-      "@material-tech/alloy-strategies": ["./src/index.ts"]
+      "@material-tech/vulcan-core": ["../core/src/index.ts"],
+      "@material-tech/vulcan-indicators": ["../indicators/src/index.ts"],
+      "@material-tech/vulcan-strategies": ["./src/index.ts"]
     }
   },
   "include": ["src/**/*.ts", "tests/**/*.spec.ts"]
