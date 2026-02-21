@@ -1,6 +1,5 @@
 import type { CandleData, RequiredProperties } from '@vulcan-js/core'
 import { assert, createSignal, fp18 } from '@vulcan-js/core'
-import { createEmaFp18 } from '../trend/exponentialMovingAverage'
 import { createMsumFp18 } from '../trend/movingSum'
 
 export interface MassIndexOptions {
@@ -45,8 +44,8 @@ export const mi = createSignal(
   ({ emaPeriod, miPeriod }) => {
     assert(Number.isInteger(emaPeriod) && emaPeriod >= 1, new RangeError(`Expected emaPeriod to be a positive integer, got ${emaPeriod}`))
     assert(Number.isInteger(miPeriod) && miPeriod >= 1, new RangeError(`Expected miPeriod to be a positive integer, got ${miPeriod}`))
-    const ema1Proc = createEmaFp18({ period: emaPeriod })
-    const ema2Proc = createEmaFp18({ period: emaPeriod })
+    const ema1Proc = fp18.ewma(fp18.ewma.k(emaPeriod))
+    const ema2Proc = fp18.ewma(fp18.ewma.k(emaPeriod))
     const msumProc = createMsumFp18({ period: miPeriod })
 
     return (bar: RequiredProperties<CandleData, 'h' | 'l'>) => {

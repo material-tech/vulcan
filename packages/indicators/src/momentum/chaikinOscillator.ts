@@ -1,6 +1,5 @@
 import type { CandleData, RequiredProperties } from '@vulcan-js/core'
 import { assert, createSignal, fp18 } from '@vulcan-js/core'
-import { createEmaFp18 } from '../trend/exponentialMovingAverage'
 import { createAdFp18 } from '../volume/accumulationDistribution'
 
 export interface ChaikinOscillatorOptions {
@@ -27,8 +26,8 @@ export const cmo = createSignal(
     assert(Number.isInteger(fastPeriod) && fastPeriod >= 1, new RangeError(`Expected fastPeriod to be a positive integer, got ${fastPeriod}`))
     assert(Number.isInteger(slowPeriod) && slowPeriod >= 1, new RangeError(`Expected slowPeriod to be a positive integer, got ${slowPeriod}`))
     const adProc = createAdFp18()
-    const fastProc = createEmaFp18({ period: fastPeriod })
-    const slowProc = createEmaFp18({ period: slowPeriod })
+    const fastProc = fp18.ewma(fp18.ewma.k(fastPeriod))
+    const slowProc = fp18.ewma(fp18.ewma.k(slowPeriod))
     return (bar: RequiredProperties<CandleData, 'h' | 'l' | 'c' | 'v'>) => {
       const adVal = adProc(
         fp18.toFp18(bar.h),

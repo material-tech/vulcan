@@ -9,23 +9,6 @@ export const defaultExponentialMovingAverageOptions: ExponentialMovingAverageOpt
   period: 12,
 }
 
-export function createEmaFp18({ period }: { period: number }) {
-  assert(Number.isInteger(period) && period >= 1, new RangeError(`Expected period to be a positive integer, got ${period}`))
-  // k = 2 / (period + 1)
-  const k = fp18.div(fp18.TWO, BigInt(1 + period) * fp18.SCALE)
-  const m = fp18.ONE - k
-  let prev: bigint | undefined
-
-  return (value: bigint): bigint => {
-    if (prev === undefined) {
-      prev = value
-      return prev
-    }
-    prev = fp18.mul(value, k) + fp18.mul(prev, m)
-    return prev
-  }
-}
-
 /**
  * Exponential Moving Average (EMA)
  *
@@ -34,7 +17,8 @@ export function createEmaFp18({ period }: { period: number }) {
  */
 export const ema = createSignal(
   ({ period }) => {
-    const proc = createEmaFp18({ period })
+    assert(Number.isInteger(period) && period >= 1, new RangeError(`Expected period to be a positive integer, got ${period}`))
+    const proc = fp18.ewma(fp18.ewma.k(period))
     return (value: Numberish) => fp18.toDnum(proc(fp18.toFp18(value)))
   },
   defaultExponentialMovingAverageOptions,
