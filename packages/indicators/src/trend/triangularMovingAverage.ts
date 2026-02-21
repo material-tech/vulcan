@@ -12,7 +12,7 @@ export const defaultTriangularMovingAverageOptions: TriangularMovingAverageOptio
 
 export const trima = createSignal(
   ({ period }) => {
-    assertPositiveInteger(period)
+    assertPositiveInteger(period, 'period')
     let n1: number
     let n2: number
 

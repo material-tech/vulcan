@@ -24,7 +24,7 @@ export const defaultDoubleExponentialMovingAverageOptions: DoubleExponentialMovi
  */
 export const dema = createSignal(
   ({ period }) => {
-    assertPositiveInteger(period)
+    assertPositiveInteger(period, 'period')
     const ema1 = ema.create({ period })
     const ema2 = ema.create({ period })
     return (value: Numberish) => {

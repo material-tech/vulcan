@@ -22,7 +22,7 @@ export const defaultRMAOptions: RMAOptions = {
  */
 export const rma = createSignal(
   ({ period }) => {
-    assertPositiveInteger(period)
+    assertPositiveInteger(period, 'period')
     let count = 0
     let sum: Dnum = from(0, 18)
     let prev: Dnum = from(0, 18)

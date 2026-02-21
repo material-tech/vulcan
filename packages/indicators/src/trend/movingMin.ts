@@ -18,7 +18,7 @@ export const defaultMovingMinOptions: MovingMinOptions = {
  */
 export const mmin = createSignal(
   ({ period }) => {
-    assertPositiveInteger(period)
+    assertPositiveInteger(period, 'period')
     const buffer: Dnum[] = []
     return (value: Numberish) => {
       buffer.push(from(value, 18))

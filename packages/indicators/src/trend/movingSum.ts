@@ -17,7 +17,7 @@ export const defaultMovingSumOptions: MovingSumOptions = {
  */
 export const msum = createSignal(
   ({ period }) => {
-    assertPositiveInteger(period)
+    assertPositiveInteger(period, 'period')
     const buffer: Dnum[] = Array.from({ length: period })
     let head = 0
     let count = 0

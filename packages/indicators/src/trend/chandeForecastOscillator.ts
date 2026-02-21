@@ -31,7 +31,7 @@ export const defaultCFOOptions: ChandeForecastOscillatorOptions = {
  */
 export const cfo = createSignal(
   ({ period }) => {
-    assertPositiveInteger(period)
+    assertPositiveInteger(period, 'period')
     const buffer: Dnum[] = []
 
     return (value: Numberish) => {

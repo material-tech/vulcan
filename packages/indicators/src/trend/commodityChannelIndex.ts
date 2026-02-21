@@ -35,7 +35,7 @@ export const defaultCCIOptions: CommodityChannelIndexOptions = {
  */
 export const cci = createSignal(
   ({ period }) => {
-    assertPositiveInteger(period)
+    assertPositiveInteger(period, 'period')
     const buffer: Dnum[] = []
 
     return (bar: RequiredProperties<CandleData, 'h' | 'l' | 'c'>) => {

@@ -26,7 +26,7 @@ export interface AroonPoint {
  */
 export const aroon = createSignal(
   ({ period }) => {
-    assertPositiveInteger(period)
+    assertPositiveInteger(period, 'period')
     const highBuffer: Dnum[] = []
     const lowBuffer: Dnum[] = []
 

@@ -30,7 +30,7 @@ export const defaultSMAOptions: SimpleMovingAverageOptions = {
  */
 export const sma = createSignal(
   ({ period }) => {
-    assertPositiveInteger(period)
+    assertPositiveInteger(period, 'period')
     const buffer: Dnum[] = Array.from({ length: period })
     let head = 0
     let count = 0

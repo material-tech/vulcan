@@ -22,7 +22,7 @@ export const defaultRSIOptions: RSIOptions = {
  */
 export const rsi = createSignal(
   ({ period }) => {
-    assertPositiveInteger(period)
+    assertPositiveInteger(period, 'period')
     const gainProc = rma.create({ period })
     const lossProc = rma.create({ period })
     let prev: Dnum | undefined

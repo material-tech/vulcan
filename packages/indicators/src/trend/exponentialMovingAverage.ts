@@ -18,7 +18,7 @@ export const defaultExponentialMovingAverageOptions: ExponentialMovingAverageOpt
  */
 export const ema = createSignal(
   ({ period }) => {
-    assertPositiveInteger(period)
+    assertPositiveInteger(period, 'period')
     const k = divide(from(2, 18), from(1 + period, 18), 18)
     const m = subtract(from(1, 18), k)
     let prev: Dnum | undefined
