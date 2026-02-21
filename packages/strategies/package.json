@@ -1,18 +1,20 @@
 {
   "name": "@vulcan/strategies",
   "type": "module",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "license": "MIT",
   "exports": {
     ".": "./dist/index.js",
     "./package.json": "./package.json"
   },
+  "types": "./dist/index.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
     "build": "tsdown",
-    "test": "vitest run"
+    "test": "vitest run",
+    "prepublishOnly": "pnpm run build"
   },
   "dependencies": {
     "@vulcan/core": "workspace:^",

@@ -1,7 +1,7 @@
 {
   "name": "@vulcan/forge",
   "type": "module",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "license": "MIT",
   "exports": {
     ".": "./dist/index.js",
@@ -12,7 +12,8 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsdown"
+    "build": "tsdown",
+    "prepublishOnly": "pnpm run build"
   },
   "dependencies": {
     "@vulcan/backtest": "workspace:^",
