@@ -79,6 +79,7 @@ process(98)
 | Ichimoku Cloud | `ichimokuCloud` | — |
 | Percentage Price Oscillator | `ppo` | `percentagePriceOscillator` |
 | Relative Strength Index | `rsi` | `relativeStrengthIndex` |
+| Percentage Volume Oscillator | `pvo` | `percentageVolumeOscillator` |
 | Stochastic Oscillator | `stoch` | `stochasticOscillator` |
 
 ### Volume

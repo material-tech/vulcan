@@ -102,7 +102,7 @@ const result3 = process(98)
 - [x] Chaikin Oscillator (CMO)
 - [x] Ichimoku Cloud
 - [x] Percentage Price Oscillator (PPO)
-- [ ] Percentage Volume Oscillator (PVO)
+- [x] Percentage Volume Oscillator (PVO)
 - [ ] Price Rate of Change (ROC)
 - [x] Relative Strength Index (RSI)
 - [x] Stochastic Oscillator (STOCH)
