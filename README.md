@@ -90,7 +90,7 @@ const result3 = process(98)
 - [x] Since Change
 - [x] Triple Exponential Moving Average (TEMA)
 - [x] Triangular Moving Average (TRIMA)
-- [ ] Triple Exponential Average (TRIX)
+- [x] Triple Exponential Average (TRIX)
 - [ ] Typical Price
 - [ ] Volume Weighted Moving Average (VWMA)
 - [ ] Vortex Indicator
