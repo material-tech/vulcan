@@ -57,6 +57,7 @@ process(98)
 | Moving Min | `mmin` | `movingMin` |
 | Moving Sum | `msum` | — |
 | Parabolic SAR | `psar` | `parabolicSar` |
+| Qstick | `qstick` | `qstickIndicator` |
 | Rolling Moving Average | `rma` | `rollingMovingAverage` |
 | Simple Moving Average | `sma` | `simpleMovingAverage` |
 | Triangular Moving Average | `trima` | `triangularMovingAverage` |
