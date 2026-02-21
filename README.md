@@ -84,7 +84,7 @@ const result3 = process(98)
 - [x] Moving Sum (MSUM)
 - [x] Parabolic SAR (PSAR)
 - [x] Qstick
-- [ ] Random Index (KDJ)
+- [x] Random Index (KDJ)
 - [x] Rolling Moving Average (RMA)
 - [x] Simple Moving Average (SMA)
 - [ ] Since Change
