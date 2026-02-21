@@ -92,10 +92,10 @@ importers:
 
   packages/backtest:
     dependencies:
-      '@vulcan/core':
+      '@vulcan-js/core':
         specifier: workspace:^
         version: link:../core
-      '@vulcan/strategies':
+      '@vulcan-js/strategies':
         specifier: workspace:^
         version: link:../strategies
       defu:
@@ -127,16 +127,16 @@ importers:
 
   packages/forge:
     dependencies:
-      '@vulcan/backtest':
+      '@vulcan-js/backtest':
         specifier: workspace:^
         version: link:../backtest
-      '@vulcan/core':
+      '@vulcan-js/core':
         specifier: workspace:^
         version: link:../core
-      '@vulcan/indicators':
+      '@vulcan-js/indicators':
         specifier: workspace:^
         version: link:../indicators
-      '@vulcan/strategies':
+      '@vulcan-js/strategies':
         specifier: workspace:^
         version: link:../strategies
     devDependencies:
@@ -152,7 +152,7 @@ importers:
 
   packages/indicators:
     dependencies:
-      '@vulcan/core':
+      '@vulcan-js/core':
         specifier: workspace:^
         version: link:../core
       dnum:
@@ -171,10 +171,10 @@ importers:
 
   packages/strategies:
     dependencies:
-      '@vulcan/core':
+      '@vulcan-js/core':
         specifier: workspace:^
         version: link:../core
-      '@vulcan/indicators':
+      '@vulcan-js/indicators':
         specifier: workspace:^
         version: link:../indicators
       defu:

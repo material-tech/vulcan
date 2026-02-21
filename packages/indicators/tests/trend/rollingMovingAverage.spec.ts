@@ -1,5 +1,5 @@
-import { collect } from '@vulcan/core'
-import { rma } from '@vulcan/indicators'
+import { collect } from '@vulcan-js/core'
+import { rma } from '@vulcan-js/indicators'
 import { describe, expect, it } from 'vitest'
 
 describe('rollingMovingAverage', () => {

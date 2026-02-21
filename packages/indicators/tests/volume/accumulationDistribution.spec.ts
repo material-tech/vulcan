@@ -1,5 +1,5 @@
-import { collect } from '@vulcan/core'
-import { ad } from '@vulcan/indicators'
+import { collect } from '@vulcan-js/core'
+import { ad } from '@vulcan-js/indicators'
 import { describe, expect, it } from 'vitest'
 
 describe('accumulation distribution (A/D)', () => {

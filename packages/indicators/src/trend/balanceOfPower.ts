@@ -1,5 +1,5 @@
-import type { CandleData, RequiredProperties } from '@vulcan/core'
-import { createSignal } from '@vulcan/core'
+import type { CandleData, RequiredProperties } from '@vulcan-js/core'
+import { createSignal } from '@vulcan-js/core'
 import { divide, equal, from, subtract } from 'dnum'
 
 export const bop = createSignal(

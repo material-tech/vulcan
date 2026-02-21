@@ -13,16 +13,16 @@
 
 | 包名 | 说明 |
 | --- | --- |
-| [`@vulcan/core`](./packages/core/) | 核心类型（`CandleData`、`Processor`、`SignalGenerator`）及工具函数（`createSignal`、`collect`） |
-| [`@vulcan/indicators`](./packages/indicators/) | 全部技术指标（趋势、动量、成交量） |
-| [`@vulcan/strategies`](./packages/strategies/) | 可组合的交易策略，输出结构化信号 |
-| [`@vulcan/backtest`](./packages/backtest/) | 回测引擎，含仓位管理和统计分析 |
+| [`@vulcan-js/core`](./packages/core/) | 核心类型（`CandleData`、`Processor`、`SignalGenerator`）及工具函数（`createSignal`、`collect`） |
+| [`@vulcan-js/indicators`](./packages/indicators/) | 全部技术指标（趋势、动量、成交量） |
+| [`@vulcan-js/strategies`](./packages/strategies/) | 可组合的交易策略，输出结构化信号 |
+| [`@vulcan-js/backtest`](./packages/backtest/) | 回测引擎，含仓位管理和统计分析 |
 
 ## 安装
 
 ```bash
 # 指标包（自动包含 core 依赖）
-pnpm add @vulcan/indicators
+pnpm add @vulcan-js/indicators
 ```
 
 ## 使用方式
@@ -32,8 +32,8 @@ pnpm add @vulcan/indicators
 每个指标都是生成器函数。传入可迭代数据源，遍历结果即可：
 
 ```ts
-import { collect } from '@vulcan/core'
-import { sma } from '@vulcan/indicators'
+import { collect } from '@vulcan-js/core'
+import { sma } from '@vulcan-js/indicators'
 
 const prices = [10, 11, 12, 13, 14, 15]
 
@@ -51,7 +51,7 @@ for (const value of sma(prices, { period: 3 })) {
 使用 `.create()` 获取有状态处理器，逐条喂入数据：
 
 ```ts
-import { rsi } from '@vulcan/indicators'
+import { rsi } from '@vulcan-js/indicators'
 
 const process = rsi.create({ period: 14 })
 

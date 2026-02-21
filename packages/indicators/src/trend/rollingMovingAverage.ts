@@ -1,5 +1,5 @@
 import type { Dnum, Numberish } from 'dnum'
-import { assert, createSignal } from '@vulcan/core'
+import { assert, createSignal } from '@vulcan-js/core'
 import { add, div, from, mul } from 'dnum'
 
 export interface RMAOptions {

@@ -1,5 +1,5 @@
-import { collect } from '@vulcan/core'
-import { ema } from '@vulcan/indicators'
+import { collect } from '@vulcan-js/core'
+import { ema } from '@vulcan-js/indicators'
 import { describe, expect, it } from 'vitest'
 
 describe('exponential moving average (ema)', () => {

@@ -1,5 +1,5 @@
-import { collect } from '@vulcan/core'
-import { dema } from '@vulcan/indicators'
+import { collect } from '@vulcan-js/core'
+import { dema } from '@vulcan-js/indicators'
 import { describe, expect, it } from 'vitest'
 
 describe('double exponential moving average (dema)', () => {

@@ -1,6 +1,6 @@
-import type { StrategySignal } from '@vulcan/strategies'
-import { collect } from '@vulcan/core'
-import { createStrategy } from '@vulcan/strategies'
+import type { StrategySignal } from '@vulcan-js/strategies'
+import { collect } from '@vulcan-js/core'
+import { createStrategy } from '@vulcan-js/strategies'
 import { describe, expect, it } from 'vitest'
 
 function bar(c: number, h = c, l = c, o = c, v = 100) {

@@ -1,14 +1,14 @@
-# @vulcan/core
+# @vulcan-js/core
 
 Core types and utilities for the [Vulcan](../../README.md) technical analysis library.
 
 ## Installation
 
 ```bash
-pnpm add @vulcan/core
+pnpm add @vulcan-js/core
 ```
 
-> **Note:** You typically don't need to install this package directly — it's included as a dependency of `@vulcan/indicators`.
+> **Note:** You typically don't need to install this package directly — it's included as a dependency of `@vulcan-js/indicators`.
 
 ## API
 
@@ -22,7 +22,7 @@ Returns a `SignalGenerator` with:
 - **`.defaultOptions`** — the default options for the indicator
 
 ```ts
-import { createSignal } from '@vulcan/core'
+import { createSignal } from '@vulcan-js/core'
 
 const myIndicator = createSignal(
   (options) => {
@@ -52,8 +52,8 @@ process(2) // => 3
 Collects all values from an iterable into an array.
 
 ```ts
-import { collect } from '@vulcan/core'
-import { sma } from '@vulcan/indicators'
+import { collect } from '@vulcan-js/core'
+import { sma } from '@vulcan-js/indicators'
 
 const results = collect(sma([10, 11, 12, 13, 14], { period: 3 }))
 ```

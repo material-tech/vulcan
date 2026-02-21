@@ -1,5 +1,5 @@
-import type { CandleData, RequiredProperties } from '@vulcan/core'
-import { assert, createSignal } from '@vulcan/core'
+import type { CandleData, RequiredProperties } from '@vulcan-js/core'
+import { assert, createSignal } from '@vulcan-js/core'
 import { add, div, from, sub } from 'dnum'
 import { sma } from '../trend/simpleMovingAverage'
 

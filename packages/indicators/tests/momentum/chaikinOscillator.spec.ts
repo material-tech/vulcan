@@ -1,5 +1,5 @@
-import { collect } from '@vulcan/core'
-import { cmo } from '@vulcan/indicators'
+import { collect } from '@vulcan-js/core'
+import { cmo } from '@vulcan-js/indicators'
 import { describe, expect, it } from 'vitest'
 
 describe('chaikin money flow oscillator (CMO)', () => {

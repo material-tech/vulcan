@@ -1,4 +1,4 @@
-import type { CandleData, Processor, SignalGenerator } from '@vulcan/core'
+import type { CandleData, Processor, SignalGenerator } from '@vulcan-js/core'
 
 /**
  * The action a strategy recommends.

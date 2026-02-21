@@ -1,5 +1,5 @@
-import { collect } from '@vulcan/core'
-import { trima } from '@vulcan/indicators'
+import { collect } from '@vulcan-js/core'
+import { trima } from '@vulcan-js/indicators'
 import { describe, expect, it } from 'vitest'
 
 describe('triangular moving average (trima)', () => {

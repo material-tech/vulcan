@@ -1,5 +1,5 @@
 import type { Dnum, Numberish } from 'dnum'
-import { assert, createSignal } from '@vulcan/core'
+import { assert, createSignal } from '@vulcan-js/core'
 import { from, lt } from 'dnum'
 
 export interface MovingMinOptions {

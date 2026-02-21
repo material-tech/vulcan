@@ -1,7 +1,7 @@
 /* eslint-disable antfu/consistent-list-newline */
 
-import { collect } from '@vulcan/core'
-import { ichimokuCloud } from '@vulcan/indicators'
+import { collect } from '@vulcan-js/core'
+import { ichimokuCloud } from '@vulcan-js/indicators'
 import { toNumber } from 'dnum'
 import { describe, expect, it } from 'vitest'
 import ohlcv from '../ohlcv.json' with { type: 'json' }

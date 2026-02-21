@@ -1,5 +1,5 @@
 {
-  "name": "@vulcan/forge",
+  "name": "@vulcan-js/forge",
   "type": "module",
   "version": "0.0.0",
   "license": "MIT",
@@ -16,10 +16,10 @@
     "prepublishOnly": "pnpm run build"
   },
   "dependencies": {
-    "@vulcan/backtest": "workspace:^",
-    "@vulcan/core": "workspace:^",
-    "@vulcan/indicators": "workspace:^",
-    "@vulcan/strategies": "workspace:^"
+    "@vulcan-js/backtest": "workspace:^",
+    "@vulcan-js/core": "workspace:^",
+    "@vulcan-js/indicators": "workspace:^",
+    "@vulcan-js/strategies": "workspace:^"
   },
   "devDependencies": {
     "@types/node": "catalog:build",

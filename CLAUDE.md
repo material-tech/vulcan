@@ -6,10 +6,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Vulcan is a TypeScript technical analysis indicator library using `dnum` for high-precision decimal arithmetic (`[value: bigint, decimals: number]` tuples). The project is organized as a **pnpm monorepo** with the following packages:
 
-- **`@vulcan/core`** (`packages/core/`) — core types (`CandleData`, `Processor`, `SignalGenerator`) and factory function (`createSignal`, `collect`)
-- **`@vulcan/indicators`** (`packages/indicators/`) — all indicators organized by category: `trend/`, `momentum/`, `volume/`
-- **`@vulcan/strategies`** (`packages/strategies/`) — composable trading strategies with structured signal output
-- **`@vulcan/backtest`** (`packages/backtest/`) — backtesting engine with position management and statistics
+- **`@vulcan-js/core`** (`packages/core/`) — core types (`CandleData`, `Processor`, `SignalGenerator`) and factory function (`createSignal`, `collect`)
+- **`@vulcan-js/indicators`** (`packages/indicators/`) — all indicators organized by category: `trend/`, `momentum/`, `volume/`
+- **`@vulcan-js/strategies`** (`packages/strategies/`) — composable trading strategies with structured signal output
+- **`@vulcan-js/backtest`** (`packages/backtest/`) — backtesting engine with position management and statistics
 
 **Dependency graph:** `indicators` → `core`, `strategies` → `core` + `indicators`, `backtest` → `core` + `strategies`
 
@@ -48,7 +48,7 @@ pnpm lint:fix           # Lint with auto-fix
 - `momentum/` — 7 indicators (RSI, STOCH, APO, PPO, etc.)
 - `volume/` — 1 indicator (Accumulation/Distribution)
 
-Imports from core use `@vulcan/core`. Cross-category imports use relative paths (e.g., `../trend/exponentialMovingAverage`).
+Imports from core use `@vulcan-js/core`. Cross-category imports use relative paths (e.g., `../trend/exponentialMovingAverage`).
 
 ### Module Resolution
 
@@ -56,9 +56,9 @@ Root `tsconfig.json` maps workspace packages via `paths` for development. Each p
 
 ## Implementing a New Indicator
 
-1. **Create** `packages/indicators/src/<category>/<indicatorName>.ts` — define `Options` interface, `defaultOptions`, implement with `createSignal` (from `@vulcan/core`), export short name + long alias
+1. **Create** `packages/indicators/src/<category>/<indicatorName>.ts` — define `Options` interface, `defaultOptions`, implement with `createSignal` (from `@vulcan-js/core`), export short name + long alias
 2. **Export** from `packages/indicators/src/<category>/index.ts` — add `export * from './<indicatorName>'`
-3. **Test** in `packages/indicators/tests/<category>/<indicatorName>.spec.ts` — import from `@vulcan/core` (for `collect`) and `@vulcan/indicators` (for the indicator)
+3. **Test** in `packages/indicators/tests/<category>/<indicatorName>.spec.ts` — import from `@vulcan-js/core` (for `collect`) and `@vulcan-js/indicators` (for the indicator)
 4. **Update** README.md (and README_zh.md) — change `[ ]` to `[x]` for the indicator
 
 ## Testing Conventions

@@ -1,5 +1,5 @@
 import type { Dnum, Numberish } from 'dnum'
-import { assert, createSignal } from '@vulcan/core'
+import { assert, createSignal } from '@vulcan-js/core'
 import { add, divide, from, mul, subtract } from 'dnum'
 
 export interface ExponentialMovingAverageOptions {

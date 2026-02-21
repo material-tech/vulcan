@@ -1,5 +1,5 @@
-import { collect } from '@vulcan/core'
-import { cfo } from '@vulcan/indicators'
+import { collect } from '@vulcan-js/core'
+import { cfo } from '@vulcan-js/indicators'
 import { describe, expect, it } from 'vitest'
 
 describe('chande forecast oscillator (CFO)', () => {

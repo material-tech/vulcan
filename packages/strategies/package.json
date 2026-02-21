@@ -1,5 +1,5 @@
 {
-  "name": "@vulcan/strategies",
+  "name": "@vulcan-js/strategies",
   "type": "module",
   "version": "0.0.0",
   "license": "MIT",
@@ -17,8 +17,8 @@
     "prepublishOnly": "pnpm run build"
   },
   "dependencies": {
-    "@vulcan/core": "workspace:^",
-    "@vulcan/indicators": "workspace:^",
+    "@vulcan-js/core": "workspace:^",
+    "@vulcan-js/indicators": "workspace:^",
     "defu": "catalog:runtime",
     "dnum": "catalog:runtime"
   },

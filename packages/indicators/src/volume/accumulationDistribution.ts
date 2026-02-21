@@ -1,6 +1,6 @@
-import type { CandleData, RequiredProperties } from '@vulcan/core'
+import type { CandleData, RequiredProperties } from '@vulcan-js/core'
 import type { Dnum } from 'dnum'
-import { createSignal } from '@vulcan/core'
+import { createSignal } from '@vulcan-js/core'
 import { add, divide, equal, from, multiply, subtract } from 'dnum'
 
 /**

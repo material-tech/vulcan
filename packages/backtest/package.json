@@ -1,5 +1,5 @@
 {
-  "name": "@vulcan/backtest",
+  "name": "@vulcan-js/backtest",
   "type": "module",
   "version": "0.0.0",
   "license": "MIT",
@@ -16,8 +16,8 @@
     "prepublishOnly": "pnpm run build"
   },
   "dependencies": {
-    "@vulcan/core": "workspace:^",
-    "@vulcan/strategies": "workspace:^",
+    "@vulcan-js/core": "workspace:^",
+    "@vulcan-js/strategies": "workspace:^",
     "defu": "catalog:runtime",
     "dnum": "catalog:runtime"
   },

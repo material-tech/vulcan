@@ -1,5 +1,5 @@
-import { collect } from '@vulcan/core'
-import { stoch } from '@vulcan/indicators'
+import { collect } from '@vulcan-js/core'
+import { stoch } from '@vulcan-js/indicators'
 import { toNumber } from 'dnum'
 import { describe, expect, it } from 'vitest'
 

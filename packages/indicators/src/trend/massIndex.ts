@@ -1,5 +1,5 @@
-import type { CandleData, RequiredProperties } from '@vulcan/core'
-import { assert, createSignal } from '@vulcan/core'
+import type { CandleData, RequiredProperties } from '@vulcan-js/core'
+import { assert, createSignal } from '@vulcan-js/core'
 import { divide, from, subtract } from 'dnum'
 import { ema } from './exponentialMovingAverage'
 import { msum } from './movingSum'

@@ -1,5 +1,5 @@
-import { collect } from '@vulcan/core'
-import { msum } from '@vulcan/indicators'
+import { collect } from '@vulcan-js/core'
+import { msum } from '@vulcan-js/indicators'
 import { describe, expect, it } from 'vitest'
 
 describe('movingSum', () => {

@@ -1,6 +1,6 @@
-import type { CandleData, RequiredProperties } from '@vulcan/core'
+import type { CandleData, RequiredProperties } from '@vulcan-js/core'
 import type { Dnum } from 'dnum'
-import { assert, createSignal } from '@vulcan/core'
+import { assert, createSignal } from '@vulcan-js/core'
 import { add, div, from } from 'dnum'
 import { mmax } from '../trend/movingMax'
 import { mmin } from '../trend/movingMin'

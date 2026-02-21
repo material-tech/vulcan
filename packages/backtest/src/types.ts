@@ -1,5 +1,5 @@
-import type { CandleData } from '@vulcan/core'
-import type { StrategySignal } from '@vulcan/strategies'
+import type { CandleData } from '@vulcan-js/core'
+import type { StrategySignal } from '@vulcan-js/strategies'
 import type { Dnum, Numberish } from 'dnum'
 
 export type { CandleData, StrategySignal }

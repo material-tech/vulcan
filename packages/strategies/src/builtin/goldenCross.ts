@@ -1,6 +1,6 @@
 import type { Dnum, Numberish } from 'dnum'
 import type { BaseStrategyOptions, StrategySignal } from '../types'
-import { sma } from '@vulcan/indicators'
+import { sma } from '@vulcan-js/indicators'
 import { from, gt, toNumber } from 'dnum'
 import { createStrategy } from '../base'
 

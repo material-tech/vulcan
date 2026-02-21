@@ -1,11 +1,11 @@
-# @vulcan/strategies
+# @vulcan-js/strategies
 
 Composable trading strategies for the [Vulcan](../../README.md) library. Combines multiple indicators into structured signal output with position management.
 
 ## Installation
 
 ```bash
-pnpm add @vulcan/strategies
+pnpm add @vulcan-js/strategies
 ```
 
 ## Usage
@@ -15,8 +15,8 @@ pnpm add @vulcan/strategies
 Every strategy is a generator function (just like indicators). Pass OHLCV bars and iterate over signals:
 
 ```ts
-import { collect } from '@vulcan/core'
-import { goldenCross } from '@vulcan/strategies'
+import { collect } from '@vulcan-js/core'
+import { goldenCross } from '@vulcan-js/strategies'
 
 const bars = [
   { o: 10, h: 12, l: 9, c: 11, v: 1000 },
@@ -37,7 +37,7 @@ for (const signal of goldenCross(bars)) {
 Use `.create()` for real-time / streaming scenarios:
 
 ```ts
-import { goldenCross } from '@vulcan/strategies'
+import { goldenCross } from '@vulcan-js/strategies'
 
 const process = goldenCross.create({ fastPeriod: 10, slowPeriod: 30 })
 
@@ -50,8 +50,8 @@ const signal = process({ o: 10, h: 12, l: 9, c: 11, v: 1000 })
 Use `createStrategy` to build your own strategy. It mirrors `createSignal` from core, but adds a rolling window of historical bars and structured signal output:
 
 ```ts
-import { ema } from '@vulcan/indicators'
-import { createStrategy } from '@vulcan/strategies'
+import { ema } from '@vulcan-js/indicators'
+import { createStrategy } from '@vulcan-js/strategies'
 
 const myStrategy = createStrategy(
   ({ emaPeriod, threshold }) => {

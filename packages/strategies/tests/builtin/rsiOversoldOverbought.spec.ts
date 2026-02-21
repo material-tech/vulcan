@@ -1,5 +1,5 @@
-import { collect } from '@vulcan/core'
-import { rsiOversoldOverbought } from '@vulcan/strategies'
+import { collect } from '@vulcan-js/core'
+import { rsiOversoldOverbought } from '@vulcan-js/strategies'
 import { describe, expect, it } from 'vitest'
 
 function bar(c: number) {
