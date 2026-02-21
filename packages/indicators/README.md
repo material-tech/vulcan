@@ -58,6 +58,7 @@ process(98)
 | Moving Sum | `msum` | — |
 | Parabolic SAR | `psar` | `parabolicSar` |
 | Qstick | `qstick` | `qstickIndicator` |
+| Random Index (KDJ) | `kdj` | `randomIndex` |
 | Rolling Moving Average | `rma` | `rollingMovingAverage` |
 | Simple Moving Average | `sma` | `simpleMovingAverage` |
 | Triangular Moving Average | `trima` | `triangularMovingAverage` |
