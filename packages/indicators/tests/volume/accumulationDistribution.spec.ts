@@ -17,4 +17,14 @@ describe('accumulation distribution (A/D)', () => {
     const result = collect(ad(values))
     expect(result).toMatchNumberArray(expected)
   })
+
+  it('should handle zero range (high === low) without division by zero', () => {
+    const values = [
+      { h: 10, l: 10, c: 10, v: 100 },
+      { h: 10, l: 6, c: 9, v: 200 },
+    ]
+
+    const result = collect(ad(values))
+    expect(result).toMatchNumberArray([0, 100])
+  })
 })
