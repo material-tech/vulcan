@@ -25,7 +25,7 @@ export function createSignal<Input, Output, Options extends Record<string, any>>
 
   Object.defineProperty(generator, 'defaultOptions', {
     get() {
-      return defaultOptions ? JSON.parse(JSON.stringify(defaultOptions)) : {}
+      return defu({}, defaultOptions)
     },
   })
 
