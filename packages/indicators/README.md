@@ -62,6 +62,7 @@ process(98)
 | Rolling Moving Average | `rma` | `rollingMovingAverage` |
 | Simple Moving Average | `sma` | `simpleMovingAverage` |
 | Since Change | `since` | `sinceChange` |
+| Triple Exponential Moving Average | `tema` | `tripleExponentialMovingAverage` |
 | Triangular Moving Average | `trima` | `triangularMovingAverage` |
 
 ### Momentum

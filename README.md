@@ -88,7 +88,7 @@ const result3 = process(98)
 - [x] Rolling Moving Average (RMA)
 - [x] Simple Moving Average (SMA)
 - [x] Since Change
-- [ ] Triple Exponential Moving Average (TEMA)
+- [x] Triple Exponential Moving Average (TEMA)
 - [x] Triangular Moving Average (TRIMA)
 - [ ] Triple Exponential Average (TRIX)
 - [ ] Typical Price
