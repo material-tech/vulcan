@@ -1,5 +1,5 @@
-import { collect } from '@material-tech/vulcan-core'
-import { ad } from '@material-tech/vulcan-indicators'
+import { collect } from '@vulcan/core'
+import { ad } from '@vulcan/indicators'
 import { describe, expect, it } from 'vitest'
 
 describe('accumulation distribution (A/D)', () => {

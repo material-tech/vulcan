@@ -2,8 +2,8 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "paths": {
-      "@material-tech/vulcan-core": ["../core/src/index.ts"],
-      "@material-tech/vulcan-indicators": ["./src/index.ts"]
+      "@vulcan/core": ["../core/src/index.ts"],
+      "@vulcan/indicators": ["./src/index.ts"]
     }
   },
   "include": ["src/**/*.ts", "tests/**/*.spec.ts", "tests/ohlcv.json"]

@@ -1,5 +1,5 @@
-import { collect } from '@material-tech/vulcan-core'
-import { mmax } from '@material-tech/vulcan-indicators'
+import { collect } from '@vulcan/core'
+import { mmax } from '@vulcan/indicators'
 import { describe, expect, it } from 'vitest'
 
 describe('movingMax (mmax)', () => {

@@ -1,5 +1,5 @@
 {
-  "name": "@material-tech/vulcan-monorepo",
+  "name": "@vulcan/monorepo",
   "type": "module",
   "version": "0.1.0",
   "private": true,

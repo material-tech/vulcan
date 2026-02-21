@@ -1,5 +1,5 @@
 {
-  "name": "@material-tech/vulcan-backtest",
+  "name": "@vulcan/backtest",
   "type": "module",
   "version": "0.1.0",
   "license": "MIT",
@@ -15,8 +15,8 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@material-tech/vulcan-core": "workspace:^",
-    "@material-tech/vulcan-strategies": "workspace:^",
+    "@vulcan/core": "workspace:^",
+    "@vulcan/strategies": "workspace:^",
     "defu": "catalog:runtime",
     "dnum": "catalog:runtime"
   },

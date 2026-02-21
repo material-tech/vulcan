@@ -1,5 +1,5 @@
-import { collect } from '@material-tech/vulcan-core'
-import { cci } from '@material-tech/vulcan-indicators'
+import { collect } from '@vulcan/core'
+import { cci } from '@vulcan/indicators'
 import { describe, expect, it } from 'vitest'
 
 describe('commodity channel index (CCI)', () => {

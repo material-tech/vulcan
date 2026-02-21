@@ -1,5 +1,5 @@
-import type { CandleData } from '@material-tech/vulcan-core'
-import { createStrategy, goldenCross } from '@material-tech/vulcan-strategies'
+import type { CandleData } from '@vulcan/core'
+import { createStrategy, goldenCross } from '@vulcan/strategies'
 import { toNumber } from 'dnum'
 import { describe, expect, it } from 'vitest'
 import { backtest, backtestStream } from '../src/backtest'

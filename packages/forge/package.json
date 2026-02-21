@@ -1,5 +1,5 @@
 {
-  "name": "@material-tech/vulcan",
+  "name": "@vulcan/forge",
   "type": "module",
   "version": "0.1.0",
   "license": "MIT",
@@ -15,10 +15,10 @@
     "build": "tsdown"
   },
   "dependencies": {
-    "@material-tech/vulcan-backtest": "workspace:^",
-    "@material-tech/vulcan-core": "workspace:^",
-    "@material-tech/vulcan-indicators": "workspace:^",
-    "@material-tech/vulcan-strategies": "workspace:^"
+    "@vulcan/backtest": "workspace:^",
+    "@vulcan/core": "workspace:^",
+    "@vulcan/indicators": "workspace:^",
+    "@vulcan/strategies": "workspace:^"
   },
   "devDependencies": {
     "@types/node": "catalog:build",

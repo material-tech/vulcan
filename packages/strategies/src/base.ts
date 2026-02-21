@@ -1,5 +1,5 @@
 import type { BaseStrategyOptions, CandleData, Processor, StrategyContext, StrategyFactory, StrategyGenerator, StrategySignal } from './types'
-import { assert } from '@material-tech/vulcan-core'
+import { assert } from '@vulcan/core'
 import { defu } from 'defu'
 
 /**

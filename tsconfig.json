@@ -2,12 +2,12 @@
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
     "paths": {
-      "@material-tech/vulcan-core": ["./packages/core/src/index.ts"],
-      "@material-tech/vulcan-indicators": ["./packages/indicators/src/index.ts"],
-      "@material-tech/vulcan-strategies": ["./packages/strategies/src/index.ts"],
-      "@material-tech/vulcan-backtest": ["./packages/backtest/src/index.ts"],
-      "@material-tech/vulcan": ["./packages/vulcan/src/index.ts"],
-      "@material-tech/vulcan/*": ["./packages/vulcan/src/*.ts"]
+      "@vulcan/core": ["./packages/core/src/index.ts"],
+      "@vulcan/indicators": ["./packages/indicators/src/index.ts"],
+      "@vulcan/strategies": ["./packages/strategies/src/index.ts"],
+      "@vulcan/backtest": ["./packages/backtest/src/index.ts"],
+      "@vulcan/forge": ["./packages/forge/src/index.ts"],
+      "@vulcan/forge/*": ["./packages/forge/src/*.ts"]
     }
   },
   "include": ["packages/*/src/**/*.ts"]

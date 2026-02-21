@@ -1,5 +1,5 @@
-import type { CandleData } from '@material-tech/vulcan-core'
-import type { StrategySignal } from '@material-tech/vulcan-strategies'
+import type { CandleData } from '@vulcan/core'
+import type { StrategySignal } from '@vulcan/strategies'
 import type { Dnum, Numberish } from 'dnum'
 
 export type { CandleData, StrategySignal }

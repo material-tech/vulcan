@@ -1,4 +1,4 @@
-import type { Trade } from '@material-tech/vulcan-backtest'
+import type { Trade } from '@vulcan/backtest'
 import type { Dnum } from 'dnum'
 import { from } from 'dnum'
 import { describe, expect, it } from 'vitest'

@@ -1,5 +1,5 @@
 {
-  "name": "@material-tech/vulcan-core",
+  "name": "@vulcan/core",
   "type": "module",
   "version": "0.1.0",
   "license": "MIT",

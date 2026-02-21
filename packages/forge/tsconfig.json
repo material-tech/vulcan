@@ -4,8 +4,9 @@
     "paths": {
       "@vulcan/core": ["../core/src/index.ts"],
       "@vulcan/indicators": ["../indicators/src/index.ts"],
-      "@vulcan/strategies": ["./src/index.ts"]
+      "@vulcan/strategies": ["../strategies/src/index.ts"],
+      "@vulcan/backtest": ["../backtest/src/index.ts"]
     }
   },
-  "include": ["src/**/*.ts", "tests/**/*.spec.ts"]
+  "include": ["src/**/*.ts"]
 }

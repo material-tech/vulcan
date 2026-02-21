@@ -1,6 +1,6 @@
 /* eslint-disable antfu/consistent-list-newline */
-import { collect } from '@material-tech/vulcan-core'
-import { macd } from '@material-tech/vulcan-indicators'
+import { collect } from '@vulcan/core'
+import { macd } from '@vulcan/indicators'
 import { describe, expect, it } from 'vitest'
 
 describe('moving average convergence divergence (MACD)', () => {

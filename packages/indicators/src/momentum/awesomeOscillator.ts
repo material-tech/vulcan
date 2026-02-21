@@ -1,5 +1,5 @@
-import type { CandleData, RequiredProperties } from '@material-tech/vulcan-core'
-import { assert, createSignal } from '@material-tech/vulcan-core'
+import type { CandleData, RequiredProperties } from '@vulcan/core'
+import { assert, createSignal } from '@vulcan/core'
 import { add, div, from, sub } from 'dnum'
 import { sma } from '../trend/simpleMovingAverage'
 

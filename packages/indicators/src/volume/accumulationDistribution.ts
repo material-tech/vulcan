@@ -1,6 +1,6 @@
-import type { CandleData, RequiredProperties } from '@material-tech/vulcan-core'
+import type { CandleData, RequiredProperties } from '@vulcan/core'
 import type { Dnum } from 'dnum'
-import { createSignal } from '@material-tech/vulcan-core'
+import { createSignal } from '@vulcan/core'
 import { add, divide, equal, from, multiply, subtract } from 'dnum'
 
 /**

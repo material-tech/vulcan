@@ -1,5 +1,5 @@
 import type { Numberish } from 'dnum'
-import { assert, createSignal } from '@material-tech/vulcan-core'
+import { assert, createSignal } from '@vulcan/core'
 import { mul, sub } from 'dnum'
 import { ema } from './exponentialMovingAverage'
 

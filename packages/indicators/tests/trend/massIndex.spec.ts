@@ -1,5 +1,5 @@
-import { collect } from '@material-tech/vulcan-core'
-import { mi } from '@material-tech/vulcan-indicators'
+import { collect } from '@vulcan/core'
+import { mi } from '@vulcan/indicators'
 import { describe, expect, it } from 'vitest'
 
 describe('mass index (MI)', () => {

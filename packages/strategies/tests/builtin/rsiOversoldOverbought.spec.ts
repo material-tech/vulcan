@@ -1,5 +1,5 @@
-import { collect } from '@material-tech/vulcan-core'
-import { rsiOversoldOverbought } from '@material-tech/vulcan-strategies'
+import { collect } from '@vulcan/core'
+import { rsiOversoldOverbought } from '@vulcan/strategies'
 import { describe, expect, it } from 'vitest'
 
 function bar(c: number) {

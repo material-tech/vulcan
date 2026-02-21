@@ -1,5 +1,5 @@
 import type { Dnum, Numberish } from 'dnum'
-import { assert, createSignal } from '@material-tech/vulcan-core'
+import { assert, createSignal } from '@vulcan/core'
 import { from, gt } from 'dnum'
 
 export interface MovingMaxOptions {

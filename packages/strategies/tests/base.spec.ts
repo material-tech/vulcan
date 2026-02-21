@@ -1,6 +1,6 @@
-import type { StrategySignal } from '@material-tech/vulcan-strategies'
-import { collect } from '@material-tech/vulcan-core'
-import { createStrategy } from '@material-tech/vulcan-strategies'
+import type { StrategySignal } from '@vulcan/strategies'
+import { collect } from '@vulcan/core'
+import { createStrategy } from '@vulcan/strategies'
 import { describe, expect, it } from 'vitest'
 
 function bar(c: number, h = c, l = c, o = c, v = 100) {

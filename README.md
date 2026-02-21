@@ -13,16 +13,16 @@ A TypeScript library for technical analysis indicators, built on generator-based
 
 | Package | Description |
 | --- | --- |
-| [`@material-tech/vulcan-core`](./packages/core/) | Core types (`CandleData`, `Processor`, `SignalGenerator`) and utilities (`createSignal`, `collect`) |
-| [`@material-tech/vulcan-indicators`](./packages/indicators/) | All technical indicators (trend, momentum, volume) |
-| [`@material-tech/vulcan-strategies`](./packages/strategies/) | Composable trading strategies with structured signal output |
-| [`@material-tech/vulcan-backtest`](./packages/backtest/) | Backtesting engine with position management and statistics |
+| [`@vulcan/core`](./packages/core/) | Core types (`CandleData`, `Processor`, `SignalGenerator`) and utilities (`createSignal`, `collect`) |
+| [`@vulcan/indicators`](./packages/indicators/) | All technical indicators (trend, momentum, volume) |
+| [`@vulcan/strategies`](./packages/strategies/) | Composable trading strategies with structured signal output |
+| [`@vulcan/backtest`](./packages/backtest/) | Backtesting engine with position management and statistics |
 
 ## Installation
 
 ```bash
 # Indicators (includes core as dependency)
-pnpm add @material-tech/vulcan-indicators
+pnpm add @vulcan/indicators
 ```
 
 ## Usage
@@ -32,8 +32,8 @@ pnpm add @material-tech/vulcan-indicators
 Every indicator is a generator function. Pass an iterable source and iterate over the results:
 
 ```ts
-import { collect } from '@material-tech/vulcan-core'
-import { sma } from '@material-tech/vulcan-indicators'
+import { collect } from '@vulcan/core'
+import { sma } from '@vulcan/indicators'
 
 const prices = [10, 11, 12, 13, 14, 15]
 
@@ -51,7 +51,7 @@ for (const value of sma(prices, { period: 3 })) {
 Use `.create()` to get a stateful processor for feeding data point-by-point:
 
 ```ts
-import { rsi } from '@material-tech/vulcan-indicators'
+import { rsi } from '@vulcan/indicators'
 
 const process = rsi.create({ period: 14 })
 

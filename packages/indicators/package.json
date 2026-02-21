@@ -1,5 +1,5 @@
 {
-  "name": "@material-tech/vulcan-indicators",
+  "name": "@vulcan/indicators",
   "type": "module",
   "version": "0.1.0",
   "license": "MIT",
@@ -15,7 +15,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@material-tech/vulcan-core": "workspace:^",
+    "@vulcan/core": "workspace:^",
     "dnum": "catalog:runtime"
   },
   "devDependencies": {

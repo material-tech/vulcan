@@ -1,6 +1,6 @@
-import type { CandleData, RequiredProperties } from '@material-tech/vulcan-core'
+import type { CandleData, RequiredProperties } from '@vulcan/core'
 import type { Dnum } from 'dnum'
-import { assert, createSignal } from '@material-tech/vulcan-core'
+import { assert, createSignal } from '@vulcan/core'
 import { div, eq, from, mul, sub } from 'dnum'
 import { mmax } from '../trend/movingMax'
 import { mmin } from '../trend/movingMin'

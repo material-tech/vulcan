@@ -1,5 +1,5 @@
-import { collect } from '@material-tech/vulcan-core'
-import { goldenCross } from '@material-tech/vulcan-strategies'
+import { collect } from '@vulcan/core'
+import { goldenCross } from '@vulcan/strategies'
 import { describe, expect, it } from 'vitest'
 
 function bar(c: number) {

@@ -1,4 +1,4 @@
-import type { CandleData, Processor, SignalGenerator } from '@material-tech/vulcan-core'
+import type { CandleData, Processor, SignalGenerator } from '@vulcan/core'
 
 /**
  * The action a strategy recommends.

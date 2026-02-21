@@ -1,5 +1,5 @@
 import type { Dnum, Numberish } from 'dnum'
-import { assert, createSignal } from '@material-tech/vulcan-core'
+import { assert, createSignal } from '@vulcan/core'
 import { add, divide, equal, from, multiply, subtract } from 'dnum'
 
 export interface ChandeForecastOscillatorOptions {

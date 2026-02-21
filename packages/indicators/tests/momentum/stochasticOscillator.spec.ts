@@ -1,5 +1,5 @@
-import { collect } from '@material-tech/vulcan-core'
-import { stoch } from '@material-tech/vulcan-indicators'
+import { collect } from '@vulcan/core'
+import { stoch } from '@vulcan/indicators'
 import { toNumber } from 'dnum'
 import { describe, expect, it } from 'vitest'
 
