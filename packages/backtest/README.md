@@ -1,6 +1,6 @@
 # @vulcan-js/backtest
 
-Backtesting engine for the [Vulcan](../../README.md) library, with position management, commission/slippage modeling, and comprehensive statistics.
+Backtesting engine for the [Vulcan](https://github.com/material-tech/vulcan) library, with position management, commission/slippage modeling, and comprehensive statistics.
 
 ## Installation
 

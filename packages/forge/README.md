@@ -1,6 +1,6 @@
 # @vulcan-js/forge
 
-All-in-one package that re-exports every [Vulcan](../../README.md) module — install once, import everything.
+All-in-one package that re-exports every [Vulcan](https://github.com/material-tech/vulcan) module — install once, import everything.
 
 ## Installation
 
@@ -19,10 +19,10 @@ import { backtest, collect, createStrategy, rsi, sma } from '@vulcan-js/forge'
 
 | Package | Description |
 | --- | --- |
-| [`@vulcan-js/core`](../core/) | Core types and utilities |
-| [`@vulcan-js/indicators`](../indicators/) | Technical analysis indicators |
-| [`@vulcan-js/strategies`](../strategies/) | Trading strategies |
-| [`@vulcan-js/backtest`](../backtest/) | Backtesting engine |
+| [`@vulcan-js/core`](https://github.com/material-tech/vulcan/tree/main/packages/core) | Core types and utilities |
+| [`@vulcan-js/indicators`](https://github.com/material-tech/vulcan/tree/main/packages/indicators) | Technical analysis indicators |
+| [`@vulcan-js/strategies`](https://github.com/material-tech/vulcan/tree/main/packages/strategies) | Trading strategies |
+| [`@vulcan-js/backtest`](https://github.com/material-tech/vulcan/tree/main/packages/backtest) | Backtesting engine |
 
 ## License
 

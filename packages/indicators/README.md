@@ -1,6 +1,6 @@
 # @vulcan-js/indicators
 
-Technical analysis indicators for the [Vulcan](../../README.md) library, built on generator-based streaming with high-precision decimal arithmetic ([`dnum`](https://github.com/bpierre/dnum)).
+Technical analysis indicators for the [Vulcan](https://github.com/material-tech/vulcan) library, built on generator-based streaming with high-precision decimal arithmetic ([`dnum`](https://github.com/bpierre/dnum)).
 
 ## Installation
 

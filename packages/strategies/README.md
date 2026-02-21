@@ -1,6 +1,6 @@
 # @vulcan-js/strategies
 
-Composable trading strategies for the [Vulcan](../../README.md) library. Combines multiple indicators into structured signal output with position management.
+Composable trading strategies for the [Vulcan](https://github.com/material-tech/vulcan) library. Combines multiple indicators into structured signal output with position management.
 
 ## Installation
 

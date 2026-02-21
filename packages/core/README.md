@@ -1,6 +1,6 @@
 # @vulcan-js/core
 
-Core types and utilities for the [Vulcan](../../README.md) technical analysis library.
+Core types and utilities for the [Vulcan](https://github.com/material-tech/vulcan) technical analysis library.
 
 ## Installation
 
