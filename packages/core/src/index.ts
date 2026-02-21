@@ -1,3 +1,5 @@
 export { assert } from './assert'
 export { collect, createSignal } from './base'
+export * from './constants'
 export type { CandleData, Processor, RequiredProperties, SignalGenerator } from './types'
+export { toDnum } from './utils'
