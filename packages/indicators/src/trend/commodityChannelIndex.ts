@@ -1,6 +1,6 @@
 import type { CandleData, RequiredProperties } from '@material-tech/vulcan-core'
 import type { Dnum } from 'dnum'
-import { createSignal } from '@material-tech/vulcan-core'
+import { assertPositiveInteger, createSignal } from '@material-tech/vulcan-core'
 import { abs, add, divide, equal, from, subtract } from 'dnum'
 
 export interface CommodityChannelIndexOptions {
@@ -35,6 +35,7 @@ export const defaultCCIOptions: CommodityChannelIndexOptions = {
  */
 export const cci = createSignal(
   ({ period }) => {
+    assertPositiveInteger(period)
     const buffer: Dnum[] = []
 
     return (bar: RequiredProperties<CandleData, 'h' | 'l' | 'c'>) => {

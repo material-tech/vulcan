@@ -1,6 +1,6 @@
 import type { CandleData, RequiredProperties } from '@material-tech/vulcan-core'
 import type { Dnum } from 'dnum'
-import { createSignal } from '@material-tech/vulcan-core'
+import { assertPositiveInteger, createSignal } from '@material-tech/vulcan-core'
 import { div, eq, from, mul, sub } from 'dnum'
 import { mmax } from '../trend/movingMax'
 import { mmin } from '../trend/movingMin'
@@ -34,6 +34,9 @@ export interface StochPoint {
  */
 export const stoch = createSignal(
   ({ kPeriod, slowingPeriod, dPeriod }) => {
+    assertPositiveInteger(kPeriod, 'kPeriod')
+    assertPositiveInteger(slowingPeriod, 'slowingPeriod')
+    assertPositiveInteger(dPeriod, 'dPeriod')
     const mmaxProc = mmax.create({ period: kPeriod })
     const mminProc = mmin.create({ period: kPeriod })
     const slowingProc = slowingPeriod > 1 ? sma.create({ period: slowingPeriod }) : null

@@ -1,5 +1,5 @@
 import type { Dnum, Numberish } from 'dnum'
-import { createSignal } from '@material-tech/vulcan-core'
+import { assertPositiveInteger, createSignal } from '@material-tech/vulcan-core'
 import { add, divide, equal, from, multiply, subtract } from 'dnum'
 
 export interface ChandeForecastOscillatorOptions {
@@ -31,6 +31,7 @@ export const defaultCFOOptions: ChandeForecastOscillatorOptions = {
  */
 export const cfo = createSignal(
   ({ period }) => {
+    assertPositiveInteger(period)
     const buffer: Dnum[] = []
 
     return (value: Numberish) => {

@@ -1,6 +1,6 @@
 import type { CandleData, RequiredProperties } from '@material-tech/vulcan-core'
 import type { Dnum } from 'dnum'
-import { createSignal } from '@material-tech/vulcan-core'
+import { assertPositiveInteger, createSignal } from '@material-tech/vulcan-core'
 import { add, div, from } from 'dnum'
 import { mmax } from '../trend/movingMax'
 import { mmin } from '../trend/movingMin'
@@ -43,6 +43,9 @@ export interface IchimokuCloudPoint {
  */
 export const ichimokuCloud = createSignal(
   ({ conversionPeriod, basePeriod, leadingBPeriod }) => {
+    assertPositiveInteger(conversionPeriod, 'conversionPeriod')
+    assertPositiveInteger(basePeriod, 'basePeriod')
+    assertPositiveInteger(leadingBPeriod, 'leadingBPeriod')
     const convHighProc = mmax.create({ period: conversionPeriod })
     const convLowProc = mmin.create({ period: conversionPeriod })
     const baseHighProc = mmax.create({ period: basePeriod })

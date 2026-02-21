@@ -1,5 +1,5 @@
 import type { Numberish } from 'dnum'
-import { createSignal } from '@material-tech/vulcan-core'
+import { assertPositiveInteger, createSignal } from '@material-tech/vulcan-core'
 import { mul, sub } from 'dnum'
 import { ema } from './exponentialMovingAverage'
 
@@ -24,6 +24,7 @@ export const defaultDoubleExponentialMovingAverageOptions: DoubleExponentialMovi
  */
 export const dema = createSignal(
   ({ period }) => {
+    assertPositiveInteger(period)
     const ema1 = ema.create({ period })
     const ema2 = ema.create({ period })
     return (value: Numberish) => {

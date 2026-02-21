@@ -1,5 +1,5 @@
 import type { Dnum, Numberish } from 'dnum'
-import { createSignal } from '@material-tech/vulcan-core'
+import { assertPositiveInteger, createSignal } from '@material-tech/vulcan-core'
 import { add, from, subtract } from 'dnum'
 
 export interface MovingSumOptions {
@@ -17,6 +17,7 @@ export const defaultMovingSumOptions: MovingSumOptions = {
  */
 export const msum = createSignal(
   ({ period }) => {
+    assertPositiveInteger(period)
     const buffer: Dnum[] = Array.from({ length: period })
     let head = 0
     let count = 0

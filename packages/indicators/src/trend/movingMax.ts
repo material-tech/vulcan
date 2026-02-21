@@ -1,5 +1,5 @@
 import type { Dnum, Numberish } from 'dnum'
-import { createSignal } from '@material-tech/vulcan-core'
+import { assertPositiveInteger, createSignal } from '@material-tech/vulcan-core'
 import { from, gt } from 'dnum'
 
 export interface MovingMaxOptions {
@@ -18,6 +18,7 @@ export const defaultMovingMaxOptions: MovingMaxOptions = {
  */
 export const mmax = createSignal(
   ({ period }) => {
+    assertPositiveInteger(period)
     const buffer: Dnum[] = []
     return (value: Numberish) => {
       buffer.push(from(value, 18))

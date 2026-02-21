@@ -1,5 +1,5 @@
 import type { Dnum, Numberish } from 'dnum'
-import { createSignal } from '@material-tech/vulcan-core'
+import { assertPositiveInteger, createSignal } from '@material-tech/vulcan-core'
 import { div, eq, from, mul, sub } from 'dnum'
 import { ema } from '../trend/exponentialMovingAverage'
 
@@ -44,6 +44,9 @@ export interface PercentagePriceOscillatorPoint {
  */
 export const ppo = createSignal(
   ({ fastPeriod, slowPeriod, signalPeriod }) => {
+    assertPositiveInteger(fastPeriod, 'fastPeriod')
+    assertPositiveInteger(slowPeriod, 'slowPeriod')
+    assertPositiveInteger(signalPeriod, 'signalPeriod')
     const fastProc = ema.create({ period: fastPeriod })
     const slowProc = ema.create({ period: slowPeriod })
     const signalProc = ema.create({ period: signalPeriod })

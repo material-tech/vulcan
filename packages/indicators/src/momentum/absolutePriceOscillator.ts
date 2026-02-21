@@ -1,5 +1,5 @@
 import type { Numberish } from 'dnum'
-import { createSignal } from '@material-tech/vulcan-core'
+import { assertPositiveInteger, createSignal } from '@material-tech/vulcan-core'
 import { sub } from 'dnum'
 import { ema } from '../trend/exponentialMovingAverage'
 
@@ -15,6 +15,8 @@ export const defaultAbsolutePriceOscillatorOptions: AbsolutePriceOscillatorOptio
 
 export const apo = createSignal(
   ({ fastPeriod, slowPeriod }) => {
+    assertPositiveInteger(fastPeriod, 'fastPeriod')
+    assertPositiveInteger(slowPeriod, 'slowPeriod')
     const fastProc = ema.create({ period: fastPeriod })
     const slowProc = ema.create({ period: slowPeriod })
     return (value: Numberish) => sub(fastProc(value), slowProc(value))

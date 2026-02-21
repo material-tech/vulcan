@@ -1,6 +1,6 @@
 import type { CandleData, RequiredProperties } from '@material-tech/vulcan-core'
 import type { Dnum } from 'dnum'
-import { createSignal } from '@material-tech/vulcan-core'
+import { assertPositiveInteger, createSignal } from '@material-tech/vulcan-core'
 import { divide, from, gt, lt, multiply, subtract } from 'dnum'
 
 export interface AroonOptions {
@@ -26,6 +26,7 @@ export interface AroonPoint {
  */
 export const aroon = createSignal(
   ({ period }) => {
+    assertPositiveInteger(period)
     const highBuffer: Dnum[] = []
     const lowBuffer: Dnum[] = []
 

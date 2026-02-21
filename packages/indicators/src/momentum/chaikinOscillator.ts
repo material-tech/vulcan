@@ -1,5 +1,5 @@
 import type { CandleData, RequiredProperties } from '@material-tech/vulcan-core'
-import { createSignal } from '@material-tech/vulcan-core'
+import { assertPositiveInteger, createSignal } from '@material-tech/vulcan-core'
 import { sub } from 'dnum'
 import { ema } from '../trend/exponentialMovingAverage'
 import { ad } from '../volume/accumulationDistribution'
@@ -25,6 +25,8 @@ export const defaultChaikinOscillatorOptions: ChaikinOscillatorOptions = {
  */
 export const cmo = createSignal(
   ({ fastPeriod, slowPeriod }) => {
+    assertPositiveInteger(fastPeriod, 'fastPeriod')
+    assertPositiveInteger(slowPeriod, 'slowPeriod')
     const adProc = ad.create()
     const fastProc = ema.create({ period: fastPeriod })
     const slowProc = ema.create({ period: slowPeriod })

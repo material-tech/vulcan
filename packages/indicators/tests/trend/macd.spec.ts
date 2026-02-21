@@ -4,6 +4,18 @@ import { macd } from '@material-tech/vulcan-indicators'
 import { describe, expect, it } from 'vitest'
 
 describe('moving average convergence divergence (MACD)', () => {
+  it('should throw RangeError for fastPeriod of 0', () => {
+    expect(() => macd.create({ fastPeriod: 0 })).toThrow(RangeError)
+  })
+
+  it('should throw RangeError for negative slowPeriod', () => {
+    expect(() => macd.create({ slowPeriod: -1 })).toThrow(RangeError)
+  })
+
+  it('should throw RangeError for non-integer signalPeriod', () => {
+    expect(() => macd.create({ signalPeriod: 1.5 })).toThrow(RangeError)
+  })
+
   const values = [
     3674.84, 3666.77, 3789.99, 3735.48, 3749.63, 3900.86, 4017.82, 4115.77,
     4160.68, 4121.43, 4108.54, 4176.82, 4101.23, 4132.15, 4158.24, 4057.84,

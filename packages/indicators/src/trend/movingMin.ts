@@ -1,5 +1,5 @@
 import type { Dnum, Numberish } from 'dnum'
-import { createSignal } from '@material-tech/vulcan-core'
+import { assertPositiveInteger, createSignal } from '@material-tech/vulcan-core'
 import { from, lt } from 'dnum'
 
 export interface MovingMinOptions {
@@ -18,6 +18,7 @@ export const defaultMovingMinOptions: MovingMinOptions = {
  */
 export const mmin = createSignal(
   ({ period }) => {
+    assertPositiveInteger(period)
     const buffer: Dnum[] = []
     return (value: Numberish) => {
       buffer.push(from(value, 18))
