@@ -7,6 +7,10 @@
   "description": "A library for technical indicators",
   "author": "enpitsulin <enpitsulin@gmail.com>",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/material-tech/vulcan"
+  },
   "keywords": [
     "signal",
     "indicator",
