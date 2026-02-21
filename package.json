@@ -24,6 +24,8 @@
     "@antfu/eslint-config": "catalog:lint",
     "@types/node": "catalog:build",
     "@vitest/coverage-v8": "catalog:test",
+    "defu": "catalog:runtime",
+    "dnum": "catalog:runtime",
     "eslint": "catalog:lint",
     "lint-staged": "catalog:lint",
     "simple-git-hooks": "catalog:lint",
