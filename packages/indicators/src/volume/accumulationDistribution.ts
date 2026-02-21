@@ -1,7 +1,20 @@
 import type { CandleData, RequiredProperties } from '@vulcan-js/core'
-import type { Dnum } from 'dnum'
-import { constants, createSignal, toDnum } from '@vulcan-js/core'
-import { add, divide, equal, multiply, subtract } from 'dnum'
+import { createSignal, fp18 } from '@vulcan-js/core'
+
+export function createAdFp18() {
+  let prevAD = fp18.ZERO
+
+  return (h: bigint, l: bigint, c: bigint, v: bigint): bigint => {
+    const range = h - l
+    // When high equals low, the range is zero and MFM is undefined; treat as 0
+    const mfm = range === fp18.ZERO
+      ? fp18.ZERO
+      : fp18.div((c - l) - (h - c), range)
+    const mfv = fp18.mul(mfm, v)
+    prevAD += mfv
+    return prevAD
+  }
+}
 
 /**
  * Accumulation/Distribution Indicator (A/D). Cumulative indicator
@@ -14,25 +27,14 @@ import { add, divide, equal, multiply, subtract } from 'dnum'
  */
 export const ad = createSignal(
   () => {
-    let prevAD: Dnum = constants.ZERO
+    const proc = createAdFp18()
     return (bar: RequiredProperties<CandleData, 'h' | 'l' | 'c' | 'v'>) => {
-      const h = toDnum(bar.h)
-      const l = toDnum(bar.l)
-      const c = toDnum(bar.c)
-      const v = toDnum(bar.v)
-
-      const range = subtract(h, l)
-      // When high equals low, the range is zero and MFM is undefined; treat as 0
-      const mfm = equal(range, 0)
-        ? constants.ZERO
-        : divide(
-            subtract(subtract(c, l), subtract(h, c)),
-            range,
-            constants.DECIMALS,
-          )
-      const mfv = multiply(mfm, v)
-      prevAD = add(mfv, prevAD)
-      return prevAD
+      return fp18.toDnum(proc(
+        fp18.toFp18(bar.h),
+        fp18.toFp18(bar.l),
+        fp18.toFp18(bar.c),
+        fp18.toFp18(bar.v),
+      ))
     }
   },
 )

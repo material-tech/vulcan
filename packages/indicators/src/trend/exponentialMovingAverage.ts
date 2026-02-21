@@ -1,6 +1,5 @@
-import type { Dnum, Numberish } from 'dnum'
-import { assert, constants, createSignal, toDnum } from '@vulcan-js/core'
-import { add, divide, mul, subtract } from 'dnum'
+import type { Numberish } from 'dnum'
+import { assert, createSignal, fp18 } from '@vulcan-js/core'
 
 export interface ExponentialMovingAverageOptions {
   period: number
@@ -8,6 +7,23 @@ export interface ExponentialMovingAverageOptions {
 
 export const defaultExponentialMovingAverageOptions: ExponentialMovingAverageOptions = {
   period: 12,
+}
+
+export function createEmaFp18({ period }: { period: number }) {
+  assert(Number.isInteger(period) && period >= 1, new RangeError(`Expected period to be a positive integer, got ${period}`))
+  // k = 2 / (period + 1)
+  const k = fp18.div(fp18.TWO, BigInt(1 + period) * fp18.SCALE)
+  const m = fp18.ONE - k
+  let prev: bigint | undefined
+
+  return (value: bigint): bigint => {
+    if (prev === undefined) {
+      prev = value
+      return prev
+    }
+    prev = fp18.mul(value, k) + fp18.mul(prev, m)
+    return prev
+  }
 }
 
 /**
@@ -18,21 +34,8 @@ export const defaultExponentialMovingAverageOptions: ExponentialMovingAverageOpt
  */
 export const ema = createSignal(
   ({ period }) => {
-    assert(Number.isInteger(period) && period >= 1, new RangeError(`Expected period to be a positive integer, got ${period}`))
-    const k = divide(constants.TWO, toDnum(1 + period), constants.DECIMALS)
-    const m = subtract(constants.ONE, k)
-    let prev: Dnum | undefined
-    return (value: Numberish) => {
-      if (prev === undefined) {
-        prev = toDnum(value)
-        return prev
-      }
-      prev = add(
-        mul(value, k, constants.DECIMALS),
-        mul(prev, m, constants.DECIMALS),
-      )
-      return prev
-    }
+    const proc = createEmaFp18({ period })
+    return (value: Numberish) => fp18.toDnum(proc(fp18.toFp18(value)))
   },
   defaultExponentialMovingAverageOptions,
 )

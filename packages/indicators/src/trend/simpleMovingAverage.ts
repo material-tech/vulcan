@@ -1,6 +1,5 @@
-import type { Dnum, Numberish } from 'dnum'
-import { assert, constants, createSignal, toDnum } from '@vulcan-js/core'
-import { add, div, subtract } from 'dnum'
+import type { Numberish } from 'dnum'
+import { assert, createSignal, fp18 } from '@vulcan-js/core'
 
 export interface SimpleMovingAverageOptions {
   /**
@@ -12,6 +11,28 @@ export interface SimpleMovingAverageOptions {
 
 export const defaultSMAOptions: SimpleMovingAverageOptions = {
   period: 2,
+}
+
+export function createSmaFp18({ period }: { period: number }) {
+  assert(Number.isInteger(period) && period >= 1, new RangeError(`Expected period to be a positive integer, got ${period}`))
+  const buffer: bigint[] = Array.from({ length: period })
+  let head = 0
+  let count = 0
+  let runningSum = fp18.ZERO
+
+  return (value: bigint): bigint => {
+    if (count < period) {
+      buffer[count] = value
+      runningSum += value
+      count++
+    }
+    else {
+      runningSum = runningSum - buffer[head] + value
+      buffer[head] = value
+      head = (head + 1) % period
+    }
+    return runningSum / BigInt(count)
+  }
 }
 
 /**
@@ -30,27 +51,8 @@ export const defaultSMAOptions: SimpleMovingAverageOptions = {
  */
 export const sma = createSignal(
   ({ period }) => {
-    assert(Number.isInteger(period) && period >= 1, new RangeError(`Expected period to be a positive integer, got ${period}`))
-    const buffer: Dnum[] = Array.from({ length: period })
-    let head = 0
-    let count = 0
-    let runningSum: Dnum = constants.ZERO
-
-    return (value: Numberish) => {
-      const v = toDnum(value)
-      if (count < period) {
-        buffer[count] = v
-        runningSum = add(runningSum, v)
-        count++
-      }
-      else {
-        runningSum = subtract(runningSum, buffer[head])
-        runningSum = add(runningSum, v)
-        buffer[head] = v
-        head = (head + 1) % period
-      }
-      return div(runningSum, count, constants.DECIMALS)
-    }
+    const proc = createSmaFp18({ period })
+    return (value: Numberish) => fp18.toDnum(proc(fp18.toFp18(value)))
   },
   defaultSMAOptions,
 )

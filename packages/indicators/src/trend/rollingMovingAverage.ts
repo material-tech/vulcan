@@ -1,6 +1,5 @@
-import type { Dnum, Numberish } from 'dnum'
-import { assert, constants, createSignal } from '@vulcan-js/core'
-import { add, div, mul } from 'dnum'
+import type { Numberish } from 'dnum'
+import { assert, createSignal, fp18 } from '@vulcan-js/core'
 
 export interface RMAOptions {
   /**
@@ -13,6 +12,25 @@ export const defaultRMAOptions: RMAOptions = {
   period: 4,
 }
 
+export function createRmaFp18({ period }: { period: number }) {
+  assert(Number.isInteger(period) && period >= 1, new RangeError(`Expected period to be a positive integer, got ${period}`))
+  const periodBig = BigInt(period)
+  let count = 0
+  let sum = fp18.ZERO
+  let prev = fp18.ZERO
+
+  return (value: bigint): bigint => {
+    if (count < period) {
+      sum += value
+      count++
+      prev = sum / BigInt(count)
+      return prev
+    }
+    prev = (prev * (periodBig - 1n) + value) / periodBig
+    return prev
+  }
+}
+
 /**
  * Rolling moving average (RMA).
  *
@@ -22,25 +40,8 @@ export const defaultRMAOptions: RMAOptions = {
  */
 export const rma = createSignal(
   ({ period }) => {
-    assert(Number.isInteger(period) && period >= 1, new RangeError(`Expected period to be a positive integer, got ${period}`))
-    let count = 0
-    let sum: Dnum = constants.ZERO
-    let prev: Dnum = constants.ZERO
-
-    return (value: Numberish) => {
-      if (count < period) {
-        sum = add(sum, value)
-        count++
-        prev = div(sum, count, constants.DECIMALS)
-        return prev
-      }
-      prev = div(
-        add(mul(prev, period - 1, constants.DECIMALS), value),
-        period,
-        constants.DECIMALS,
-      )
-      return prev
-    }
+    const proc = createRmaFp18({ period })
+    return (value: Numberish) => fp18.toDnum(proc(fp18.toFp18(value)))
   },
   defaultRMAOptions,
 )
