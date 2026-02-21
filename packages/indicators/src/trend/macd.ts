@@ -1,5 +1,5 @@
 import type { Dnum, Numberish } from 'dnum'
-import { assertPositiveInteger, createSignal } from '@material-tech/vulcan-core'
+import { assert, createSignal } from '@material-tech/vulcan-core'
 import { sub } from 'dnum'
 import { ema } from './exponentialMovingAverage'
 
@@ -44,9 +44,9 @@ export interface MACDPoint {
  */
 export const macd = createSignal(
   ({ fastPeriod, slowPeriod, signalPeriod }) => {
-    assertPositiveInteger(fastPeriod, 'fastPeriod')
-    assertPositiveInteger(slowPeriod, 'slowPeriod')
-    assertPositiveInteger(signalPeriod, 'signalPeriod')
+    assert(Number.isInteger(fastPeriod) && fastPeriod >= 1, new RangeError(`Expected fastPeriod to be a positive integer, got ${fastPeriod}`))
+    assert(Number.isInteger(slowPeriod) && slowPeriod >= 1, new RangeError(`Expected slowPeriod to be a positive integer, got ${slowPeriod}`))
+    assert(Number.isInteger(signalPeriod) && signalPeriod >= 1, new RangeError(`Expected signalPeriod to be a positive integer, got ${signalPeriod}`))
     const fastProc = ema.create({ period: fastPeriod })
     const slowProc = ema.create({ period: slowPeriod })
     const signalProc = ema.create({ period: signalPeriod })

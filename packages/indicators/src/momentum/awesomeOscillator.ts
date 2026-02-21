@@ -1,5 +1,5 @@
 import type { CandleData, RequiredProperties } from '@material-tech/vulcan-core'
-import { assertPositiveInteger, createSignal } from '@material-tech/vulcan-core'
+import { assert, createSignal } from '@material-tech/vulcan-core'
 import { add, div, from, sub } from 'dnum'
 import { sma } from '../trend/simpleMovingAverage'
 
@@ -21,8 +21,8 @@ export const defaultAwesomeOscillatorOptions: AwesomeOscillatorOptions = {
  */
 export const ao = createSignal(
   ({ fastPeriod, slowPeriod }) => {
-    assertPositiveInteger(fastPeriod, 'fastPeriod')
-    assertPositiveInteger(slowPeriod, 'slowPeriod')
+    assert(Number.isInteger(fastPeriod) && fastPeriod >= 1, new RangeError(`Expected fastPeriod to be a positive integer, got ${fastPeriod}`))
+    assert(Number.isInteger(slowPeriod) && slowPeriod >= 1, new RangeError(`Expected slowPeriod to be a positive integer, got ${slowPeriod}`))
     const fastProc = sma.create({ period: fastPeriod })
     const slowProc = sma.create({ period: slowPeriod })
     return (bar: RequiredProperties<CandleData, 'h' | 'l'>) => {

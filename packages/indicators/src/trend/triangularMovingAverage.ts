@@ -1,5 +1,5 @@
 import type { Numberish } from 'dnum'
-import { assertPositiveInteger, createSignal } from '@material-tech/vulcan-core'
+import { assert, createSignal } from '@material-tech/vulcan-core'
 import { sma } from './simpleMovingAverage'
 
 export interface TriangularMovingAverageOptions {
@@ -12,7 +12,7 @@ export const defaultTriangularMovingAverageOptions: TriangularMovingAverageOptio
 
 export const trima = createSignal(
   ({ period }) => {
-    assertPositiveInteger(period, 'period')
+    assert(Number.isInteger(period) && period >= 1, new RangeError(`Expected period to be a positive integer, got ${period}`))
     let n1: number
     let n2: number
 

@@ -1,6 +1,6 @@
 import type { CandleData, RequiredProperties } from '@material-tech/vulcan-core'
 import type { Dnum } from 'dnum'
-import { assertPositiveInteger, createSignal } from '@material-tech/vulcan-core'
+import { assert, createSignal } from '@material-tech/vulcan-core'
 import { abs, add, divide, equal, from, subtract } from 'dnum'
 
 export interface CommodityChannelIndexOptions {
@@ -35,7 +35,7 @@ export const defaultCCIOptions: CommodityChannelIndexOptions = {
  */
 export const cci = createSignal(
   ({ period }) => {
-    assertPositiveInteger(period, 'period')
+    assert(Number.isInteger(period) && period >= 1, new RangeError(`Expected period to be a positive integer, got ${period}`))
     const buffer: Dnum[] = []
 
     return (bar: RequiredProperties<CandleData, 'h' | 'l' | 'c'>) => {

@@ -1,5 +1,5 @@
 import type { Dnum, Numberish } from 'dnum'
-import { assertPositiveInteger, createSignal } from '@material-tech/vulcan-core'
+import { assert, createSignal } from '@material-tech/vulcan-core'
 import { add, div, from, subtract } from 'dnum'
 
 export interface SimpleMovingAverageOptions {
@@ -30,7 +30,7 @@ export const defaultSMAOptions: SimpleMovingAverageOptions = {
  */
 export const sma = createSignal(
   ({ period }) => {
-    assertPositiveInteger(period, 'period')
+    assert(Number.isInteger(period) && period >= 1, new RangeError(`Expected period to be a positive integer, got ${period}`))
     const buffer: Dnum[] = Array.from({ length: period })
     let head = 0
     let count = 0

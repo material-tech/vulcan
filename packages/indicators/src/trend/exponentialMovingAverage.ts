@@ -1,5 +1,5 @@
 import type { Dnum, Numberish } from 'dnum'
-import { assertPositiveInteger, createSignal } from '@material-tech/vulcan-core'
+import { assert, createSignal } from '@material-tech/vulcan-core'
 import { add, divide, from, mul, subtract } from 'dnum'
 
 export interface ExponentialMovingAverageOptions {
@@ -18,7 +18,7 @@ export const defaultExponentialMovingAverageOptions: ExponentialMovingAverageOpt
  */
 export const ema = createSignal(
   ({ period }) => {
-    assertPositiveInteger(period, 'period')
+    assert(Number.isInteger(period) && period >= 1, new RangeError(`Expected period to be a positive integer, got ${period}`))
     const k = divide(from(2, 18), from(1 + period, 18), 18)
     const m = subtract(from(1, 18), k)
     let prev: Dnum | undefined

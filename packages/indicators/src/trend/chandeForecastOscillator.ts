@@ -1,5 +1,5 @@
 import type { Dnum, Numberish } from 'dnum'
-import { assertPositiveInteger, createSignal } from '@material-tech/vulcan-core'
+import { assert, createSignal } from '@material-tech/vulcan-core'
 import { add, divide, equal, from, multiply, subtract } from 'dnum'
 
 export interface ChandeForecastOscillatorOptions {
@@ -31,7 +31,7 @@ export const defaultCFOOptions: ChandeForecastOscillatorOptions = {
  */
 export const cfo = createSignal(
   ({ period }) => {
-    assertPositiveInteger(period, 'period')
+    assert(Number.isInteger(period) && period >= 1, new RangeError(`Expected period to be a positive integer, got ${period}`))
     const buffer: Dnum[] = []
 
     return (value: Numberish) => {

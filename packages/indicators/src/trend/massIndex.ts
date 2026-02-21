@@ -1,5 +1,5 @@
 import type { CandleData, RequiredProperties } from '@material-tech/vulcan-core'
-import { assertPositiveInteger, createSignal } from '@material-tech/vulcan-core'
+import { assert, createSignal } from '@material-tech/vulcan-core'
 import { divide, from, subtract } from 'dnum'
 import { ema } from './exponentialMovingAverage'
 import { msum } from './movingSum'
@@ -44,8 +44,8 @@ export const defaultMassIndexOptions: MassIndexOptions = {
  */
 export const mi = createSignal(
   ({ emaPeriod, miPeriod }) => {
-    assertPositiveInteger(emaPeriod, 'emaPeriod')
-    assertPositiveInteger(miPeriod, 'miPeriod')
+    assert(Number.isInteger(emaPeriod) && emaPeriod >= 1, new RangeError(`Expected emaPeriod to be a positive integer, got ${emaPeriod}`))
+    assert(Number.isInteger(miPeriod) && miPeriod >= 1, new RangeError(`Expected miPeriod to be a positive integer, got ${miPeriod}`))
     const ema1Proc = ema.create({ period: emaPeriod })
     const ema2Proc = ema.create({ period: emaPeriod })
     const msumProc = msum.create({ period: miPeriod })

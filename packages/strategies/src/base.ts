@@ -1,5 +1,5 @@
 import type { BaseStrategyOptions, CandleData, Processor, StrategyContext, StrategyFactory, StrategyGenerator, StrategySignal } from './types'
-import { assertPositiveInteger } from '@material-tech/vulcan-core'
+import { assert } from '@material-tech/vulcan-core'
 import { defu } from 'defu'
 
 /**
@@ -44,7 +44,7 @@ export function createStrategy<Opts extends BaseStrategyOptions>(
 ): StrategyGenerator<Opts> {
   function buildProcessor(options?: Partial<Opts>): Processor<CandleData, StrategySignal> {
     const opt = defu(options, defaultOptions) as Required<Opts>
-    assertPositiveInteger(opt.windowSize, 'windowSize')
+    assert(Number.isInteger(opt.windowSize) && opt.windowSize >= 1, new RangeError(`Expected windowSize to be a positive integer, got ${opt.windowSize}`))
     const ring = createRingBuffer<CandleData>(opt.windowSize)
     const process = factory(opt)
     let index = 0
