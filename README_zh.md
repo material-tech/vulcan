@@ -76,7 +76,7 @@ const result3 = process(98)
 - [x] Moving Max (MMAX)
 - [x] Moving Min (MMIN)
 - [x] Moving Sum (MSUM)
-- [ ] Parabolic SAR (PSAR)
+- [x] Parabolic SAR (PSAR)
 - [ ] Qstick
 - [ ] Random Index (KDJ)
 - [x] Rolling Moving Average (RMA)
