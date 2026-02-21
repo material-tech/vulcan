@@ -7,5 +7,5 @@
       "@material-tech/vulcan-strategies": ["./src/index.ts"]
     }
   },
-  "include": ["src/**/*.ts", "tests/**/*.spec.ts"]
+  "include": ["src/**/*.ts", "tests/**/*.spec.ts", "../../vitest-setup.ts"]
 }
