@@ -1,7 +1,7 @@
 {
   "name": "@vulcan-js/core",
   "type": "module",
-  "version": "0.1.0-beta.3",
+  "version": "0.1.0",
   "description": "Core types and utilities for the Vulcan technical analysis library",
   "license": "MIT",
   "repository": {

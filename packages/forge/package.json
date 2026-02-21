@@ -1,7 +1,7 @@
 {
   "name": "@vulcan-js/forge",
   "type": "module",
-  "version": "0.1.0-beta.3",
+  "version": "0.1.0",
   "description": "All-in-one package that re-exports all Vulcan technical analysis modules",
   "license": "MIT",
   "repository": {
