@@ -2,6 +2,7 @@
   "name": "@material-tech/vulcan-strategies",
   "type": "module",
   "version": "0.1.0",
+  "license": "MIT",
   "exports": {
     ".": "./dist/index.js",
     "./package.json": "./package.json"
