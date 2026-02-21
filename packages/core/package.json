@@ -2,12 +2,21 @@
   "name": "@vulcan-js/core",
   "type": "module",
   "version": "0.0.1",
+  "description": "Core types and utilities for the Vulcan technical analysis library",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/material-tech/vulcan",
     "directory": "packages/core"
   },
+  "keywords": [
+    "technical-analysis",
+    "trading",
+    "generator",
+    "streaming",
+    "dnum",
+    "high-precision"
+  ],
   "exports": {
     ".": "./dist/index.js",
     "./package.json": "./package.json"

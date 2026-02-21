@@ -17,12 +17,18 @@ A TypeScript library for technical analysis indicators, built on generator-based
 | [`@vulcan-js/indicators`](./packages/indicators/) | All technical indicators (trend, momentum, volume) |
 | [`@vulcan-js/strategies`](./packages/strategies/) | Composable trading strategies with structured signal output |
 | [`@vulcan-js/backtest`](./packages/backtest/) | Backtesting engine with position management and statistics |
+| [`@vulcan-js/forge`](./packages/forge/) | All-in-one package that re-exports all Vulcan modules |
 
 ## Installation
 
 ```bash
-# Indicators (includes core as dependency)
-pnpm add @vulcan-js/indicators
+# All-in-one (includes all packages)
+pnpm add @vulcan-js/forge
+
+# Or install individual packages as needed
+pnpm add @vulcan-js/indicators   # Indicators (includes core)
+pnpm add @vulcan-js/strategies   # Strategies (includes core + indicators)
+pnpm add @vulcan-js/backtest     # Backtesting (includes core + strategies)
 ```
 
 ## Usage

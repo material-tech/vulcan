@@ -2,12 +2,21 @@
   "name": "@vulcan-js/backtest",
   "type": "module",
   "version": "0.0.1",
+  "description": "Backtesting engine with position management and statistics for the Vulcan library",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/material-tech/vulcan",
     "directory": "packages/backtest"
   },
+  "keywords": [
+    "technical-analysis",
+    "backtesting",
+    "trading",
+    "simulation",
+    "statistics",
+    "sharpe-ratio"
+  ],
   "exports": {
     ".": "./dist/index.js",
     "./package.json": "./package.json"

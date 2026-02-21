@@ -56,6 +56,7 @@ process(98)
 | Moving Max | `mmax` | `movingMax` |
 | Moving Min | `mmin` | `movingMin` |
 | Moving Sum | `msum` | — |
+| Parabolic SAR | `psar` | `parabolicSar` |
 | Rolling Moving Average | `rma` | `rollingMovingAverage` |
 | Simple Moving Average | `sma` | `simpleMovingAverage` |
 | Triangular Moving Average | `trima` | `triangularMovingAverage` |

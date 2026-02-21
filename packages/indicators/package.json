@@ -2,12 +2,24 @@
   "name": "@vulcan-js/indicators",
   "type": "module",
   "version": "0.0.1",
+  "description": "Technical analysis indicators with generator-based streaming and high-precision arithmetic",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/material-tech/vulcan",
     "directory": "packages/indicators"
   },
+  "keywords": [
+    "technical-analysis",
+    "indicators",
+    "sma",
+    "ema",
+    "rsi",
+    "macd",
+    "trading",
+    "generator",
+    "streaming"
+  ],
   "exports": {
     ".": "./dist/index.js",
     "./package.json": "./package.json"

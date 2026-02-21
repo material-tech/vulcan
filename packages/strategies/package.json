@@ -2,12 +2,20 @@
   "name": "@vulcan-js/strategies",
   "type": "module",
   "version": "0.0.1",
+  "description": "Composable trading strategies with structured signal output for the Vulcan library",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/material-tech/vulcan",
     "directory": "packages/strategies"
   },
+  "keywords": [
+    "technical-analysis",
+    "trading",
+    "strategy",
+    "signals",
+    "backtesting"
+  ],
   "exports": {
     ".": "./dist/index.js",
     "./package.json": "./package.json"

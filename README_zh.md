@@ -17,12 +17,18 @@
 | [`@vulcan-js/indicators`](./packages/indicators/) | 全部技术指标（趋势、动量、成交量） |
 | [`@vulcan-js/strategies`](./packages/strategies/) | 可组合的交易策略，输出结构化信号 |
 | [`@vulcan-js/backtest`](./packages/backtest/) | 回测引擎，含仓位管理和统计分析 |
+| [`@vulcan-js/forge`](./packages/forge/) | 一站式聚合包，统一导出所有 Vulcan 模块 |
 
 ## 安装
 
 ```bash
-# 指标包（自动包含 core 依赖）
-pnpm add @vulcan-js/indicators
+# 一站式安装（包含所有包）
+pnpm add @vulcan-js/forge
+
+# 或按需安装各子包
+pnpm add @vulcan-js/indicators   # 指标包（包含 core）
+pnpm add @vulcan-js/strategies   # 策略包（包含 core + indicators）
+pnpm add @vulcan-js/backtest     # 回测包（包含 core + strategies）
 ```
 
 ## 使用方式

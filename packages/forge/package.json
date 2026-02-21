@@ -2,12 +2,21 @@
   "name": "@vulcan-js/forge",
   "type": "module",
   "version": "0.0.1",
+  "description": "All-in-one package that re-exports all Vulcan technical analysis modules",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/material-tech/vulcan",
     "directory": "packages/forge"
   },
+  "keywords": [
+    "technical-analysis",
+    "indicators",
+    "trading",
+    "backtesting",
+    "strategy",
+    "vulcan"
+  ],
   "exports": {
     ".": "./dist/index.js",
     "./package.json": "./package.json"
