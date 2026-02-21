@@ -3,13 +3,17 @@ name: Release
 on:
   push:
     tags:
-      - v*
+      - 'v*'
 
 jobs:
   release:
+    name: Release
     runs-on: ubuntu-latest
+
     permissions:
       contents: write
+      id-token: write
+
     steps:
       - name: Checkout
         uses: actions/checkout@v6
