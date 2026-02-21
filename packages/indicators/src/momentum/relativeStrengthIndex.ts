@@ -49,7 +49,7 @@ export const rsi = createSignal(
         return from(100, 18)
       }
 
-      const rs = div(avgGain, avgLoss)
+      const rs = div(avgGain, avgLoss, 18)
       return sub(100, div(100, add(1, rs), 18))
     }
   },
