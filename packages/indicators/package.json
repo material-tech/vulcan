@@ -1,7 +1,7 @@
 {
   "name": "@vulcan-js/indicators",
   "type": "module",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Technical analysis indicators with generator-based streaming and high-precision arithmetic",
   "license": "MIT",
   "repository": {
