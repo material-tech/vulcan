@@ -82,6 +82,7 @@ process(98)
 | Percentage Volume Oscillator | `pvo` | `percentageVolumeOscillator` |
 | Price Rate of Change | `roc` | `priceRateOfChange` |
 | Stochastic Oscillator | `stoch` | `stochasticOscillator` |
+| Williams %R | `willr` | `williamsR` |
 
 ### Volume
 
