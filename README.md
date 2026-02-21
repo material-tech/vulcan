@@ -14,7 +14,7 @@ A TypeScript library for technical analysis indicators, built on generator-based
 | Package | Description |
 | --- | --- |
 | [`@vulcan-js/core`](./packages/core/) | Core types (`CandleData`, `Processor`, `SignalGenerator`) and utilities (`createSignal`, `collect`) |
-| [`@vulcan-js/indicators`](./packages/indicators/) | All technical indicators (trend, momentum, volume) |
+| [`@vulcan-js/indicators`](./packages/indicators/) | All technical indicators (trend, momentum, volatility, volume) |
 | [`@vulcan-js/strategies`](./packages/strategies/) | Composable trading strategies with structured signal output |
 | [`@vulcan-js/backtest`](./packages/backtest/) | Backtesting engine with position management and statistics |
 | [`@vulcan-js/forge`](./packages/forge/) | All-in-one package that re-exports all Vulcan modules |
@@ -74,17 +74,15 @@ const result3 = process(98)
 - [x] Aroon Indicator
 - [x] Balance of Power (BOP)
 - [x] Chande Forecast Oscillator (CFO)
-- [x] Commodity Channel Index (CCI)
 - [x] Double Exponential Moving Average (DEMA)
 - [x] Exponential Moving Average (EMA)
-- [x] Mass Index (MI)
+- [x] Ichimoku Cloud
 - [x] Moving Average Convergence Divergence (MACD)
 - [x] Moving Max (MMAX)
 - [x] Moving Min (MMIN)
 - [x] Moving Sum (MSUM)
 - [x] Parabolic SAR (PSAR)
 - [x] Qstick
-- [x] Random Index (KDJ)
 - [x] Rolling Moving Average (RMA)
 - [x] Simple Moving Average (SMA)
 - [x] Since Change
@@ -94,23 +92,44 @@ const result3 = process(98)
 - [x] Typical Price
 - [x] Volume Weighted Moving Average (VWMA)
 - [x] Vortex Indicator
+- [ ] ADX/DMI
+- [ ] SuperTrend
+- [ ] ALMA
+- [ ] ZigZag
 
 ### Momentum
 
 - [x] Absolute Price Oscillator (APO)
 - [x] Awesome Oscillator (AO)
 - [x] Chaikin Oscillator (CMO)
-- [x] Ichimoku Cloud
+- [x] Commodity Channel Index (CCI)
 - [x] Percentage Price Oscillator (PPO)
 - [x] Percentage Volume Oscillator (PVO)
 - [x] Price Rate of Change (ROC)
+- [x] Random Index (KDJ)
 - [x] Relative Strength Index (RSI)
 - [x] Stochastic Oscillator (STOCH)
 - [x] Williams R (WILLR)
+- [ ] Money Flow Index (MFI)
+- [ ] Ultimate Oscillator
+- [ ] True Strength Index (TSI)
+
+### Volatility
+
+- [x] Mass Index (MI)
+- [ ] Average True Range (ATR)
+- [ ] Bollinger Bands
+- [ ] Keltner Channels
+- [ ] Donchian Channels
+- [ ] Standard Deviation
 
 ### Volume
 
 - [x] Accumulation/Distribution (AD)
+- [ ] On-Balance Volume (OBV)
+- [ ] Volume Weighted Average Price (VWAP)
+- [ ] Force Index
+- [ ] Ease of Movement (EOM)
 
 ## License
 

@@ -48,17 +48,15 @@ process(98)
 | Aroon Indicator | `aroon` | — |
 | Balance of Power | `bop` | `balanceOfPower` |
 | Chande Forecast Oscillator | `cfo` | `chandeForecastOscillator` |
-| Commodity Channel Index | `cci` | `commodityChannelIndex` |
 | Double Exponential Moving Average | `dema` | `doubleExponentialMovingAverage` |
 | Exponential Moving Average | `ema` | `exponentialMovingAverage` |
-| Mass Index | `mi` | `massIndex` |
+| Ichimoku Cloud | `ichimokuCloud` | — |
 | MACD | `macd` | `movingAverageConvergenceDivergence` |
 | Moving Max | `mmax` | `movingMax` |
 | Moving Min | `mmin` | `movingMin` |
 | Moving Sum | `msum` | — |
 | Parabolic SAR | `psar` | `parabolicSar` |
 | Qstick | `qstick` | `qstickIndicator` |
-| Random Index (KDJ) | `kdj` | `randomIndex` |
 | Rolling Moving Average | `rma` | `rollingMovingAverage` |
 | Simple Moving Average | `sma` | `simpleMovingAverage` |
 | Since Change | `since` | `sinceChange` |
@@ -68,6 +66,10 @@ process(98)
 | Typical Price | `typicalPrice` | `typicalPriceIndicator` |
 | Volume Weighted Moving Average | `vwma` | `volumeWeightedMovingAverage` |
 | Vortex Indicator | `vortex` | `vortexIndicator` |
+| ADX/DMI | — | _TODO_ |
+| SuperTrend | — | _TODO_ |
+| ALMA | — | _TODO_ |
+| ZigZag | — | _TODO_ |
 
 ### Momentum
 
@@ -76,19 +78,38 @@ process(98)
 | Absolute Price Oscillator | `apo` | `absolutePriceOscillator` |
 | Awesome Oscillator | `ao` | `awesomeOscillator` |
 | Chaikin Oscillator | `cmo` | `chaikinOscillator` |
-| Ichimoku Cloud | `ichimokuCloud` | — |
+| Commodity Channel Index | `cci` | `commodityChannelIndex` |
 | Percentage Price Oscillator | `ppo` | `percentagePriceOscillator` |
-| Relative Strength Index | `rsi` | `relativeStrengthIndex` |
 | Percentage Volume Oscillator | `pvo` | `percentageVolumeOscillator` |
 | Price Rate of Change | `roc` | `priceRateOfChange` |
+| Random Index (KDJ) | `kdj` | `randomIndex` |
+| Relative Strength Index | `rsi` | `relativeStrengthIndex` |
 | Stochastic Oscillator | `stoch` | `stochasticOscillator` |
 | Williams %R | `willr` | `williamsR` |
+| Money Flow Index | — | _TODO_ |
+| Ultimate Oscillator | — | _TODO_ |
+| True Strength Index | — | _TODO_ |
+
+### Volatility
+
+| Indicator | Function | Alias |
+| --- | --- | --- |
+| Mass Index | `mi` | `massIndex` |
+| Average True Range | — | _TODO_ |
+| Bollinger Bands | — | _TODO_ |
+| Keltner Channels | — | _TODO_ |
+| Donchian Channels | — | _TODO_ |
+| Standard Deviation | — | _TODO_ |
 
 ### Volume
 
 | Indicator | Function | Alias |
 | --- | --- | --- |
 | Accumulation/Distribution | `ad` | `accumulationDistribution` |
+| On-Balance Volume | — | _TODO_ |
+| VWAP | — | _TODO_ |
+| Force Index | — | _TODO_ |
+| Ease of Movement | — | _TODO_ |
 
 ## License
 

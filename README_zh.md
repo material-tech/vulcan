@@ -14,7 +14,7 @@
 | 包名 | 说明 |
 | --- | --- |
 | [`@vulcan-js/core`](./packages/core/) | 核心类型（`CandleData`、`Processor`、`SignalGenerator`）及工具函数（`createSignal`、`collect`） |
-| [`@vulcan-js/indicators`](./packages/indicators/) | 全部技术指标（趋势、动量、成交量） |
+| [`@vulcan-js/indicators`](./packages/indicators/) | 全部技术指标（趋势、动量、波动率、成交量） |
 | [`@vulcan-js/strategies`](./packages/strategies/) | 可组合的交易策略，输出结构化信号 |
 | [`@vulcan-js/backtest`](./packages/backtest/) | 回测引擎，含仓位管理和统计分析 |
 | [`@vulcan-js/forge`](./packages/forge/) | 一站式聚合包，统一导出所有 Vulcan 模块 |
@@ -74,17 +74,15 @@ const result3 = process(98)
 - [x] Aroon Indicator
 - [x] Balance of Power (BOP)
 - [x] Chande Forecast Oscillator (CFO)
-- [x] Commodity Channel Index (CCI)
 - [x] Double Exponential Moving Average (DEMA)
 - [x] Exponential Moving Average (EMA)
-- [x] Mass Index (MI)
+- [x] Ichimoku Cloud
 - [x] Moving Average Convergence Divergence (MACD)
 - [x] Moving Max (MMAX)
 - [x] Moving Min (MMIN)
 - [x] Moving Sum (MSUM)
 - [x] Parabolic SAR (PSAR)
 - [x] Qstick
-- [x] Random Index (KDJ)
 - [x] Rolling Moving Average (RMA)
 - [x] Simple Moving Average (SMA)
 - [x] Since Change
@@ -94,23 +92,44 @@ const result3 = process(98)
 - [x] Typical Price
 - [x] Volume Weighted Moving Average (VWMA)
 - [x] Vortex Indicator
+- [ ] ADX/DMI
+- [ ] SuperTrend
+- [ ] ALMA
+- [ ] ZigZag
 
 ### 动量指标
 
 - [x] Absolute Price Oscillator (APO)
 - [x] Awesome Oscillator (AO)
 - [x] Chaikin Oscillator (CMO)
-- [x] Ichimoku Cloud
+- [x] Commodity Channel Index (CCI)
 - [x] Percentage Price Oscillator (PPO)
 - [x] Percentage Volume Oscillator (PVO)
 - [x] Price Rate of Change (ROC)
+- [x] Random Index (KDJ)
 - [x] Relative Strength Index (RSI)
 - [x] Stochastic Oscillator (STOCH)
 - [x] Williams R (WILLR)
+- [ ] Money Flow Index (MFI)
+- [ ] Ultimate Oscillator
+- [ ] True Strength Index (TSI)
+
+### 波动率指标
+
+- [x] Mass Index (MI)
+- [ ] Average True Range (ATR)
+- [ ] Bollinger Bands
+- [ ] Keltner Channels
+- [ ] Donchian Channels
+- [ ] Standard Deviation
 
 ### 成交量指标
 
 - [x] Accumulation/Distribution (AD)
+- [ ] On-Balance Volume (OBV)
+- [ ] Volume Weighted Average Price (VWAP)
+- [ ] Force Index
+- [ ] Ease of Movement (EOM)
 
 ## License
 

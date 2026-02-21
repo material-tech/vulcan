@@ -2,8 +2,8 @@ import type { CandleData, RequiredProperties } from '@vulcan-js/core'
 import type { Dnum } from 'dnum'
 import { assert, createSignal } from '@vulcan-js/core'
 import { add, div, from } from 'dnum'
-import { mmax } from '../trend/movingMax'
-import { mmin } from '../trend/movingMin'
+import { mmax } from './movingMax'
+import { mmin } from './movingMin'
 
 export interface IchimokuCloudOptions {
   /** Conversion line period */

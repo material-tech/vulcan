@@ -2,8 +2,8 @@ import type { CandleData, RequiredProperties } from '@vulcan-js/core'
 import type { Dnum } from 'dnum'
 import { assert, constants, createSignal, toDnum } from '@vulcan-js/core'
 import { add, div, eq, mul, sub } from 'dnum'
-import { mmax } from './movingMax'
-import { mmin } from './movingMin'
+import { mmax } from '../trend/movingMax'
+import { mmin } from '../trend/movingMin'
 
 export interface RandomIndexOptions {
   /**

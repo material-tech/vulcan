@@ -1,8 +1,8 @@
 import type { CandleData, RequiredProperties } from '@vulcan-js/core'
 import { assert, createSignal } from '@vulcan-js/core'
 import { divide, from, subtract } from 'dnum'
-import { ema } from './exponentialMovingAverage'
-import { msum } from './movingSum'
+import { ema } from '../trend/exponentialMovingAverage'
+import { msum } from '../trend/movingSum'
 
 export interface MassIndexOptions {
   /**

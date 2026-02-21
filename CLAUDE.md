@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 Vulcan is a TypeScript technical analysis indicator library using `dnum` for high-precision decimal arithmetic (`[value: bigint, decimals: number]` tuples). The project is organized as a **pnpm monorepo** with the following packages:
 
 - **`@vulcan-js/core`** (`packages/core/`) — core types (`CandleData`, `Processor`, `SignalGenerator`) and factory function (`createSignal`, `collect`)
-- **`@vulcan-js/indicators`** (`packages/indicators/`) — all indicators organized by category: `trend/`, `momentum/`, `volume/`
+- **`@vulcan-js/indicators`** (`packages/indicators/`) — all indicators organized by category: `trend/`, `momentum/`, `volatility/`, `volume/`
 - **`@vulcan-js/strategies`** (`packages/strategies/`) — composable trading strategies with structured signal output
 - **`@vulcan-js/backtest`** (`packages/backtest/`) — backtesting engine with position management and statistics
 
@@ -44,8 +44,9 @@ pnpm lint:fix           # Lint with auto-fix
 
 ### Indicators Package (`packages/indicators/`)
 
-- `trend/` — 14 indicators (SMA, EMA, DEMA, MACD, Aroon, etc.)
-- `momentum/` — 7 indicators (RSI, STOCH, APO, PPO, etc.)
+- `trend/` — 21 indicators (SMA, EMA, DEMA, MACD, Aroon, Ichimoku Cloud, etc.)
+- `momentum/` — 11 indicators (RSI, STOCH, APO, PPO, CCI, KDJ, etc.)
+- `volatility/` — 1 indicator (Mass Index)
 - `volume/` — 1 indicator (Accumulation/Distribution)
 
 Imports from core use `@vulcan-js/core`. Cross-category imports use relative paths (e.g., `../trend/exponentialMovingAverage`).
