@@ -106,7 +106,7 @@ const result3 = process(98)
 - [x] Price Rate of Change (ROC)
 - [x] Relative Strength Index (RSI)
 - [x] Stochastic Oscillator (STOCH)
-- [ ] Williams R (WILLR)
+- [x] Williams R (WILLR)
 
 ### Volume
 
