@@ -71,7 +71,7 @@ export function createStrategy<Opts extends BaseStrategyOptions>(
 
   Object.defineProperty(generator, 'defaultOptions', {
     get() {
-      return defu(defaultOptions)
+      return JSON.parse(JSON.stringify(defaultOptions))
     },
   })
 
