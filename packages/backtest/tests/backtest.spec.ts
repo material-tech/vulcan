@@ -1,5 +1,6 @@
 import type { CandleData } from '@material-tech/vulcan-core'
 import { createStrategy, goldenCross } from '@material-tech/vulcan-strategies'
+import { toNumber } from 'dnum'
 import { describe, expect, it } from 'vitest'
 import { backtest, backtestStream } from '../src/backtest'
 
@@ -45,7 +46,7 @@ describe('backtest — basic integration', () => {
 
     expect(result.trades).toHaveLength(0)
     expect(result.equityCurve).toHaveLength(0)
-    expect(result.finalEquity).toBe(10000)
+    expect(toNumber(result.finalEquity)).toBe(10000)
     expect(result.statistics.totalBars).toBe(0)
     expect(result.statistics.totalTrades).toBe(0)
   })
@@ -57,8 +58,8 @@ describe('backtest — basic integration', () => {
     // alwaysLong opens on bar 0, holds through bars 1-2, auto-closes at end
     expect(result.trades).toHaveLength(1)
     expect(result.trades[0].exitReason).toBe('end_of_data')
-    expect(result.trades[0].pnl).toBeCloseTo((110 - 100) * (10000 / 100))
-    expect(result.finalEquity).toBeCloseTo(10000 + (110 - 100) * (10000 / 100))
+    expect(toNumber(result.trades[0].pnl)).toBeCloseTo((110 - 100) * (10000 / 100))
+    expect(toNumber(result.finalEquity)).toBeCloseTo(10000 + (110 - 100) * (10000 / 100))
   })
 
   it('handles alternating long/close strategy', () => {
@@ -71,14 +72,14 @@ describe('backtest — basic integration', () => {
     const result = backtest(alternating, data)
 
     expect(result.trades).toHaveLength(2)
-    expect(result.trades[0].entryPrice).toBe(100)
-    expect(result.trades[0].exitPrice).toBe(110)
-    expect(result.trades[1].entryPrice).toBe(105)
-    expect(result.trades[1].exitPrice).toBe(115)
+    expect(toNumber(result.trades[0].entryPrice)).toBe(100)
+    expect(toNumber(result.trades[0].exitPrice)).toBe(110)
+    expect(toNumber(result.trades[1].entryPrice)).toBe(105)
+    expect(toNumber(result.trades[1].exitPrice)).toBe(115)
 
     // All trades profitable
-    expect(result.trades.every(t => t.pnl > 0)).toBe(true)
-    expect(result.finalEquity).toBeGreaterThan(10000)
+    expect(result.trades.every(t => toNumber(t.pnl) > 0)).toBe(true)
+    expect(toNumber(result.finalEquity)).toBeGreaterThan(10000)
     expect(result.statistics.winRate).toBe(1)
   })
 
@@ -87,7 +88,7 @@ describe('backtest — basic integration', () => {
     const noFee = backtest(alternating, data)
     const withFee = backtest(alternating, data, { commissionRate: 0.001 })
 
-    expect(withFee.finalEquity).toBeLessThan(noFee.finalEquity)
+    expect(toNumber(withFee.finalEquity)).toBeLessThan(toNumber(noFee.finalEquity))
   })
 
   it('respects slippage rate', () => {
@@ -95,7 +96,7 @@ describe('backtest — basic integration', () => {
     const noSlip = backtest(alternating, data)
     const withSlip = backtest(alternating, data, { slippageRate: 0.01 })
 
-    expect(withSlip.finalEquity).toBeLessThan(noSlip.finalEquity)
+    expect(toNumber(withSlip.finalEquity)).toBeLessThan(toNumber(noSlip.finalEquity))
   })
 
   it('equity curve has same length as data', () => {
@@ -117,7 +118,7 @@ describe('backtest — no short allowed', () => {
     const result = backtest(alwaysShort, data, { allowShort: false })
 
     expect(result.trades).toHaveLength(0)
-    expect(result.finalEquity).toBe(10000)
+    expect(toNumber(result.finalEquity)).toBe(10000)
   })
 })
 
@@ -134,11 +135,13 @@ describe('backtestStream', () => {
     const snapshots = await collectAsync(backtestStream(alwaysLong, data))
 
     // Bar 0: just opened, close = entry price → unrealizedPnl ≈ 0
-    expect(snapshots[0].unrealizedPnl).toBeCloseTo(0)
+    expect(toNumber(snapshots[0].unrealizedPnl)).toBeCloseTo(0)
 
     // Bar 1: price went up 10 → unrealizedPnl > 0
-    expect(snapshots[1].unrealizedPnl).toBeGreaterThan(0)
-    expect(snapshots[1].totalEquity).toBeCloseTo(snapshots[1].equity + snapshots[1].unrealizedPnl)
+    expect(toNumber(snapshots[1].unrealizedPnl)).toBeGreaterThan(0)
+    expect(toNumber(snapshots[1].totalEquity)).toBeCloseTo(
+      toNumber(snapshots[1].equity) + toNumber(snapshots[1].unrealizedPnl),
+    )
   })
 
   it('yields closedTrade when a trade closes', async () => {
@@ -147,7 +150,7 @@ describe('backtestStream', () => {
 
     expect(snapshots[0].closedTrade).toBeNull()
     expect(snapshots[1].closedTrade).not.toBeNull()
-    expect(snapshots[1].closedTrade!.pnl).toBeGreaterThan(0)
+    expect(toNumber(snapshots[1].closedTrade!.pnl)).toBeGreaterThan(0)
   })
 
   it('does not auto-close at end of data', async () => {
@@ -171,7 +174,7 @@ describe('backtestStream', () => {
 
     expect(snapshots).toHaveLength(3)
     expect(snapshots[2].position).not.toBeNull()
-    expect(snapshots[2].unrealizedPnl).toBeGreaterThan(0)
+    expect(toNumber(snapshots[2].unrealizedPnl)).toBeGreaterThan(0)
   })
 })
 
@@ -189,7 +192,7 @@ describe('backtest — smoke test with built-in strategy', () => {
     const result = backtest(goldenCross, data)
 
     expect(result.equityCurve).toHaveLength(250)
-    expect(result.finalEquity).toBeGreaterThan(0)
+    expect(toNumber(result.finalEquity)).toBeGreaterThan(0)
     expect(result.statistics.totalBars).toBe(250)
   })
 })

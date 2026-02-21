@@ -1,9 +1,13 @@
 import type { BaseStrategyOptions, StrategyGenerator } from '@material-tech/vulcan-strategies'
+import type { Dnum } from 'dnum'
 import type { BacktestOptions, BacktestResult, BacktestSnapshot, CandleData, Position, Trade } from './types'
 import { defu } from 'defu'
+import { add, from, multiply, subtract } from 'dnum'
 import { normalizeBar } from './convert'
 import { closePositionAtEnd, updatePosition } from './position'
 import { computeStatistics } from './statistics'
+
+const ZERO: Dnum = from(0, 18)
 
 const defaultBacktestOptions: BacktestOptions = {
   initialCapital: 10000,
@@ -12,12 +16,13 @@ const defaultBacktestOptions: BacktestOptions = {
   allowShort: true,
 }
 
-function computeUnrealizedPnl(position: Position | null, closePrice: number): number {
+function computeUnrealizedPnl(position: Position | null, closePrice: Dnum): Dnum {
   if (!position)
-    return 0
-  return position.side === 'long'
-    ? (closePrice - position.entryPrice) * position.quantity
-    : (position.entryPrice - closePrice) * position.quantity
+    return ZERO
+  const priceDiff = position.side === 'long'
+    ? subtract(closePrice, position.entryPrice)
+    : subtract(position.entryPrice, closePrice)
+  return multiply(priceDiff, position.quantity, 18)
 }
 
 /**
@@ -37,7 +42,7 @@ export async function* backtestStream<Opts extends BaseStrategyOptions>(
   const opts = defu(options, defaultBacktestOptions) as BacktestOptions
   const process = strategy.create(strategyOptions)
 
-  let equity = opts.initialCapital
+  let equity = from(opts.initialCapital, 18)
   let position: Position | null = null
   let index = 0
 
@@ -48,7 +53,7 @@ export async function* backtestStream<Opts extends BaseStrategyOptions>(
     const update = updatePosition(position, signal, bar, index, equity, opts)
 
     if (update.closedTrade) {
-      equity += update.closedTrade.pnl
+      equity = add(equity, update.closedTrade.pnl)
     }
     position = update.position
 
@@ -61,7 +66,7 @@ export async function* backtestStream<Opts extends BaseStrategyOptions>(
       position,
       equity,
       unrealizedPnl,
-      totalEquity: equity + unrealizedPnl,
+      totalEquity: add(equity, unrealizedPnl),
       closedTrade: update.closedTrade,
     }
 
@@ -83,10 +88,10 @@ export function backtest<Opts extends BaseStrategyOptions>(
   const opts = defu(options, defaultBacktestOptions) as BacktestOptions
   const process = strategy.create(strategyOptions)
 
-  let equity = opts.initialCapital
+  let equity = from(opts.initialCapital, 18)
   let position: Position | null = null
   const trades: Trade[] = []
-  const equityCurve: number[] = []
+  const equityCurve: Dnum[] = []
 
   for (let index = 0; index < data.length; index++) {
     const bar = normalizeBar(data[index])
@@ -95,27 +100,27 @@ export function backtest<Opts extends BaseStrategyOptions>(
     const update = updatePosition(position, signal, bar, index, equity, opts)
 
     if (update.closedTrade) {
-      equity += update.closedTrade.pnl
+      equity = add(equity, update.closedTrade.pnl)
       trades.push(update.closedTrade)
     }
     position = update.position
 
     const unrealizedPnl = computeUnrealizedPnl(position, bar.c)
-    equityCurve.push(equity + unrealizedPnl)
+    equityCurve.push(add(equity, unrealizedPnl))
   }
 
   // Auto-close open position at end of data
   if (position && data.length > 0) {
     const lastBar = normalizeBar(data[data.length - 1])
     const trade = closePositionAtEnd(position, lastBar, data.length - 1, opts)
-    equity += trade.pnl
+    equity = add(equity, trade.pnl)
     trades.push(trade)
     equityCurve[equityCurve.length - 1] = equity
   }
 
   return {
     trades,
-    statistics: computeStatistics(trades, equityCurve, opts.initialCapital),
+    statistics: computeStatistics(trades, equityCurve, from(opts.initialCapital, 18)),
     equityCurve,
     finalEquity: equity,
   }
