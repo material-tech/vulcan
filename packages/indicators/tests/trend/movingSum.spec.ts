@@ -1,5 +1,5 @@
-import { collect } from '@material-tech/alloy-core'
-import { msum } from '@material-tech/alloy-indicators'
+import { collect } from '@material-tech/vulcan-core'
+import { msum } from '@material-tech/vulcan-indicators'
 import { describe, expect, it } from 'vitest'
 
 describe('movingSum', () => {

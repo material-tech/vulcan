@@ -1,5 +1,5 @@
 {
-  "name": "@material-tech/alloy-indicators",
+  "name": "@material-tech/vulcan-indicators",
   "type": "module",
   "version": "0.1.0",
   "exports": {
@@ -14,7 +14,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@material-tech/alloy-core": "workspace:^",
+    "@material-tech/vulcan-core": "workspace:^",
     "dnum": "catalog:runtime"
   },
   "devDependencies": {

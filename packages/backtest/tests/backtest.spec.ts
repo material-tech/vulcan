@@ -1,5 +1,5 @@
-import type { CandleData } from '@material-tech/alloy-core'
-import { createStrategy, goldenCross } from '@material-tech/alloy-strategies'
+import type { CandleData } from '@material-tech/vulcan-core'
+import { createStrategy, goldenCross } from '@material-tech/vulcan-strategies'
 import { describe, expect, it } from 'vitest'
 import { backtest, backtestStream } from '../src/backtest'
 

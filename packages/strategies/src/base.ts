@@ -35,8 +35,7 @@ function createRingBuffer<T>(capacity: number) {
  * Mirrors `createSignal` from core, but manages a rolling window of bars
  * and constructs a `StrategyContext` for each evaluation.
  *
- * The returned generator is fully compatible with `SignalGenerator<CandleData, StrategySignal, Opts>`,
- * so all existing adapters (batch, node-stream, web-stream) work out of the box.
+ * The returned generator is fully compatible with `SignalGenerator<CandleData, StrategySignal, Opts>`.
  */
 export function createStrategy<Opts extends BaseStrategyOptions>(
   factory: StrategyFactory<Opts>,

@@ -1,14 +1,14 @@
-# @material-tech/alloy-core
+# @material-tech/vulcan-core
 
-Core types and utilities for the [Alloy](../../README.md) technical analysis library.
+Core types and utilities for the [Vulcan](../../README.md) technical analysis library.
 
 ## Installation
 
 ```bash
-pnpm add @material-tech/alloy-core
+pnpm add @material-tech/vulcan-core
 ```
 
-> **Note:** You typically don't need to install this package directly — it's included as a dependency of `@material-tech/alloy-indicators`.
+> **Note:** You typically don't need to install this package directly — it's included as a dependency of `@material-tech/vulcan-indicators`.
 
 ## API
 
@@ -22,7 +22,7 @@ Returns a `SignalGenerator` with:
 - **`.defaultOptions`** — the default options for the indicator
 
 ```ts
-import { createSignal } from '@material-tech/alloy-core'
+import { createSignal } from '@material-tech/vulcan-core'
 
 const myIndicator = createSignal(
   (options) => {
@@ -52,8 +52,8 @@ process(2) // => 3
 Collects all values from an iterable into an array.
 
 ```ts
-import { collect } from '@material-tech/alloy-core'
-import { sma } from '@material-tech/alloy-indicators'
+import { collect } from '@material-tech/vulcan-core'
+import { sma } from '@material-tech/vulcan-indicators'
 
 const results = collect(sma([10, 11, 12, 13, 14], { period: 3 }))
 ```

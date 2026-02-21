@@ -1,11 +1,11 @@
-# @material-tech/alloy-strategies
+# @material-tech/vulcan-strategies
 
-Composable trading strategies for the [Alloy](../../README.md) library. Combines multiple indicators into structured signal output with position management.
+Composable trading strategies for the [Vulcan](../../README.md) library. Combines multiple indicators into structured signal output with position management.
 
 ## Installation
 
 ```bash
-pnpm add @material-tech/alloy-strategies
+pnpm add @material-tech/vulcan-strategies
 ```
 
 ## Usage
@@ -15,8 +15,8 @@ pnpm add @material-tech/alloy-strategies
 Every strategy is a generator function (just like indicators). Pass OHLCV bars and iterate over signals:
 
 ```ts
-import { collect } from '@material-tech/alloy-core'
-import { goldenCross } from '@material-tech/alloy-strategies'
+import { collect } from '@material-tech/vulcan-core'
+import { goldenCross } from '@material-tech/vulcan-strategies'
 
 const bars = [
   { o: 10, h: 12, l: 9, c: 11, v: 1000 },
@@ -37,7 +37,7 @@ for (const signal of goldenCross(bars)) {
 Use `.create()` for real-time / streaming scenarios:
 
 ```ts
-import { goldenCross } from '@material-tech/alloy-strategies'
+import { goldenCross } from '@material-tech/vulcan-strategies'
 
 const process = goldenCross.create({ fastPeriod: 10, slowPeriod: 30 })
 
@@ -50,8 +50,8 @@ const signal = process({ o: 10, h: 12, l: 9, c: 11, v: 1000 })
 Use `createStrategy` to build your own strategy. It mirrors `createSignal` from core, but adds a rolling window of historical bars and structured signal output:
 
 ```ts
-import { ema } from '@material-tech/alloy-indicators'
-import { createStrategy } from '@material-tech/alloy-strategies'
+import { ema } from '@material-tech/vulcan-indicators'
+import { createStrategy } from '@material-tech/vulcan-strategies'
 
 const myStrategy = createStrategy(
   ({ emaPeriod, threshold }) => {
@@ -69,24 +69,6 @@ const myStrategy = createStrategy(
   },
   { windowSize: 10, emaPeriod: 20, threshold: 0.05 },
 )
-```
-
-### Adapter compatibility
-
-Strategies are fully compatible with all existing adapters since `StrategyGenerator` is a type alias for `SignalGenerator<CandleData, StrategySignal, Opts>`:
-
-```ts
-import { batch } from '@material-tech/alloy-adapters/batch'
-import { toNodeStream } from '@material-tech/alloy-adapters/node-stream'
-import { goldenCross } from '@material-tech/alloy-strategies'
-
-// Batch
-const batchStrategy = batch(goldenCross)
-const signals = batchStrategy(bars, { fastPeriod: 10, slowPeriod: 30 })
-
-// Node.js stream
-const transform = toNodeStream(goldenCross, { fastPeriod: 10, slowPeriod: 30 })
-readable.pipe(transform).pipe(writable)
 ```
 
 ## API

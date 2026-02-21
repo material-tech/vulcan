@@ -1,32 +1,28 @@
-# Alloy
+# Vulcan
 
 A TypeScript library for technical analysis indicators, built on generator-based streaming architecture with high-precision decimal arithmetic.
 
 ## Features
 
-- **Generator-based streaming** — Process data point-by-point via standard iterators, naturally composable with for-of loops, pipelines, and adapters
+- **Generator-based streaming** — Process data point-by-point via standard iterators, naturally composable with for-of loops and pipelines
 - **High-precision arithmetic** — Powered by [`dnum`](https://github.com/bpierre/dnum), representing numbers as `[value: bigint, decimals: number]` tuples — no floating-point rounding errors
 - **Full TypeScript support** — Strict types for all indicators, options, and outputs
-- **Modular packages** — Pick only what you need: core primitives, indicators, or stream adapters
+- **Modular packages** — Pick only what you need: core primitives, indicators, strategies, or backtesting
 
 ## Packages
 
 | Package | Description |
 | --- | --- |
-| [`@material-tech/alloy-core`](./packages/core/) | Core types (`CandleData`, `Processor`, `SignalGenerator`) and utilities (`createSignal`, `collect`) |
-| [`@material-tech/alloy-indicators`](./packages/indicators/) | All technical indicators (trend, momentum, volume) |
-| [`@material-tech/alloy-strategies`](./packages/strategies/) | Composable trading strategies with structured signal output |
-| [`@material-tech/alloy-backtest`](./packages/backtest/) | Backtesting engine with position management and statistics |
-| [`@material-tech/alloy-adapters`](./packages/adapters/) | Adapters for batch processing, Node.js streams, and Web streams |
+| [`@material-tech/vulcan-core`](./packages/core/) | Core types (`CandleData`, `Processor`, `SignalGenerator`) and utilities (`createSignal`, `collect`) |
+| [`@material-tech/vulcan-indicators`](./packages/indicators/) | All technical indicators (trend, momentum, volume) |
+| [`@material-tech/vulcan-strategies`](./packages/strategies/) | Composable trading strategies with structured signal output |
+| [`@material-tech/vulcan-backtest`](./packages/backtest/) | Backtesting engine with position management and statistics |
 
 ## Installation
 
 ```bash
 # Indicators (includes core as dependency)
-pnpm add @material-tech/alloy-indicators
-
-# Adapters (optional)
-pnpm add @material-tech/alloy-adapters
+pnpm add @material-tech/vulcan-indicators
 ```
 
 ## Usage
@@ -36,8 +32,8 @@ pnpm add @material-tech/alloy-adapters
 Every indicator is a generator function. Pass an iterable source and iterate over the results:
 
 ```ts
-import { collect } from '@material-tech/alloy-core'
-import { sma } from '@material-tech/alloy-indicators'
+import { collect } from '@material-tech/vulcan-core'
+import { sma } from '@material-tech/vulcan-indicators'
 
 const prices = [10, 11, 12, 13, 14, 15]
 
@@ -55,7 +51,7 @@ for (const value of sma(prices, { period: 3 })) {
 Use `.create()` to get a stateful processor for feeding data point-by-point:
 
 ```ts
-import { rsi } from '@material-tech/alloy-indicators'
+import { rsi } from '@material-tech/vulcan-indicators'
 
 const process = rsi.create({ period: 14 })
 
@@ -63,37 +59,6 @@ const process = rsi.create({ period: 14 })
 const result1 = process(100)
 const result2 = process(102)
 const result3 = process(98)
-```
-
-### Batch adapter
-
-```ts
-import { batch } from '@material-tech/alloy-adapters/batch'
-import { ema } from '@material-tech/alloy-indicators'
-
-const batchEma = batch(ema)
-const results = batchEma([10, 11, 12, 13, 14], { period: 3 })
-// results: Dnum[]
-```
-
-### Node.js streams
-
-```ts
-import { toNodeStream } from '@material-tech/alloy-adapters/node-stream'
-import { sma } from '@material-tech/alloy-indicators'
-
-const transform = toNodeStream(sma, { period: 5 })
-readable.pipe(transform).pipe(writable)
-```
-
-### Web streams
-
-```ts
-import { toWebStream } from '@material-tech/alloy-adapters/web-stream'
-import { rsi } from '@material-tech/alloy-indicators'
-
-const transform = toWebStream(rsi, { period: 14 })
-readable.pipeThrough(transform).pipeTo(writable)
 ```
 
 ## Supported Indicators

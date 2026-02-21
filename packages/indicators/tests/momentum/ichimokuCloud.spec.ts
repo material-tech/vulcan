@@ -1,7 +1,7 @@
 /* eslint-disable antfu/consistent-list-newline */
 
-import { collect } from '@material-tech/alloy-core'
-import { ichimokuCloud } from '@material-tech/alloy-indicators'
+import { collect } from '@material-tech/vulcan-core'
+import { ichimokuCloud } from '@material-tech/vulcan-indicators'
 import { toNumber } from 'dnum'
 import { describe, expect, it } from 'vitest'
 import ohlcv from '../ohlcv.json' with { type: 'json' }

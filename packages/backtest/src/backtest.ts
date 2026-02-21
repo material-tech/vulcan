@@ -1,4 +1,4 @@
-import type { BaseStrategyOptions, StrategyGenerator } from '@material-tech/alloy-strategies'
+import type { BaseStrategyOptions, StrategyGenerator } from '@material-tech/vulcan-strategies'
 import type { BacktestOptions, BacktestResult, BacktestSnapshot, CandleData, Position, Trade } from './types'
 import { defu } from 'defu'
 import { normalizeBar } from './convert'

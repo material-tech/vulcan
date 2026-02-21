@@ -1,4 +1,4 @@
-import type { Trade } from '@material-tech/alloy-backtest'
+import type { Trade } from '@material-tech/vulcan-backtest'
 import { describe, expect, it } from 'vitest'
 import { computeStatistics } from '../src/statistics'
 

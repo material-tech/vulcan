@@ -1,5 +1,5 @@
 import type { Dnum, Numberish } from 'dnum'
-import { createSignal } from '@material-tech/alloy-core'
+import { createSignal } from '@material-tech/vulcan-core'
 import { add, div, eq, from, gt, mul, sub } from 'dnum'
 import { rma } from '../trend/rollingMovingAverage'
 

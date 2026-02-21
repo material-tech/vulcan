@@ -1,6 +1,6 @@
 /* eslint-disable antfu/consistent-list-newline */
-import { collect } from '@material-tech/alloy-core'
-import { ppo } from '@material-tech/alloy-indicators'
+import { collect } from '@material-tech/vulcan-core'
+import { ppo } from '@material-tech/vulcan-indicators'
 import { describe, expect, it } from 'vitest'
 
 describe('percentage price oscillator (PPO)', () => {
