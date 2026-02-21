@@ -25,10 +25,7 @@
   "files": [
     "dist"
   ],
-  "scripts": {
-    "build": "tsdown",
-    "prepublishOnly": "pnpm run build"
-  },
+  "scripts": {},
   "dependencies": {
     "@vulcan-js/backtest": "workspace:^",
     "@vulcan-js/core": "workspace:^",

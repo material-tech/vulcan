@@ -17,7 +17,7 @@
     "technical-indicator"
   ],
   "scripts": {
-    "build": "pnpm -r run build",
+    "build": "tsdown",
     "test": "vitest --typecheck",
     "test:coverage": "vitest --coverage",
     "lint": "eslint .",

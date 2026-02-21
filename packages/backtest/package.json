@@ -21,13 +21,12 @@
     ".": "./dist/index.js",
     "./package.json": "./package.json"
   },
+  "types": "./dist/index.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsdown",
-    "test": "vitest run",
-    "prepublishOnly": "pnpm run build"
+    "test": "vitest run"
   },
   "dependencies": {
     "@vulcan-js/core": "workspace:^",

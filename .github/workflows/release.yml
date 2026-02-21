@@ -41,10 +41,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build
-        run: pnpm run build
+        run: pnpm build
 
       - name: Update npm
         run: npm install -g npm@latest
 
       - name: Publish to NPM
-        run: pnpm -r publish --access public --no-git-checks
+        run: pnpm -r publish --access public --no-git-checks --ignore-scripts
