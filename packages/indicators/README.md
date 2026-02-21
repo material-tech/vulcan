@@ -61,6 +61,7 @@ process(98)
 | Random Index (KDJ) | `kdj` | `randomIndex` |
 | Rolling Moving Average | `rma` | `rollingMovingAverage` |
 | Simple Moving Average | `sma` | `simpleMovingAverage` |
+| Since Change | `since` | `sinceChange` |
 | Triangular Moving Average | `trima` | `triangularMovingAverage` |
 
 ### Momentum
