@@ -1,7 +1,5 @@
 import type { CandleData, RequiredProperties } from '@vulcan-js/core'
-import type { Dnum } from 'dnum'
-import { assert, constants, createSignal, toDnum } from '@vulcan-js/core'
-import { abs, add, divide, equal, subtract } from 'dnum'
+import { assert, createSignal, fp18 } from '@vulcan-js/core'
 
 export interface CommodityChannelIndexOptions {
   /**
@@ -14,6 +12,9 @@ export interface CommodityChannelIndexOptions {
 export const defaultCCIOptions: CommodityChannelIndexOptions = {
   period: 20,
 }
+
+// Lambert constant: 0.015 = 15 * SCALE / 1000
+const LAMBERT = 15n * fp18.SCALE / 1000n
 
 /**
  * Commodity Channel Index (CCI)
@@ -36,13 +37,14 @@ export const defaultCCIOptions: CommodityChannelIndexOptions = {
 export const cci = createSignal(
   ({ period }) => {
     assert(Number.isInteger(period) && period >= 1, new RangeError(`Expected period to be a positive integer, got ${period}`))
-    const buffer: Dnum[] = []
+    const buffer: bigint[] = []
+    const periodBig = BigInt(period)
 
     return (bar: RequiredProperties<CandleData, 'h' | 'l' | 'c'>) => {
-      const h = toDnum(bar.h)
-      const l = toDnum(bar.l)
-      const c = toDnum(bar.c)
-      const tp = divide(add(add(h, l), c), 3, constants.DECIMALS)
+      const h = fp18.toFp18(bar.h)
+      const l = fp18.toFp18(bar.l)
+      const c = fp18.toFp18(bar.c)
+      const tp = (h + l + c) / 3n
 
       buffer.push(tp)
       if (buffer.length > period)
@@ -50,35 +52,31 @@ export const cci = createSignal(
 
       const n = buffer.length
       if (n < period) {
-        return constants.ZERO
+        return fp18.toDnum(fp18.ZERO)
       }
 
       // SMA and Mean Deviation in a single pass
-      let sum: Dnum = constants.ZERO
+      let sum = fp18.ZERO
       for (const v of buffer) {
-        sum = add(sum, v)
+        sum += v
       }
-      const smaVal = divide(sum, n, constants.DECIMALS)
+      const smaVal = sum / periodBig
 
-      let devSum: Dnum = constants.ZERO
+      let devSum = fp18.ZERO
       for (const v of buffer) {
-        devSum = add(devSum, abs(subtract(v, smaVal)))
+        devSum += fp18.abs(v - smaVal)
       }
-      const meanDev = divide(devSum, n, constants.DECIMALS)
+      const meanDev = devSum / periodBig
 
-      if (equal(meanDev, 0)) {
-        return constants.ZERO
+      if (meanDev === fp18.ZERO) {
+        return fp18.toDnum(fp18.ZERO)
       }
 
       const currentTP = buffer[n - 1]
-      const numerator = subtract(currentTP, smaVal)
-      // 0.015 = 15/1000, the Lambert constant
-      const lambertMeanDev = divide(
-        [meanDev[0] * 15n, meanDev[1]],
-        [1000n, 0],
-        constants.DECIMALS,
-      )
-      return divide(numerator, lambertMeanDev, constants.DECIMALS)
+      const numerator = currentTP - smaVal
+      // CCI = numerator / (0.015 * meanDev)
+      const lambertMeanDev = fp18.mul(LAMBERT, meanDev)
+      return fp18.toDnum(fp18.div(numerator, lambertMeanDev))
     }
   },
   defaultCCIOptions,

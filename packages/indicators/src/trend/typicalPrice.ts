@@ -1,6 +1,5 @@
 import type { CandleData, RequiredProperties } from '@vulcan-js/core'
-import { createSignal } from '@vulcan-js/core'
-import { add, divide, from } from 'dnum'
+import { createSignal, fp18 } from '@vulcan-js/core'
 
 /**
  * Typical Price
@@ -17,11 +16,11 @@ import { add, divide, from } from 'dnum'
 export const typicalPrice = createSignal(
   () => {
     return (bar: RequiredProperties<CandleData, 'h' | 'l' | 'c'>) => {
-      const h = from(bar.h, 18)
-      const l = from(bar.l, 18)
-      const c = from(bar.c, 18)
+      const h = fp18.toFp18(bar.h)
+      const l = fp18.toFp18(bar.l)
+      const c = fp18.toFp18(bar.c)
 
-      return divide(add(add(h, l), c), 3, 18)
+      return fp18.toDnum((h + l + c) / 3n)
     }
   },
 )
