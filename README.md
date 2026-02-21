@@ -93,7 +93,7 @@ const result3 = process(98)
 - [x] Triple Exponential Average (TRIX)
 - [x] Typical Price
 - [x] Volume Weighted Moving Average (VWMA)
-- [ ] Vortex Indicator
+- [x] Vortex Indicator
 
 ### Momentum
 
