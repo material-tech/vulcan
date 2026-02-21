@@ -18,12 +18,14 @@
     "test:coverage": "vitest --coverage",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
+    "release": "bumpp -r --execute=\"pnpm i\"",
     "prepare": "simple-git-hooks"
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:lint",
     "@types/node": "catalog:build",
     "@vitest/coverage-v8": "catalog:test",
+    "bumpp": "catalog:build",
     "defu": "catalog:runtime",
     "dnum": "catalog:runtime",
     "eslint": "catalog:lint",

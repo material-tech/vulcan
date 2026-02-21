@@ -8,6 +8,7 @@ packages:
 catalogs:
   build:
     '@types/node': ^25.2.3
+    bumpp: ^10.4.1
     tsdown: ^0.20.3
     typescript: ^5.9.3
   lint:
