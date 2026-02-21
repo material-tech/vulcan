@@ -1,7 +1,8 @@
 import type { Dnum, Numberish } from 'dnum'
 import type { BaseStrategyOptions, StrategySignal } from '../types'
+import { toDnum } from '@vulcan-js/core'
 import { sma } from '@vulcan-js/indicators'
-import { from, gt, toNumber } from 'dnum'
+import { gt, toNumber } from 'dnum'
 import { createStrategy } from '../base'
 
 export interface GoldenCrossOptions extends BaseStrategyOptions {
@@ -43,7 +44,7 @@ export const goldenCross = createStrategy(
       const fast: Dnum = fastSma(close)
       const slow: Dnum = slowSma(close)
       const fastAbove = gt(fast, slow)
-      const price = toNumber(from(close, 18))
+      const price = toNumber(toDnum(close))
 
       let signal: StrategySignal = { action: 'hold' }
 

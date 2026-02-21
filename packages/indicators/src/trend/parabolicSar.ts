@@ -1,7 +1,7 @@
 import type { CandleData, RequiredProperties } from '@vulcan-js/core'
 import type { Dnum } from 'dnum'
-import { assert, createSignal } from '@vulcan-js/core'
-import { add, from, gt, lt, mul, sub } from 'dnum'
+import { assert, constants, createSignal, toDnum } from '@vulcan-js/core'
+import { add, gt, lt, mul, sub } from 'dnum'
 
 export interface ParabolicSarOptions {
   start: number
@@ -62,13 +62,13 @@ export const psar = createSignal(
     let prevPrevHigh: Dnum
     let prevPrevLow: Dnum
 
-    const afStart = from(start, 18)
-    const afIncrement = from(increment, 18)
-    const afMax = from(max, 18)
+    const afStart = toDnum(start)
+    const afIncrement = toDnum(increment)
+    const afMax = toDnum(max)
 
     return (bar: RequiredProperties<CandleData, 'h' | 'l'>) => {
-      const h = from(bar.h, 18)
-      const l = from(bar.l, 18)
+      const h = toDnum(bar.h)
+      const l = toDnum(bar.l)
       count++
 
       // Bar 1: initialization
@@ -106,7 +106,7 @@ export const psar = createSignal(
 
       // Bar 3+: standard computation
       // Step A: calculate next SAR
-      let nextSar = add(sar, mul(af, sub(ep, sar), 18))
+      let nextSar = add(sar, mul(af, sub(ep, sar), constants.DECIMALS))
 
       // Step B: clamp SAR
       if (isUptrend) {

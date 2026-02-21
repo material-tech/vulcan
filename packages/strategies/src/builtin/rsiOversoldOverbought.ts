@@ -1,7 +1,8 @@
 import type { Dnum, Numberish } from 'dnum'
 import type { BaseStrategyOptions, StrategySignal } from '../types'
+import { toDnum } from '@vulcan-js/core'
 import { rsi } from '@vulcan-js/indicators'
-import { from, gt, lt } from 'dnum'
+import { gt, lt } from 'dnum'
 import { createStrategy } from '../base'
 
 export interface RsiOversoldOverboughtOptions extends BaseStrategyOptions {
@@ -33,8 +34,8 @@ export const rsiOversoldOverbought = createStrategy(
   ({ period, overboughtLevel, oversoldLevel }) => {
     const rsiProc = rsi.create({ period })
     let prevRsi: Dnum | undefined
-    const obLevel = from(overboughtLevel, 18)
-    const osLevel = from(oversoldLevel, 18)
+    const obLevel = toDnum(overboughtLevel)
+    const osLevel = toDnum(oversoldLevel)
 
     return (ctx) => {
       const close = ctx.bar.c as Numberish

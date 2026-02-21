@@ -1,6 +1,6 @@
 import type { Dnum, Numberish } from 'dnum'
-import { assert, createSignal } from '@vulcan-js/core'
-import { div, eq, from, mul, sub } from 'dnum'
+import { assert, constants, createSignal, toDnum } from '@vulcan-js/core'
+import { div, eq, mul, sub } from 'dnum'
 import { ema } from '../trend/exponentialMovingAverage'
 
 export interface PercentagePriceOscillatorOptions {
@@ -51,9 +51,9 @@ export const ppo = createSignal(
     const slowProc = ema.create({ period: slowPeriod })
     const signalProc = ema.create({ period: signalPeriod })
     return (value: Numberish) => {
-      const fast = fastProc(from(value, 18))
-      const slow = slowProc(from(value, 18))
-      const ppoVal = eq(slow, 0) ? from(0, 18) : mul(div(sub(fast, slow), slow, 18), 100, 18)
+      const fast = fastProc(toDnum(value))
+      const slow = slowProc(toDnum(value))
+      const ppoVal = eq(slow, 0) ? constants.ZERO : mul(div(sub(fast, slow), slow, constants.DECIMALS), 100, constants.DECIMALS)
       const sig = signalProc(ppoVal)
       return { ppo: ppoVal, signal: sig, histogram: sub(ppoVal, sig) }
     }

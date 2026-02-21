@@ -1,7 +1,7 @@
 import type { CandleData, RequiredProperties } from '@vulcan-js/core'
 import type { Dnum } from 'dnum'
-import { createSignal } from '@vulcan-js/core'
-import { add, divide, equal, from, multiply, subtract } from 'dnum'
+import { constants, createSignal, toDnum } from '@vulcan-js/core'
+import { add, divide, equal, multiply, subtract } from 'dnum'
 
 /**
  * Accumulation/Distribution Indicator (A/D). Cumulative indicator
@@ -14,21 +14,21 @@ import { add, divide, equal, from, multiply, subtract } from 'dnum'
  */
 export const ad = createSignal(
   () => {
-    let prevAD: Dnum = from(0, 18)
+    let prevAD: Dnum = constants.ZERO
     return (bar: RequiredProperties<CandleData, 'h' | 'l' | 'c' | 'v'>) => {
-      const h = from(bar.h, 18)
-      const l = from(bar.l, 18)
-      const c = from(bar.c, 18)
-      const v = from(bar.v, 18)
+      const h = toDnum(bar.h)
+      const l = toDnum(bar.l)
+      const c = toDnum(bar.c)
+      const v = toDnum(bar.v)
 
       const range = subtract(h, l)
       // When high equals low, the range is zero and MFM is undefined; treat as 0
       const mfm = equal(range, 0)
-        ? from(0, 18)
+        ? constants.ZERO
         : divide(
             subtract(subtract(c, l), subtract(h, c)),
             range,
-            18,
+            constants.DECIMALS,
           )
       const mfv = multiply(mfm, v)
       prevAD = add(mfv, prevAD)

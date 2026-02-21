@@ -1,6 +1,6 @@
 import type { Dnum, Numberish } from 'dnum'
-import { assert, createSignal } from '@vulcan-js/core'
-import { add, divide, from, mul, subtract } from 'dnum'
+import { assert, constants, createSignal, toDnum } from '@vulcan-js/core'
+import { add, divide, mul, subtract } from 'dnum'
 
 export interface ExponentialMovingAverageOptions {
   period: number
@@ -19,17 +19,17 @@ export const defaultExponentialMovingAverageOptions: ExponentialMovingAverageOpt
 export const ema = createSignal(
   ({ period }) => {
     assert(Number.isInteger(period) && period >= 1, new RangeError(`Expected period to be a positive integer, got ${period}`))
-    const k = divide(from(2, 18), from(1 + period, 18), 18)
-    const m = subtract(from(1, 18), k)
+    const k = divide(constants.TWO, toDnum(1 + period), constants.DECIMALS)
+    const m = subtract(constants.ONE, k)
     let prev: Dnum | undefined
     return (value: Numberish) => {
       if (prev === undefined) {
-        prev = from(value, 18)
+        prev = toDnum(value)
         return prev
       }
       prev = add(
-        mul(value, k, 18),
-        mul(prev, m, 18),
+        mul(value, k, constants.DECIMALS),
+        mul(prev, m, constants.DECIMALS),
       )
       return prev
     }

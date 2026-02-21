@@ -1,7 +1,7 @@
 import type { CandleData, RequiredProperties } from '@vulcan-js/core'
 import type { Dnum } from 'dnum'
-import { assert, createSignal } from '@vulcan-js/core'
-import { div, eq, from, mul, sub } from 'dnum'
+import { assert, constants, createSignal, toDnum } from '@vulcan-js/core'
+import { div, eq, mul, sub } from 'dnum'
 import { mmax } from '../trend/movingMax'
 import { mmin } from '../trend/movingMin'
 import { sma } from '../trend/simpleMovingAverage'
@@ -42,15 +42,15 @@ export const stoch = createSignal(
     const slowingProc = slowingPeriod > 1 ? sma.create({ period: slowingPeriod }) : null
     const dProc = sma.create({ period: dPeriod })
     return (bar: RequiredProperties<CandleData, 'h' | 'l' | 'c'>) => {
-      const h = from(bar.h, 18)
-      const l = from(bar.l, 18)
-      const c = from(bar.c, 18)
+      const h = toDnum(bar.h)
+      const l = toDnum(bar.l)
+      const c = toDnum(bar.c)
 
       const highestHigh = mmaxProc(h)
       const lowestLow = mminProc(l)
 
-      const range = sub(highestHigh, lowestLow, 18)
-      const rawK = eq(range, 0) ? from(0, 18) : mul(div(sub(c, lowestLow, 18), range, 18), 100, 18)
+      const range = sub(highestHigh, lowestLow, constants.DECIMALS)
+      const rawK = eq(range, 0) ? constants.ZERO : mul(div(sub(c, lowestLow, constants.DECIMALS), range, constants.DECIMALS), 100, constants.DECIMALS)
       const k = slowingProc ? slowingProc(rawK) : rawK
       return { k, d: dProc(k) }
     }

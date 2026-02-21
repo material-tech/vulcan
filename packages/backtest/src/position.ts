@@ -1,8 +1,7 @@
 import type { Dnum } from 'dnum'
 import type { BacktestOptions, NormalizedBar, Position, PositionSide, StrategySignal, Trade } from './types'
-import { add, divide, from, greaterThan, greaterThanOrEqual, lessThanOrEqual, multiply, subtract } from 'dnum'
-
-const ZERO: Dnum = from(0, 18)
+import { constants, toDnum } from '@vulcan-js/core'
+import { add, divide, greaterThan, greaterThanOrEqual, lessThanOrEqual, multiply, subtract } from 'dnum'
 
 export interface PositionUpdate {
   position: Position | null
@@ -10,7 +9,7 @@ export interface PositionUpdate {
 }
 
 export function applySlippage(price: Dnum, direction: 'buy' | 'sell', slippageRate: number): Dnum {
-  const slippage = multiply(price, slippageRate, 18)
+  const slippage = multiply(price, slippageRate, constants.DECIMALS)
   return direction === 'buy'
     ? add(price, slippage)
     : subtract(price, slippage)
@@ -26,20 +25,20 @@ function closeTrade(
   const direction = position.side === 'long' ? 'sell' : 'buy'
   const actualExitPrice = applySlippage(exitPrice, direction, options.slippageRate)
 
-  const entryCommission = multiply(multiply(position.entryPrice, position.quantity, 18), options.commissionRate, 18)
-  const exitCommission = multiply(multiply(actualExitPrice, position.quantity, 18), options.commissionRate, 18)
+  const entryCommission = multiply(multiply(position.entryPrice, position.quantity, constants.DECIMALS), options.commissionRate, constants.DECIMALS)
+  const exitCommission = multiply(multiply(actualExitPrice, position.quantity, constants.DECIMALS), options.commissionRate, constants.DECIMALS)
 
   const priceDiff = position.side === 'long'
     ? subtract(actualExitPrice, position.entryPrice)
     : subtract(position.entryPrice, actualExitPrice)
 
-  const grossPnl = multiply(priceDiff, position.quantity, 18)
+  const grossPnl = multiply(priceDiff, position.quantity, constants.DECIMALS)
   const pnl = subtract(subtract(grossPnl, entryCommission), exitCommission)
-  const cost = multiply(position.entryPrice, position.quantity, 18)
+  const cost = multiply(position.entryPrice, position.quantity, constants.DECIMALS)
 
-  const returnRate = greaterThan(cost, ZERO)
-    ? divide(pnl, cost, 18)
-    : ZERO
+  const returnRate = greaterThan(cost, constants.ZERO)
+    ? divide(pnl, cost, constants.DECIMALS)
+    : constants.ZERO
 
   return {
     side: position.side,
@@ -66,8 +65,8 @@ function openPosition(
   const size = signal.size ?? 1
   const direction = side === 'long' ? 'buy' : 'sell'
   const entryPrice = applySlippage(bar.c, direction, options.slippageRate)
-  const allocatedCapital = multiply(equity, size, 18)
-  const quantity = divide(allocatedCapital, entryPrice, 18)
+  const allocatedCapital = multiply(equity, size, constants.DECIMALS)
+  const quantity = divide(allocatedCapital, entryPrice, constants.DECIMALS)
 
   return {
     side,
@@ -75,8 +74,8 @@ function openPosition(
     quantity,
     size,
     entryIndex: index,
-    stopLoss: signal.stopLoss != null ? from(signal.stopLoss, 18) : undefined,
-    takeProfit: signal.takeProfit != null ? from(signal.takeProfit, 18) : undefined,
+    stopLoss: signal.stopLoss != null ? toDnum(signal.stopLoss) : undefined,
+    takeProfit: signal.takeProfit != null ? toDnum(signal.takeProfit) : undefined,
   }
 }
 

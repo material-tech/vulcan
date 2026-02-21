@@ -1,6 +1,6 @@
 import type { CandleData, RequiredProperties } from '@vulcan-js/core'
-import { assert, createSignal } from '@vulcan-js/core'
-import { add, div, from, sub } from 'dnum'
+import { assert, constants, createSignal, toDnum } from '@vulcan-js/core'
+import { add, div, sub } from 'dnum'
 import { sma } from '../trend/simpleMovingAverage'
 
 export interface AwesomeOscillatorOptions {
@@ -26,7 +26,7 @@ export const ao = createSignal(
     const fastProc = sma.create({ period: fastPeriod })
     const slowProc = sma.create({ period: slowPeriod })
     return (bar: RequiredProperties<CandleData, 'h' | 'l'>) => {
-      const median = div(add(from(bar.h, 18), from(bar.l, 18)), 2, 18)
+      const median = div(add(toDnum(bar.h), toDnum(bar.l)), 2, constants.DECIMALS)
       return sub(fastProc(median), slowProc(median))
     }
   },

@@ -1,8 +1,7 @@
 import type { Dnum } from 'dnum'
 import type { BacktestStatistics, Trade } from './types'
-import { abs, add, divide, from, greaterThan, subtract, toNumber } from 'dnum'
-
-const ZERO: Dnum = from(0, 18)
+import { constants } from '@vulcan-js/core'
+import { abs, add, divide, greaterThan, subtract, toNumber } from 'dnum'
 
 /**
  * Compute comprehensive backtest statistics from closed trades and equity curve.
@@ -39,13 +38,13 @@ export function computeStatistics(
     }
   }
 
-  const wins = trades.filter(t => greaterThan(t.pnl, ZERO))
-  const losses = trades.filter(t => !greaterThan(t.pnl, ZERO))
+  const wins = trades.filter(t => greaterThan(t.pnl, constants.ZERO))
+  const losses = trades.filter(t => !greaterThan(t.pnl, constants.ZERO))
   const winningTrades = wins.length
   const losingTrades = losses.length
 
-  const grossProfitDnum = wins.reduce((sum, t) => add(sum, t.pnl), ZERO)
-  const grossLossDnum = abs(losses.reduce((sum, t) => add(sum, t.pnl), ZERO))
+  const grossProfitDnum = wins.reduce((sum, t) => add(sum, t.pnl), constants.ZERO)
+  const grossLossDnum = abs(losses.reduce((sum, t) => add(sum, t.pnl), constants.ZERO))
   const netPnlDnum = subtract(grossProfitDnum, grossLossDnum)
 
   const grossProfit = toNumber(grossProfitDnum)
@@ -86,11 +85,11 @@ export function computeStatistics(
 
 function computeMaxDrawdown(equityCurve: Dnum[]): { maxDrawdown: Dnum, maxDrawdownAmount: Dnum } {
   if (equityCurve.length === 0)
-    return { maxDrawdown: ZERO, maxDrawdownAmount: ZERO }
+    return { maxDrawdown: constants.ZERO, maxDrawdownAmount: constants.ZERO }
 
   let peak = equityCurve[0]
-  let maxDrawdownAmount = ZERO
-  let maxDrawdown = ZERO
+  let maxDrawdownAmount = constants.ZERO
+  let maxDrawdown = constants.ZERO
 
   for (const equity of equityCurve) {
     if (greaterThan(equity, peak))
@@ -98,7 +97,7 @@ function computeMaxDrawdown(equityCurve: Dnum[]): { maxDrawdown: Dnum, maxDrawdo
     const drawdownAmount = subtract(peak, equity)
     if (greaterThan(drawdownAmount, maxDrawdownAmount)) {
       maxDrawdownAmount = drawdownAmount
-      maxDrawdown = greaterThan(peak, ZERO) ? divide(drawdownAmount, peak, 18) : ZERO
+      maxDrawdown = greaterThan(peak, constants.ZERO) ? divide(drawdownAmount, peak, constants.DECIMALS) : constants.ZERO
     }
   }
 
@@ -111,7 +110,7 @@ function computeRiskMetrics(equityCurve: Dnum[]): { sharpeRatio: number, sortino
 
   const returns: number[] = []
   for (let i = 1; i < equityCurve.length; i++) {
-    const ret = divide(subtract(equityCurve[i], equityCurve[i - 1]), equityCurve[i - 1], 18)
+    const ret = divide(subtract(equityCurve[i], equityCurve[i - 1]), equityCurve[i - 1], constants.DECIMALS)
     returns.push(toNumber(ret))
   }
 
@@ -140,7 +139,7 @@ function computeStreaks(trades: Trade[]): { maxConsecutiveWins: number, maxConse
   let currentLosses = 0
 
   for (const trade of trades) {
-    if (greaterThan(trade.pnl, ZERO)) {
+    if (greaterThan(trade.pnl, constants.ZERO)) {
       currentWins++
       currentLosses = 0
       maxWins = Math.max(maxWins, currentWins)

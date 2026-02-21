@@ -1,6 +1,6 @@
 import type { CandleData, RequiredProperties } from '@vulcan-js/core'
-import { assert, createSignal } from '@vulcan-js/core'
-import { div, eq, from, mul, sub } from 'dnum'
+import { assert, constants, createSignal, toDnum } from '@vulcan-js/core'
+import { div, eq, mul, sub } from 'dnum'
 import { mmax } from '../trend/movingMax'
 import { mmin } from '../trend/movingMin'
 
@@ -38,17 +38,17 @@ export const willr = createSignal(
     const mmaxProc = mmax.create({ period })
     const mminProc = mmin.create({ period })
     return (bar: RequiredProperties<CandleData, 'h' | 'l' | 'c'>) => {
-      const h = from(bar.h, 18)
-      const l = from(bar.l, 18)
-      const c = from(bar.c, 18)
+      const h = toDnum(bar.h)
+      const l = toDnum(bar.l)
+      const c = toDnum(bar.c)
 
       const highestHigh = mmaxProc(h)
       const lowestLow = mminProc(l)
 
-      const range = sub(highestHigh, lowestLow, 18)
+      const range = sub(highestHigh, lowestLow, constants.DECIMALS)
       return eq(range, 0)
-        ? from(0, 18)
-        : mul(div(sub(highestHigh, c, 18), range, 18), -100, 18)
+        ? constants.ZERO
+        : mul(div(sub(highestHigh, c, constants.DECIMALS), range, constants.DECIMALS), -100, constants.DECIMALS)
     }
   },
   defaultWilliamsROptions,

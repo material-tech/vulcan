@@ -1,7 +1,7 @@
 import type { CandleData, RequiredProperties } from '@vulcan-js/core'
 import type { Dnum } from 'dnum'
-import { assert, createSignal } from '@vulcan-js/core'
-import { add, div, eq, from, mul, sub } from 'dnum'
+import { assert, constants, createSignal, toDnum } from '@vulcan-js/core'
+import { add, div, eq, mul, sub } from 'dnum'
 import { mmax } from './movingMax'
 import { mmin } from './movingMin'
 
@@ -69,41 +69,39 @@ export const kdj = createSignal(
     const mmaxProc = mmax.create({ period })
     const mminProc = mmin.create({ period })
 
-    const HUNDRED = from(100, 18)
-    const INITIAL = from(50, 18)
-    const THREE = from(3, 18)
-    const TWO = from(2, 18)
+    const INITIAL = toDnum(50)
+    const THREE = toDnum(3)
 
     let prevK: Dnum = INITIAL
     let prevD: Dnum = INITIAL
     let isFirst = true
 
     return (bar: RequiredProperties<CandleData, 'h' | 'l' | 'c'>) => {
-      const h = from(bar.h, 18)
-      const l = from(bar.l, 18)
-      const c = from(bar.c, 18)
+      const h = toDnum(bar.h)
+      const l = toDnum(bar.l)
+      const c = toDnum(bar.c)
 
       const highestHigh = mmaxProc(h)
       const lowestLow = mminProc(l)
 
-      const range = sub(highestHigh, lowestLow, 18)
-      const rsv = eq(range, 0) ? from(0, 18) : mul(div(sub(c, lowestLow, 18), range, 18), HUNDRED, 18)
+      const range = sub(highestHigh, lowestLow, constants.DECIMALS)
+      const rsv = eq(range, 0) ? constants.ZERO : mul(div(sub(c, lowestLow, constants.DECIMALS), range, constants.DECIMALS), constants.HUNDRED, constants.DECIMALS)
 
       let k: Dnum
       let d: Dnum
 
       if (isFirst) {
         // First bar: K = (2/3)*50 + (1/3)*RSV, D = (2/3)*50 + (1/3)*K
-        k = add(mul(div(from(kPeriod - 1, 18), kPeriod, 18), INITIAL, 18), mul(div(from(1, 18), kPeriod, 18), rsv, 18))
-        d = add(mul(div(from(dPeriod - 1, 18), dPeriod, 18), INITIAL, 18), mul(div(from(1, 18), dPeriod, 18), k, 18))
+        k = add(mul(div(toDnum(kPeriod - 1), kPeriod, constants.DECIMALS), INITIAL, constants.DECIMALS), mul(div(constants.ONE, kPeriod, constants.DECIMALS), rsv, constants.DECIMALS))
+        d = add(mul(div(toDnum(dPeriod - 1), dPeriod, constants.DECIMALS), INITIAL, constants.DECIMALS), mul(div(constants.ONE, dPeriod, constants.DECIMALS), k, constants.DECIMALS))
         isFirst = false
       }
       else {
-        k = add(mul(div(from(kPeriod - 1, 18), kPeriod, 18), prevK, 18), mul(div(from(1, 18), kPeriod, 18), rsv, 18))
-        d = add(mul(div(from(dPeriod - 1, 18), dPeriod, 18), prevD, 18), mul(div(from(1, 18), dPeriod, 18), k, 18))
+        k = add(mul(div(toDnum(kPeriod - 1), kPeriod, constants.DECIMALS), prevK, constants.DECIMALS), mul(div(constants.ONE, kPeriod, constants.DECIMALS), rsv, constants.DECIMALS))
+        d = add(mul(div(toDnum(dPeriod - 1), dPeriod, constants.DECIMALS), prevD, constants.DECIMALS), mul(div(constants.ONE, dPeriod, constants.DECIMALS), k, constants.DECIMALS))
       }
 
-      const j = sub(mul(THREE, k, 18), mul(TWO, d, 18), 18)
+      const j = sub(mul(THREE, k, constants.DECIMALS), mul(constants.TWO, d, constants.DECIMALS), constants.DECIMALS)
 
       prevK = k
       prevD = d

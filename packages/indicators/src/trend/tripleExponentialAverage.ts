@@ -1,6 +1,6 @@
 import type { Dnum, Numberish } from 'dnum'
-import { assert, createSignal } from '@vulcan-js/core'
-import { divide, from, multiply, subtract } from 'dnum'
+import { assert, constants, createSignal } from '@vulcan-js/core'
+import { divide, multiply, subtract } from 'dnum'
 import { ema } from './exponentialMovingAverage'
 
 export interface TripleExponentialAverageOptions {
@@ -40,9 +40,9 @@ export const trix = createSignal(
       const e3 = ema3(e2)
       if (prevEma3 === null) {
         prevEma3 = e3
-        return from(0, 18)
+        return constants.ZERO
       }
-      const result = multiply(divide(subtract(e3, prevEma3), prevEma3, 18), 100, 18)
+      const result = multiply(divide(subtract(e3, prevEma3), prevEma3, constants.DECIMALS), 100, constants.DECIMALS)
       prevEma3 = e3
       return result
     }

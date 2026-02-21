@@ -1,13 +1,12 @@
 import type { BaseStrategyOptions, StrategyGenerator } from '@vulcan-js/strategies'
 import type { Dnum } from 'dnum'
 import type { BacktestOptions, BacktestResult, BacktestSnapshot, CandleData, Position, Trade } from './types'
+import { constants, toDnum } from '@vulcan-js/core'
 import { defu } from 'defu'
-import { add, from, multiply, subtract } from 'dnum'
+import { add, multiply, subtract } from 'dnum'
 import { normalizeBar } from './convert'
 import { closePositionAtEnd, updatePosition } from './position'
 import { computeStatistics } from './statistics'
-
-const ZERO: Dnum = from(0, 18)
 
 const defaultBacktestOptions: BacktestOptions = {
   initialCapital: 10000,
@@ -18,11 +17,11 @@ const defaultBacktestOptions: BacktestOptions = {
 
 function computeUnrealizedPnl(position: Position | null, closePrice: Dnum): Dnum {
   if (!position)
-    return ZERO
+    return constants.ZERO
   const priceDiff = position.side === 'long'
     ? subtract(closePrice, position.entryPrice)
     : subtract(position.entryPrice, closePrice)
-  return multiply(priceDiff, position.quantity, 18)
+  return multiply(priceDiff, position.quantity, constants.DECIMALS)
 }
 
 /**
@@ -42,7 +41,7 @@ export async function* backtestStream<Opts extends BaseStrategyOptions>(
   const opts = defu(options, defaultBacktestOptions) as BacktestOptions
   const process = strategy.create(strategyOptions)
 
-  let equity = from(opts.initialCapital, 18)
+  let equity = toDnum(opts.initialCapital)
   let position: Position | null = null
   let index = 0
 
@@ -88,7 +87,7 @@ export function backtest<Opts extends BaseStrategyOptions>(
   const opts = defu(options, defaultBacktestOptions) as BacktestOptions
   const process = strategy.create(strategyOptions)
 
-  let equity = from(opts.initialCapital, 18)
+  let equity = toDnum(opts.initialCapital)
   let position: Position | null = null
   const trades: Trade[] = []
   const equityCurve: Dnum[] = []
@@ -120,7 +119,7 @@ export function backtest<Opts extends BaseStrategyOptions>(
 
   return {
     trades,
-    statistics: computeStatistics(trades, equityCurve, from(opts.initialCapital, 18)),
+    statistics: computeStatistics(trades, equityCurve, toDnum(opts.initialCapital)),
     equityCurve,
     finalEquity: equity,
   }

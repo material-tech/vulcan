@@ -1,7 +1,7 @@
 import type { CandleData, RequiredProperties } from '@vulcan-js/core'
 import type { Dnum } from 'dnum'
-import { assert, createSignal } from '@vulcan-js/core'
-import { abs, add, divide, from, gt, subtract } from 'dnum'
+import { assert, constants, createSignal, toDnum } from '@vulcan-js/core'
+import { abs, add, divide, gt, subtract } from 'dnum'
 
 export interface VortexOptions {
   period: number
@@ -37,26 +37,24 @@ export const vortex = createSignal(
 
     let head = 0
     let count = 0
-    let sumVmPlus: Dnum = from(0, 18)
-    let sumVmMinus: Dnum = from(0, 18)
-    let sumTr: Dnum = from(0, 18)
+    let sumVmPlus: Dnum = constants.ZERO
+    let sumVmMinus: Dnum = constants.ZERO
+    let sumTr: Dnum = constants.ZERO
 
     let prevHigh: Dnum | null = null
     let prevLow: Dnum | null = null
     let prevClose: Dnum | null = null
 
-    const ZERO: Dnum = from(0, 18)
-
     return (bar: RequiredProperties<CandleData, 'h' | 'l' | 'c'>) => {
-      const h = from(bar.h, 18)
-      const l = from(bar.l, 18)
-      const c = from(bar.c, 18)
+      const h = toDnum(bar.h)
+      const l = toDnum(bar.l)
+      const c = toDnum(bar.c)
 
       if (prevHigh === null || prevLow === null || prevClose === null) {
         prevHigh = h
         prevLow = l
         prevClose = c
-        return { plus: ZERO, minus: ZERO }
+        return { plus: constants.ZERO, minus: constants.ZERO }
       }
 
       const vmPlus = abs(subtract(h, prevLow))
@@ -98,8 +96,8 @@ export const vortex = createSignal(
       prevClose = c
 
       return {
-        plus: divide(sumVmPlus, sumTr, 18),
-        minus: divide(sumVmMinus, sumTr, 18),
+        plus: divide(sumVmPlus, sumTr, constants.DECIMALS),
+        minus: divide(sumVmMinus, sumTr, constants.DECIMALS),
       }
     }
   },

@@ -1,6 +1,6 @@
 import type { Dnum, Numberish } from 'dnum'
-import { assert, createSignal } from '@vulcan-js/core'
-import { from, gt } from 'dnum'
+import { assert, createSignal, toDnum } from '@vulcan-js/core'
+import { gt } from 'dnum'
 
 export interface MovingMaxOptions {
   /**
@@ -21,7 +21,7 @@ export const mmax = createSignal(
     assert(Number.isInteger(period) && period >= 1, new RangeError(`Expected period to be a positive integer, got ${period}`))
     const buffer: Dnum[] = []
     return (value: Numberish) => {
-      buffer.push(from(value, 18))
+      buffer.push(toDnum(value))
       if (buffer.length > period)
         buffer.shift()
       return buffer.reduce((max, cur) => gt(max, cur) ? max : cur)

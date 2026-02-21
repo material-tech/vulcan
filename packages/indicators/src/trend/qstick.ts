@@ -1,7 +1,7 @@
 import type { CandleData, RequiredProperties } from '@vulcan-js/core'
 import type { Dnum } from 'dnum'
-import { assert, createSignal } from '@vulcan-js/core'
-import { add, divide, from, subtract } from 'dnum'
+import { assert, constants, createSignal, toDnum } from '@vulcan-js/core'
+import { add, divide, subtract } from 'dnum'
 
 export interface QstickOptions {
   /**
@@ -42,10 +42,10 @@ export const qstick = createSignal(
     const buffer: Dnum[] = Array.from({ length: period })
     let head = 0
     let count = 0
-    let runningSum: Dnum = from(0, 18)
+    let runningSum: Dnum = constants.ZERO
 
     return (bar: RequiredProperties<CandleData, 'o' | 'c'>) => {
-      const diff = subtract(from(bar.c, 18), from(bar.o, 18))
+      const diff = subtract(toDnum(bar.c), toDnum(bar.o))
 
       if (count < period) {
         buffer[count] = diff
@@ -59,7 +59,7 @@ export const qstick = createSignal(
         head = (head + 1) % period
       }
 
-      return divide(runningSum, count, 18)
+      return divide(runningSum, count, constants.DECIMALS)
     }
   },
   defaultQstickOptions,

@@ -1,8 +1,6 @@
 import type { Dnum, Numberish } from 'dnum'
-import { createSignal } from '@vulcan-js/core'
-import { add, equal, from } from 'dnum'
-
-const ONE: Dnum = from(1, 18)
+import { constants, createSignal, toDnum } from '@vulcan-js/core'
+import { add, equal } from 'dnum'
 
 /**
  * Since Change
@@ -21,17 +19,17 @@ const ONE: Dnum = from(1, 18)
 export const since = createSignal(
   () => {
     let last: Dnum | undefined
-    let count: Dnum = from(0, 18)
+    let count: Dnum = constants.ZERO
 
     return (value: Numberish) => {
-      const v = from(value, 18)
+      const v = toDnum(value)
 
       if (last === undefined || !equal(last, v)) {
         last = v
-        count = from(0, 18)
+        count = constants.ZERO
       }
       else {
-        count = add(count, ONE)
+        count = add(count, constants.ONE)
       }
 
       return count

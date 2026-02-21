@@ -1,10 +1,5 @@
-import type { Numberish } from 'dnum'
 import type { CandleData, NormalizedBar } from './types'
-import { from } from 'dnum'
-
-function toDnum(value: Numberish) {
-  return from(value, 18)
-}
+import { toDnum } from '@vulcan-js/core'
 
 export function normalizeBar(bar: CandleData): NormalizedBar {
   return {

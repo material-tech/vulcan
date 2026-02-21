@@ -1,6 +1,6 @@
 import type { Dnum, Numberish } from 'dnum'
-import { assert, createSignal } from '@vulcan-js/core'
-import { div, eq, from, mul, sub } from 'dnum'
+import { assert, constants, createSignal, toDnum } from '@vulcan-js/core'
+import { div, eq, mul, sub } from 'dnum'
 
 export interface PriceRateOfChangeOptions {
   period: number
@@ -32,17 +32,17 @@ export const roc = createSignal(
     let count = 0
 
     return (value: Numberish) => {
-      const v = from(value, 18)
+      const v = toDnum(value)
       if (count < period) {
         buffer[count] = v
         count++
-        return from(0, 18)
+        return constants.ZERO
       }
       else {
         const oldest = buffer[head]
         buffer[head] = v
         head = (head + 1) % period
-        return eq(oldest, 0) ? from(0, 18) : mul(div(sub(v, oldest), oldest, 18), 100, 18)
+        return eq(oldest, 0) ? constants.ZERO : mul(div(sub(v, oldest), oldest, constants.DECIMALS), 100, constants.DECIMALS)
       }
     }
   },

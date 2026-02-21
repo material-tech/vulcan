@@ -1,6 +1,6 @@
 import type { Dnum, Numberish } from 'dnum'
-import { assert, createSignal } from '@vulcan-js/core'
-import { add, divide, equal, from, multiply, subtract } from 'dnum'
+import { assert, constants, createSignal, toDnum } from '@vulcan-js/core'
+import { add, divide, equal, multiply, subtract } from 'dnum'
 
 export interface ChandeForecastOscillatorOptions {
   /**
@@ -35,13 +35,13 @@ export const cfo = createSignal(
     const buffer: Dnum[] = []
 
     return (value: Numberish) => {
-      buffer.push(from(value, 18))
+      buffer.push(toDnum(value))
       if (buffer.length > period)
         buffer.shift()
 
       const n = buffer.length
       if (n < 2) {
-        return from(0, 18)
+        return constants.ZERO
       }
 
       // Precompute X-related sums as plain integers
@@ -50,8 +50,8 @@ export const cfo = createSignal(
       const denom = n * x2Sum - xSum * xSum
 
       // Compute Y-dependent sums (keep all Dnum at 18 decimals)
-      let sumY: Dnum = from(0, 18)
-      let sumXY: Dnum = from(0, 18)
+      let sumY: Dnum = constants.ZERO
+      let sumXY: Dnum = constants.ZERO
       for (let i = 0; i < n; i++) {
         sumY = add(sumY, buffer[i])
         sumXY = add(sumXY, multiply(buffer[i], i + 1))
@@ -59,20 +59,20 @@ export const cfo = createSignal(
 
       // slope = (n * SUM(XY) - SUM(X) * SUM(Y)) / denom
       const num = subtract(multiply(sumXY, n), multiply(sumY, xSum))
-      const slope = divide(num, denom, 18)
+      const slope = divide(num, denom, constants.DECIMALS)
 
       // intercept = (SUM(Y) - slope * SUM(X)) / n
-      const intercept = divide(subtract(sumY, multiply(slope, xSum)), n, 18)
+      const intercept = divide(subtract(sumY, multiply(slope, xSum)), n, constants.DECIMALS)
 
       // forecast = slope * n + intercept
       const forecast = add(multiply(slope, n), intercept)
 
       const close = buffer[n - 1]
       if (equal(close, 0)) {
-        return from(0, 18)
+        return constants.ZERO
       }
 
-      return divide(multiply(subtract(close, forecast), 100), close, 18)
+      return divide(multiply(subtract(close, forecast), 100), close, constants.DECIMALS)
     }
   },
   defaultCFOOptions,

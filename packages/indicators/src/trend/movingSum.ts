@@ -1,6 +1,6 @@
 import type { Dnum, Numberish } from 'dnum'
-import { assert, createSignal } from '@vulcan-js/core'
-import { add, from, subtract } from 'dnum'
+import { assert, constants, createSignal, toDnum } from '@vulcan-js/core'
+import { add, subtract } from 'dnum'
 
 export interface MovingSumOptions {
   period: number
@@ -21,10 +21,10 @@ export const msum = createSignal(
     const buffer: Dnum[] = Array.from({ length: period })
     let head = 0
     let count = 0
-    let runningSum: Dnum = from(0, 18)
+    let runningSum: Dnum = constants.ZERO
 
     return (value: Numberish) => {
-      const v = from(value, 18)
+      const v = toDnum(value)
       if (count < period) {
         buffer[count] = v
         runningSum = add(runningSum, v)

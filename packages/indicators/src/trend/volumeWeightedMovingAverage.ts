@@ -1,7 +1,7 @@
 import type { CandleData, RequiredProperties } from '@vulcan-js/core'
 import type { Dnum } from 'dnum'
-import { assert, createSignal } from '@vulcan-js/core'
-import { add, divide, from, multiply, subtract } from 'dnum'
+import { assert, constants, createSignal, toDnum } from '@vulcan-js/core'
+import { add, divide, multiply, subtract } from 'dnum'
 
 export interface VwmaOptions {
   /**
@@ -42,13 +42,13 @@ export const vwma = createSignal(
     const vBuffer: Dnum[] = Array.from({ length: period })
     let head = 0
     let count = 0
-    let pvSum: Dnum = from(0, 18)
-    let vSum: Dnum = from(0, 18)
+    let pvSum: Dnum = constants.ZERO
+    let vSum: Dnum = constants.ZERO
 
     return (bar: RequiredProperties<CandleData, 'c' | 'v'>) => {
-      const close = from(bar.c, 18)
-      const volume = from(bar.v, 18)
-      const pv = multiply(close, volume, 18)
+      const close = toDnum(bar.c)
+      const volume = toDnum(bar.v)
+      const pv = multiply(close, volume, constants.DECIMALS)
 
       if (count < period) {
         pvBuffer[count] = pv
@@ -67,7 +67,7 @@ export const vwma = createSignal(
         head = (head + 1) % period
       }
 
-      return divide(pvSum, vSum, 18)
+      return divide(pvSum, vSum, constants.DECIMALS)
     }
   },
   defaultVwmaOptions,
