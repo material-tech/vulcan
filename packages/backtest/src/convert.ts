@@ -1,20 +1,18 @@
 import type { Numberish } from 'dnum'
 import type { CandleData, NormalizedBar } from './types'
-import { from, toNumber } from 'dnum'
+import { from } from 'dnum'
 
-function toNum(value: Numberish): number {
-  if (typeof value === 'number')
-    return value
-  return toNumber(from(value))
+function toDnum(value: Numberish) {
+  return from(value, 18)
 }
 
 export function normalizeBar(bar: CandleData): NormalizedBar {
   return {
-    o: toNum(bar.o),
-    h: toNum(bar.h),
-    l: toNum(bar.l),
-    c: toNum(bar.c),
-    v: toNum(bar.v),
+    o: toDnum(bar.o),
+    h: toDnum(bar.h),
+    l: toDnum(bar.l),
+    c: toDnum(bar.c),
+    v: toDnum(bar.v),
     ...(bar.timestamp !== undefined && { timestamp: bar.timestamp }),
   }
 }

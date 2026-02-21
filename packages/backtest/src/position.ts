@@ -1,19 +1,24 @@
+import type { Dnum } from 'dnum'
 import type { BacktestOptions, NormalizedBar, Position, PositionSide, StrategySignal, Trade } from './types'
+import { add, divide, from, greaterThan, greaterThanOrEqual, lessThanOrEqual, multiply, subtract } from 'dnum'
+
+const ZERO: Dnum = from(0, 18)
 
 export interface PositionUpdate {
   position: Position | null
   closedTrade: Trade | null
 }
 
-export function applySlippage(price: number, direction: 'buy' | 'sell', slippageRate: number): number {
+export function applySlippage(price: Dnum, direction: 'buy' | 'sell', slippageRate: number): Dnum {
+  const slippage = multiply(price, slippageRate, 18)
   return direction === 'buy'
-    ? price * (1 + slippageRate)
-    : price * (1 - slippageRate)
+    ? add(price, slippage)
+    : subtract(price, slippage)
 }
 
 function closeTrade(
   position: Position,
-  exitPrice: number,
+  exitPrice: Dnum,
   index: number,
   exitReason: Trade['exitReason'],
   options: BacktestOptions,
@@ -21,15 +26,20 @@ function closeTrade(
   const direction = position.side === 'long' ? 'sell' : 'buy'
   const actualExitPrice = applySlippage(exitPrice, direction, options.slippageRate)
 
-  const entryCommission = position.entryPrice * position.quantity * options.commissionRate
-  const exitCommission = actualExitPrice * position.quantity * options.commissionRate
+  const entryCommission = multiply(multiply(position.entryPrice, position.quantity, 18), options.commissionRate, 18)
+  const exitCommission = multiply(multiply(actualExitPrice, position.quantity, 18), options.commissionRate, 18)
 
-  const grossPnl = position.side === 'long'
-    ? (actualExitPrice - position.entryPrice) * position.quantity
-    : (position.entryPrice - actualExitPrice) * position.quantity
+  const priceDiff = position.side === 'long'
+    ? subtract(actualExitPrice, position.entryPrice)
+    : subtract(position.entryPrice, actualExitPrice)
 
-  const pnl = grossPnl - entryCommission - exitCommission
-  const cost = position.entryPrice * position.quantity
+  const grossPnl = multiply(priceDiff, position.quantity, 18)
+  const pnl = subtract(subtract(grossPnl, entryCommission), exitCommission)
+  const cost = multiply(position.entryPrice, position.quantity, 18)
+
+  const returnRate = greaterThan(cost, ZERO)
+    ? divide(pnl, cost, 18)
+    : ZERO
 
   return {
     side: position.side,
@@ -38,7 +48,7 @@ function closeTrade(
     size: position.size,
     quantity: position.quantity,
     pnl,
-    returnRate: cost > 0 ? pnl / cost : 0,
+    returnRate,
     entryIndex: position.entryIndex,
     exitIndex: index,
     exitReason,
@@ -49,15 +59,15 @@ function openPosition(
   side: PositionSide,
   bar: NormalizedBar,
   index: number,
-  equity: number,
+  equity: Dnum,
   signal: StrategySignal,
   options: BacktestOptions,
 ): Position {
   const size = signal.size ?? 1
   const direction = side === 'long' ? 'buy' : 'sell'
   const entryPrice = applySlippage(bar.c, direction, options.slippageRate)
-  const allocatedCapital = equity * size
-  const quantity = allocatedCapital / entryPrice
+  const allocatedCapital = multiply(equity, size, 18)
+  const quantity = divide(allocatedCapital, entryPrice, 18)
 
   return {
     side,
@@ -65,8 +75,8 @@ function openPosition(
     quantity,
     size,
     entryIndex: index,
-    stopLoss: signal.stopLoss,
-    takeProfit: signal.takeProfit,
+    stopLoss: signal.stopLoss != null ? from(signal.stopLoss, 18) : undefined,
+    takeProfit: signal.takeProfit != null ? from(signal.takeProfit, 18) : undefined,
   }
 }
 
@@ -74,16 +84,16 @@ function checkStopLoss(position: Position, bar: NormalizedBar): boolean {
   if (position.stopLoss == null)
     return false
   return position.side === 'long'
-    ? bar.l <= position.stopLoss
-    : bar.h >= position.stopLoss
+    ? lessThanOrEqual(bar.l, position.stopLoss)
+    : greaterThanOrEqual(bar.h, position.stopLoss)
 }
 
 function checkTakeProfit(position: Position, bar: NormalizedBar): boolean {
   if (position.takeProfit == null)
     return false
   return position.side === 'long'
-    ? bar.h >= position.takeProfit
-    : bar.l <= position.takeProfit
+    ? greaterThanOrEqual(bar.h, position.takeProfit)
+    : lessThanOrEqual(bar.l, position.takeProfit)
 }
 
 /**
@@ -97,7 +107,7 @@ export function updatePosition(
   signal: StrategySignal,
   bar: NormalizedBar,
   index: number,
-  equity: number,
+  equity: Dnum,
   options: BacktestOptions,
 ): PositionUpdate {
   // Step 1: Check SL/TP before processing signal
@@ -139,7 +149,7 @@ export function updatePosition(
     }
     if (action === 'short') {
       const trade = closeTrade(currentPosition, bar.c, index, 'signal', options)
-      const newEquity = equity + trade.pnl
+      const newEquity = add(equity, trade.pnl)
       const newPos = options.allowShort
         ? openPosition('short', bar, index, newEquity, signal, options)
         : null
@@ -155,7 +165,7 @@ export function updatePosition(
   }
   if (action === 'long') {
     const trade = closeTrade(currentPosition, bar.c, index, 'signal', options)
-    const newEquity = equity + trade.pnl
+    const newEquity = add(equity, trade.pnl)
     const newPos = openPosition('long', bar, index, newEquity, signal, options)
     return { position: newPos, closedTrade: trade }
   }

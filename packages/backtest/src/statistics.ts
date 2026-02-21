@@ -1,12 +1,16 @@
+import type { Dnum } from 'dnum'
 import type { BacktestStatistics, Trade } from './types'
+import { abs, add, divide, from, greaterThan, subtract, toNumber } from 'dnum'
+
+const ZERO: Dnum = from(0, 18)
 
 /**
  * Compute comprehensive backtest statistics from closed trades and equity curve.
  */
 export function computeStatistics(
   trades: Trade[],
-  equityCurve: number[],
-  initialCapital: number,
+  equityCurve: Dnum[],
+  initialCapital: Dnum,
 ): BacktestStatistics {
   const totalBars = equityCurve.length
   const totalTrades = trades.length
@@ -35,14 +39,18 @@ export function computeStatistics(
     }
   }
 
-  const wins = trades.filter(t => t.pnl > 0)
-  const losses = trades.filter(t => t.pnl <= 0)
+  const wins = trades.filter(t => greaterThan(t.pnl, ZERO))
+  const losses = trades.filter(t => !greaterThan(t.pnl, ZERO))
   const winningTrades = wins.length
   const losingTrades = losses.length
 
-  const grossProfit = wins.reduce((sum, t) => sum + t.pnl, 0)
-  const grossLoss = Math.abs(losses.reduce((sum, t) => sum + t.pnl, 0))
-  const netPnl = grossProfit - grossLoss
+  const grossProfitDnum = wins.reduce((sum, t) => add(sum, t.pnl), ZERO)
+  const grossLossDnum = abs(losses.reduce((sum, t) => add(sum, t.pnl), ZERO))
+  const netPnlDnum = subtract(grossProfitDnum, grossLossDnum)
+
+  const grossProfit = toNumber(grossProfitDnum)
+  const grossLoss = toNumber(grossLossDnum)
+  const netPnl = toNumber(netPnlDnum)
 
   const averageWin = winningTrades > 0 ? grossProfit / winningTrades : 0
   const averageLoss = losingTrades > 0 ? grossLoss / losingTrades : 0
@@ -51,6 +59,8 @@ export function computeStatistics(
   const { sharpeRatio, sortinoRatio } = computeRiskMetrics(equityCurve)
   const { maxConsecutiveWins, maxConsecutiveLosses } = computeStreaks(trades)
 
+  const initialCapitalNum = toNumber(initialCapital)
+
   return {
     totalBars,
     totalTrades,
@@ -58,15 +68,15 @@ export function computeStatistics(
     losingTrades,
     winRate: winningTrades / totalTrades,
     netPnl,
-    netReturn: initialCapital > 0 ? netPnl / initialCapital : 0,
+    netReturn: initialCapitalNum > 0 ? netPnl / initialCapitalNum : 0,
     grossProfit,
     grossLoss,
     profitFactor: grossLoss > 0 ? grossProfit / grossLoss : grossProfit > 0 ? Infinity : 0,
     averageWin,
     averageLoss,
     payoffRatio: averageLoss > 0 ? averageWin / averageLoss : averageWin > 0 ? Infinity : 0,
-    maxDrawdown,
-    maxDrawdownAmount,
+    maxDrawdown: toNumber(maxDrawdown),
+    maxDrawdownAmount: toNumber(maxDrawdownAmount),
     sharpeRatio,
     sortinoRatio,
     maxConsecutiveWins,
@@ -74,34 +84,35 @@ export function computeStatistics(
   }
 }
 
-function computeMaxDrawdown(equityCurve: number[]): { maxDrawdown: number, maxDrawdownAmount: number } {
+function computeMaxDrawdown(equityCurve: Dnum[]): { maxDrawdown: Dnum, maxDrawdownAmount: Dnum } {
   if (equityCurve.length === 0)
-    return { maxDrawdown: 0, maxDrawdownAmount: 0 }
+    return { maxDrawdown: ZERO, maxDrawdownAmount: ZERO }
 
   let peak = equityCurve[0]
-  let maxDrawdownAmount = 0
-  let maxDrawdown = 0
+  let maxDrawdownAmount = ZERO
+  let maxDrawdown = ZERO
 
   for (const equity of equityCurve) {
-    if (equity > peak)
+    if (greaterThan(equity, peak))
       peak = equity
-    const drawdownAmount = peak - equity
-    if (drawdownAmount > maxDrawdownAmount) {
+    const drawdownAmount = subtract(peak, equity)
+    if (greaterThan(drawdownAmount, maxDrawdownAmount)) {
       maxDrawdownAmount = drawdownAmount
-      maxDrawdown = peak > 0 ? drawdownAmount / peak : 0
+      maxDrawdown = greaterThan(peak, ZERO) ? divide(drawdownAmount, peak, 18) : ZERO
     }
   }
 
   return { maxDrawdown, maxDrawdownAmount }
 }
 
-function computeRiskMetrics(equityCurve: number[]): { sharpeRatio: number, sortinoRatio: number } {
+function computeRiskMetrics(equityCurve: Dnum[]): { sharpeRatio: number, sortinoRatio: number } {
   if (equityCurve.length < 2)
     return { sharpeRatio: 0, sortinoRatio: 0 }
 
   const returns: number[] = []
   for (let i = 1; i < equityCurve.length; i++) {
-    returns.push((equityCurve[i] - equityCurve[i - 1]) / equityCurve[i - 1])
+    const ret = divide(subtract(equityCurve[i], equityCurve[i - 1]), equityCurve[i - 1], 18)
+    returns.push(toNumber(ret))
   }
 
   const n = returns.length
@@ -129,7 +140,7 @@ function computeStreaks(trades: Trade[]): { maxConsecutiveWins: number, maxConse
   let currentLosses = 0
 
   for (const trade of trades) {
-    if (trade.pnl > 0) {
+    if (greaterThan(trade.pnl, ZERO)) {
       currentWins++
       currentLosses = 0
       maxWins = Math.max(maxWins, currentWins)

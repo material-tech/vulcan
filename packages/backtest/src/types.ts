@@ -1,20 +1,21 @@
 import type { CandleData } from '@material-tech/vulcan-core'
 import type { StrategySignal } from '@material-tech/vulcan-strategies'
+import type { Dnum, Numberish } from 'dnum'
 
 export type { CandleData, StrategySignal }
 
 export interface NormalizedBar {
-  o: number
-  h: number
-  l: number
-  c: number
-  v: number
+  o: Dnum
+  h: Dnum
+  l: Dnum
+  c: Dnum
+  v: Dnum
   timestamp?: number | Date | string
 }
 
 export interface BacktestOptions {
   /** Initial capital, defaults to 10000 */
-  initialCapital: number
+  initialCapital: Numberish
   /** Commission rate (0–1), defaults to 0 */
   commissionRate: number
   /** Slippage rate (0–1), defaults to 0 */
@@ -27,22 +28,22 @@ export type PositionSide = 'long' | 'short'
 
 export interface Position {
   side: PositionSide
-  entryPrice: number
-  quantity: number
+  entryPrice: Dnum
+  quantity: Dnum
   size: number
   entryIndex: number
-  stopLoss?: number
-  takeProfit?: number
+  stopLoss?: Dnum
+  takeProfit?: Dnum
 }
 
 export interface Trade {
   side: PositionSide
-  entryPrice: number
-  exitPrice: number
+  entryPrice: Dnum
+  exitPrice: Dnum
   size: number
-  quantity: number
-  pnl: number
-  returnRate: number
+  quantity: Dnum
+  pnl: Dnum
+  returnRate: Dnum
   entryIndex: number
   exitIndex: number
   exitReason: 'signal' | 'stop_loss' | 'take_profit' | 'end_of_data'
@@ -53,17 +54,17 @@ export interface BacktestSnapshot {
   bar: NormalizedBar
   signal: StrategySignal
   position: Position | null
-  equity: number
-  unrealizedPnl: number
-  totalEquity: number
+  equity: Dnum
+  unrealizedPnl: Dnum
+  totalEquity: Dnum
   closedTrade: Trade | null
 }
 
 export interface BacktestResult {
   trades: Trade[]
   statistics: BacktestStatistics
-  equityCurve: number[]
-  finalEquity: number
+  equityCurve: Dnum[]
+  finalEquity: Dnum
 }
 
 export interface BacktestStatistics {
