@@ -1,8 +1,7 @@
 import type { CandleData, RequiredProperties } from '@vulcan-js/core'
-import { assert, constants, createSignal, toDnum } from '@vulcan-js/core'
-import { div, eq, mul, sub } from 'dnum'
-import { mmax } from '../trend/movingMax'
-import { mmin } from '../trend/movingMin'
+import { assert, createSignal, fp18 } from '@vulcan-js/core'
+import { createMmaxFp18 } from '../trend/movingMax'
+import { createMminFp18 } from '../trend/movingMin'
 
 export interface WilliamsROptions {
   /** Lookback period */
@@ -21,7 +20,7 @@ export const defaultWilliamsROptions: WilliamsROptions = {
  * over a specified period.
  *
  * Formula:
- * - %R = -100 × (Highest High - Close) / (Highest High - Lowest Low)
+ * - %R = -100 * (Highest High - Close) / (Highest High - Lowest Low)
  *
  * Range: -100 to 0
  * - Above -20: Overbought
@@ -35,20 +34,20 @@ export const defaultWilliamsROptions: WilliamsROptions = {
 export const willr = createSignal(
   ({ period }) => {
     assert(Number.isInteger(period) && period >= 1, new RangeError(`Expected period to be a positive integer, got ${period}`))
-    const mmaxProc = mmax.create({ period })
-    const mminProc = mmin.create({ period })
+    const mmaxProc = createMmaxFp18({ period })
+    const mminProc = createMminFp18({ period })
     return (bar: RequiredProperties<CandleData, 'h' | 'l' | 'c'>) => {
-      const h = toDnum(bar.h)
-      const l = toDnum(bar.l)
-      const c = toDnum(bar.c)
+      const h = fp18.toFp18(bar.h)
+      const l = fp18.toFp18(bar.l)
+      const c = fp18.toFp18(bar.c)
 
       const highestHigh = mmaxProc(h)
       const lowestLow = mminProc(l)
 
-      const range = sub(highestHigh, lowestLow, constants.DECIMALS)
-      return eq(range, 0)
-        ? constants.ZERO
-        : mul(div(sub(highestHigh, c, constants.DECIMALS), range, constants.DECIMALS), -100, constants.DECIMALS)
+      const range = highestHigh - lowestLow
+      if (range === fp18.ZERO)
+        return fp18.toDnum(fp18.ZERO)
+      return fp18.toDnum(fp18.div((highestHigh - c) * -100n, range))
     }
   },
   defaultWilliamsROptions,

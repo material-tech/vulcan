@@ -1,10 +1,9 @@
 import type { CandleData, RequiredProperties } from '@vulcan-js/core'
 import type { Dnum } from 'dnum'
-import { assert, constants, createSignal, toDnum } from '@vulcan-js/core'
-import { div, eq, mul, sub } from 'dnum'
-import { mmax } from '../trend/movingMax'
-import { mmin } from '../trend/movingMin'
-import { sma } from '../trend/simpleMovingAverage'
+import { assert, createSignal, fp18 } from '@vulcan-js/core'
+import { createMmaxFp18 } from '../trend/movingMax'
+import { createMminFp18 } from '../trend/movingMin'
+import { createSmaFp18 } from '../trend/simpleMovingAverage'
 
 export interface StochasticOscillatorOptions {
   /** The %k period */
@@ -37,22 +36,23 @@ export const stoch = createSignal(
     assert(Number.isInteger(kPeriod) && kPeriod >= 1, new RangeError(`Expected kPeriod to be a positive integer, got ${kPeriod}`))
     assert(Number.isInteger(slowingPeriod) && slowingPeriod >= 1, new RangeError(`Expected slowingPeriod to be a positive integer, got ${slowingPeriod}`))
     assert(Number.isInteger(dPeriod) && dPeriod >= 1, new RangeError(`Expected dPeriod to be a positive integer, got ${dPeriod}`))
-    const mmaxProc = mmax.create({ period: kPeriod })
-    const mminProc = mmin.create({ period: kPeriod })
-    const slowingProc = slowingPeriod > 1 ? sma.create({ period: slowingPeriod }) : null
-    const dProc = sma.create({ period: dPeriod })
+    const mmaxProc = createMmaxFp18({ period: kPeriod })
+    const mminProc = createMminFp18({ period: kPeriod })
+    const slowingProc = slowingPeriod > 1 ? createSmaFp18({ period: slowingPeriod }) : null
+    const dProc = createSmaFp18({ period: dPeriod })
     return (bar: RequiredProperties<CandleData, 'h' | 'l' | 'c'>) => {
-      const h = toDnum(bar.h)
-      const l = toDnum(bar.l)
-      const c = toDnum(bar.c)
+      const h = fp18.toFp18(bar.h)
+      const l = fp18.toFp18(bar.l)
+      const c = fp18.toFp18(bar.c)
 
       const highestHigh = mmaxProc(h)
       const lowestLow = mminProc(l)
 
-      const range = sub(highestHigh, lowestLow, constants.DECIMALS)
-      const rawK = eq(range, 0) ? constants.ZERO : mul(div(sub(c, lowestLow, constants.DECIMALS), range, constants.DECIMALS), 100, constants.DECIMALS)
+      const range = highestHigh - lowestLow
+      const rawK = range === fp18.ZERO ? fp18.ZERO : fp18.div((c - lowestLow) * 100n, range)
       const k = slowingProc ? slowingProc(rawK) : rawK
-      return { k, d: dProc(k) }
+      const d = dProc(k)
+      return { k: fp18.toDnum(k), d: fp18.toDnum(d) }
     }
   },
   defaultStochasticOscillatorOptions,

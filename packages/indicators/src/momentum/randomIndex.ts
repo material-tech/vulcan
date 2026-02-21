@@ -1,9 +1,8 @@
 import type { CandleData, RequiredProperties } from '@vulcan-js/core'
 import type { Dnum } from 'dnum'
-import { assert, constants, createSignal, toDnum } from '@vulcan-js/core'
-import { add, div, eq, mul, sub } from 'dnum'
-import { mmax } from '../trend/movingMax'
-import { mmin } from '../trend/movingMin'
+import { assert, createSignal, fp18 } from '@vulcan-js/core'
+import { createMmaxFp18 } from '../trend/movingMax'
+import { createMminFp18 } from '../trend/movingMin'
 
 export interface RandomIndexOptions {
   /**
@@ -43,9 +42,9 @@ export interface KDJPoint {
  * initial K and D values set to 50.
  *
  * Formula:
- *   RSV = (Close - LowestLow(period)) / (HighestHigh(period) - LowestLow(period)) × 100
- *   K = ((kPeriod - 1) / kPeriod) × prevK + (1 / kPeriod) × RSV
- *   D = ((dPeriod - 1) / dPeriod) × prevD + (1 / dPeriod) × K
+ *   RSV = (Close - LowestLow(period)) / (HighestHigh(period) - LowestLow(period)) * 100
+ *   K = ((kPeriod - 1) / kPeriod) * prevK + (1 / kPeriod) * RSV
+ *   D = ((dPeriod - 1) / dPeriod) * prevD + (1 / dPeriod) * K
  *   J = 3K - 2D
  *
  * Interpretation:
@@ -66,47 +65,47 @@ export const kdj = createSignal(
     assert(Number.isInteger(kPeriod) && kPeriod >= 1, new RangeError(`Expected kPeriod to be a positive integer, got ${kPeriod}`))
     assert(Number.isInteger(dPeriod) && dPeriod >= 1, new RangeError(`Expected dPeriod to be a positive integer, got ${dPeriod}`))
 
-    const mmaxProc = mmax.create({ period })
-    const mminProc = mmin.create({ period })
+    const mmaxProc = createMmaxFp18({ period })
+    const mminProc = createMminFp18({ period })
 
-    const INITIAL = toDnum(50)
-    const THREE = toDnum(3)
+    const INITIAL = 50n * fp18.SCALE
+    const kPeriodBig = BigInt(kPeriod)
+    const dPeriodBig = BigInt(dPeriod)
 
-    let prevK: Dnum = INITIAL
-    let prevD: Dnum = INITIAL
+    let prevK = INITIAL
+    let prevD = INITIAL
     let isFirst = true
 
     return (bar: RequiredProperties<CandleData, 'h' | 'l' | 'c'>) => {
-      const h = toDnum(bar.h)
-      const l = toDnum(bar.l)
-      const c = toDnum(bar.c)
+      const h = fp18.toFp18(bar.h)
+      const l = fp18.toFp18(bar.l)
+      const c = fp18.toFp18(bar.c)
 
       const highestHigh = mmaxProc(h)
       const lowestLow = mminProc(l)
 
-      const range = sub(highestHigh, lowestLow, constants.DECIMALS)
-      const rsv = eq(range, 0) ? constants.ZERO : mul(div(sub(c, lowestLow, constants.DECIMALS), range, constants.DECIMALS), constants.HUNDRED, constants.DECIMALS)
+      const range = highestHigh - lowestLow
+      const rsv = range === fp18.ZERO ? fp18.ZERO : fp18.div((c - lowestLow) * 100n, range)
 
-      let k: Dnum
-      let d: Dnum
+      let k: bigint
+      let d: bigint
 
       if (isFirst) {
-        // First bar: K = (2/3)*50 + (1/3)*RSV, D = (2/3)*50 + (1/3)*K
-        k = add(mul(div(toDnum(kPeriod - 1), kPeriod, constants.DECIMALS), INITIAL, constants.DECIMALS), mul(div(constants.ONE, kPeriod, constants.DECIMALS), rsv, constants.DECIMALS))
-        d = add(mul(div(toDnum(dPeriod - 1), dPeriod, constants.DECIMALS), INITIAL, constants.DECIMALS), mul(div(constants.ONE, dPeriod, constants.DECIMALS), k, constants.DECIMALS))
+        k = INITIAL * (kPeriodBig - 1n) / kPeriodBig + rsv / kPeriodBig
+        d = INITIAL * (dPeriodBig - 1n) / dPeriodBig + k / dPeriodBig
         isFirst = false
       }
       else {
-        k = add(mul(div(toDnum(kPeriod - 1), kPeriod, constants.DECIMALS), prevK, constants.DECIMALS), mul(div(constants.ONE, kPeriod, constants.DECIMALS), rsv, constants.DECIMALS))
-        d = add(mul(div(toDnum(dPeriod - 1), dPeriod, constants.DECIMALS), prevD, constants.DECIMALS), mul(div(constants.ONE, dPeriod, constants.DECIMALS), k, constants.DECIMALS))
+        k = prevK * (kPeriodBig - 1n) / kPeriodBig + rsv / kPeriodBig
+        d = prevD * (dPeriodBig - 1n) / dPeriodBig + k / dPeriodBig
       }
 
-      const j = sub(mul(THREE, k, constants.DECIMALS), mul(constants.TWO, d, constants.DECIMALS), constants.DECIMALS)
+      const j = k * 3n - d * 2n
 
       prevK = k
       prevD = d
 
-      return { k, d, j }
+      return { k: fp18.toDnum(k), d: fp18.toDnum(d), j: fp18.toDnum(j) }
     }
   },
   defaultRandomIndexOptions,

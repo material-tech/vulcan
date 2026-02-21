@@ -1,6 +1,6 @@
 import type { Numberish } from 'dnum'
-import { assert, createSignal } from '@vulcan-js/core'
-import { sma } from './simpleMovingAverage'
+import { assert, createSignal, fp18 } from '@vulcan-js/core'
+import { createSmaFp18 } from './simpleMovingAverage'
 
 export interface TriangularMovingAverageOptions {
   period: number
@@ -25,12 +25,12 @@ export const trima = createSignal(
       n2 = n1
     }
 
-    const sma1 = sma.create({ period: n2 })
-    const sma2 = sma.create({ period: n1 })
+    const sma1 = createSmaFp18({ period: n2 })
+    const sma2 = createSmaFp18({ period: n1 })
 
     return (value: Numberish) => {
-      const s1 = sma1(value)
-      return sma2(s1)
+      const s1 = sma1(fp18.toFp18(value))
+      return fp18.toDnum(sma2(s1))
     }
   },
   defaultTriangularMovingAverageOptions,
