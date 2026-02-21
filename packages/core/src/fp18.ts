@@ -16,6 +16,13 @@ export namespace fp18 {
   export const abs = (a: bigint): bigint => (a < 0n ? -a : a)
 
   export function toFp18(value: Numberish): bigint {
+    if (typeof value === 'number') {
+      // Fast path: direct numeric conversion avoids dnum.from() string parsing
+      return BigInt(Math.round(value * 1e9)) * 1000000000n
+    }
+    if (typeof value === 'bigint') {
+      return value * SCALE
+    }
     return from(value, DECIMALS)[0]
   }
 
@@ -38,7 +45,7 @@ export namespace fp18 {
         prev = value
         return prev
       }
-      prev = mul(value, k) + mul(prev, m)
+      prev = (value * k + prev * m) / SCALE
       return prev
     }
   }
