@@ -66,6 +66,7 @@ process(98)
 | Triple Exponential Moving Average | `tema` | `tripleExponentialMovingAverage` |
 | Triangular Moving Average | `trima` | `triangularMovingAverage` |
 | Typical Price | `typicalPrice` | `typicalPriceIndicator` |
+| Volume Weighted Moving Average | `vwma` | `volumeWeightedMovingAverage` |
 
 ### Momentum
 
