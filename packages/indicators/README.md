@@ -67,6 +67,7 @@ process(98)
 | Triangular Moving Average | `trima` | `triangularMovingAverage` |
 | Typical Price | `typicalPrice` | `typicalPriceIndicator` |
 | Volume Weighted Moving Average | `vwma` | `volumeWeightedMovingAverage` |
+| Vortex Indicator | `vortex` | `vortexIndicator` |
 
 ### Momentum
 
