@@ -5,6 +5,14 @@ import { describe, expect, it } from 'vitest'
 describe('sma', () => {
   const values = [2, 4, 6, 8, 10]
 
+  it('should throw RangeError for period of 0', () => {
+    expect(() => sma.create({ period: 0 })).toThrow(RangeError)
+  })
+
+  it('should throw RangeError for negative period', () => {
+    expect(() => sma.create({ period: -1 })).toThrow(RangeError)
+  })
+
   it('should able to calculate simple moving average', () => {
     const result = collect(sma(values))
     const expected = [2, 3, 5, 7, 9]

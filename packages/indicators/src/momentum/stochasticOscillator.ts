@@ -1,6 +1,6 @@
 import type { CandleData, RequiredProperties } from '@material-tech/vulcan-core'
 import type { Dnum } from 'dnum'
-import { createSignal } from '@material-tech/vulcan-core'
+import { assert, createSignal } from '@material-tech/vulcan-core'
 import { div, eq, from, mul, sub } from 'dnum'
 import { mmax } from '../trend/movingMax'
 import { mmin } from '../trend/movingMin'
@@ -34,6 +34,9 @@ export interface StochPoint {
  */
 export const stoch = createSignal(
   ({ kPeriod, slowingPeriod, dPeriod }) => {
+    assert(Number.isInteger(kPeriod) && kPeriod >= 1, new RangeError(`Expected kPeriod to be a positive integer, got ${kPeriod}`))
+    assert(Number.isInteger(slowingPeriod) && slowingPeriod >= 1, new RangeError(`Expected slowingPeriod to be a positive integer, got ${slowingPeriod}`))
+    assert(Number.isInteger(dPeriod) && dPeriod >= 1, new RangeError(`Expected dPeriod to be a positive integer, got ${dPeriod}`))
     const mmaxProc = mmax.create({ period: kPeriod })
     const mminProc = mmin.create({ period: kPeriod })
     const slowingProc = slowingPeriod > 1 ? sma.create({ period: slowingPeriod }) : null

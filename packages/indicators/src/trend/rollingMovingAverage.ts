@@ -1,5 +1,5 @@
 import type { Dnum, Numberish } from 'dnum'
-import { createSignal } from '@material-tech/vulcan-core'
+import { assert, createSignal } from '@material-tech/vulcan-core'
 import { add, div, from, mul } from 'dnum'
 
 export interface RMAOptions {
@@ -22,6 +22,7 @@ export const defaultRMAOptions: RMAOptions = {
  */
 export const rma = createSignal(
   ({ period }) => {
+    assert(Number.isInteger(period) && period >= 1, new RangeError(`Expected period to be a positive integer, got ${period}`))
     let count = 0
     let sum: Dnum = from(0, 18)
     let prev: Dnum = from(0, 18)

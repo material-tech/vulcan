@@ -1,5 +1,5 @@
 import type { Dnum, Numberish } from 'dnum'
-import { createSignal } from '@material-tech/vulcan-core'
+import { assert, createSignal } from '@material-tech/vulcan-core'
 import { add, div, eq, from, gt, mul, sub } from 'dnum'
 import { rma } from '../trend/rollingMovingAverage'
 
@@ -22,6 +22,7 @@ export const defaultRSIOptions: RSIOptions = {
  */
 export const rsi = createSignal(
   ({ period }) => {
+    assert(Number.isInteger(period) && period >= 1, new RangeError(`Expected period to be a positive integer, got ${period}`))
     const gainProc = rma.create({ period })
     const lossProc = rma.create({ period })
     let prev: Dnum | undefined
