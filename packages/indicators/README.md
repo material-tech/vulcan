@@ -80,6 +80,7 @@ process(98)
 | Percentage Price Oscillator | `ppo` | `percentagePriceOscillator` |
 | Relative Strength Index | `rsi` | `relativeStrengthIndex` |
 | Percentage Volume Oscillator | `pvo` | `percentageVolumeOscillator` |
+| Price Rate of Change | `roc` | `priceRateOfChange` |
 | Stochastic Oscillator | `stoch` | `stochasticOscillator` |
 
 ### Volume

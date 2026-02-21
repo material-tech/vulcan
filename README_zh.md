@@ -103,7 +103,7 @@ const result3 = process(98)
 - [x] Ichimoku Cloud
 - [x] Percentage Price Oscillator (PPO)
 - [x] Percentage Volume Oscillator (PVO)
-- [ ] Price Rate of Change (ROC)
+- [x] Price Rate of Change (ROC)
 - [x] Relative Strength Index (RSI)
 - [x] Stochastic Oscillator (STOCH)
 - [ ] Williams R (WILLR)
