@@ -27,7 +27,7 @@ describe('ema (period=12, 1000 data points)', () => {
     nativeEMA(data, period)
   })
 
-  bench('dnum', () => {
+  bench('fp18 (via dnum API)', () => {
     const process = ema.create({ period })
     for (const v of data) {
       process(v)

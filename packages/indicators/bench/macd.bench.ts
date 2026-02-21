@@ -39,7 +39,7 @@ describe('macd (12/26/9, 1000 data points)', () => {
     nativeMACD(data, 12, 26, 9)
   })
 
-  bench('dnum', () => {
+  bench('fp18 (via dnum API)', () => {
     const process = macd.create({ fastPeriod: 12, slowPeriod: 26, signalPeriod: 9 })
     for (const v of data) {
       process(v)

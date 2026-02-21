@@ -33,7 +33,7 @@ describe('sma (period=20, 1000 data points)', () => {
     nativeSMA(data, period)
   })
 
-  bench('dnum', () => {
+  bench('fp18 (via dnum API)', () => {
     const process = sma.create({ period })
     for (const v of data) {
       process(v)
