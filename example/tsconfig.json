@@ -1,0 +1,10 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "paths": {
+      "@vulcan-js/forge": ["../packages/forge/src/index.ts"],
+      "@vulcan-js/forge/*": ["../packages/forge/src/*.ts"]
+    }
+  },
+  "include": ["src/**/*.ts"]
+}
