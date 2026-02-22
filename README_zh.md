@@ -92,7 +92,7 @@ const result3 = process(98)
 - [x] Typical Price
 - [x] Volume Weighted Moving Average (VWMA)
 - [x] Vortex Indicator
-- [ ] ADX/DMI
+- [x] ADX/DMI
 - [ ] SuperTrend
 - [ ] ALMA
 - [ ] ZigZag

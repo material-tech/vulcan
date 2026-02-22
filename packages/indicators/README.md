@@ -66,7 +66,7 @@ process(98)
 | Typical Price | `typicalPrice` | `typicalPriceIndicator` |
 | Volume Weighted Moving Average | `vwma` | `volumeWeightedMovingAverage` |
 | Vortex Indicator | `vortex` | `vortexIndicator` |
-| ADX/DMI | — | _TODO_ |
+| ADX/DMI | `adx` | `averageDirectionalIndex` |
 | SuperTrend | — | _TODO_ |
 | ALMA | — | _TODO_ |
 | ZigZag | — | _TODO_ |
