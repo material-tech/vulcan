@@ -67,7 +67,7 @@ process(98)
 | Volume Weighted Moving Average | `vwma` | `volumeWeightedMovingAverage` |
 | Vortex Indicator | `vortex` | `vortexIndicator` |
 | ADX/DMI | `adx` | `averageDirectionalIndex` |
-| SuperTrend | — | _TODO_ |
+| SuperTrend | `superTrend` | `superTrendIndicator` |
 | ALMA | — | _TODO_ |
 | ZigZag | — | _TODO_ |
 
