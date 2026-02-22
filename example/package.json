@@ -6,13 +6,14 @@
   "scripts": {
     "indicators": "tsx src/indicators.ts",
     "strategy": "tsx src/strategy.ts",
-    "backtest": "tsx src/backtest.ts"
+    "backtest": "tsx src/backtest.ts",
+    "stream": "tsx src/stream.ts"
   },
   "dependencies": {
     "@vulcan-js/forge": "workspace:^"
   },
   "devDependencies": {
-    "tsx": "^4.19.4",
+    "tsx": "catalog:build",
     "typescript": "catalog:build"
   }
 }
