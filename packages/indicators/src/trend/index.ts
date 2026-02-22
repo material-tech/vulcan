@@ -1,3 +1,4 @@
+export * from './adx'
 export * from './aroon'
 export * from './balanceOfPower'
 export * from './chandeForecastOscillator'
