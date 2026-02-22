@@ -2,6 +2,10 @@
   "extends": "../tsconfig.base.json",
   "compilerOptions": {
     "paths": {
+      "@vulcan-js/core": ["../packages/core/src/index.ts"],
+      "@vulcan-js/indicators": ["../packages/indicators/src/index.ts"],
+      "@vulcan-js/strategies": ["../packages/strategies/src/index.ts"],
+      "@vulcan-js/backtest": ["../packages/backtest/src/index.ts"],
       "@vulcan-js/forge": ["../packages/forge/src/index.ts"],
       "@vulcan-js/forge/*": ["../packages/forge/src/*.ts"]
     }
