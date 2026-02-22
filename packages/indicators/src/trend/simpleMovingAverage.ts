@@ -1,5 +1,6 @@
 import type { Numberish } from 'dnum'
-import { assert, createSignal, fp18 } from '@vulcan-js/core'
+import { createSignal, fp18 } from '@vulcan-js/core'
+import * as prim from '../primitives'
 
 export interface SimpleMovingAverageOptions {
   /**
@@ -11,28 +12,6 @@ export interface SimpleMovingAverageOptions {
 
 export const defaultSMAOptions: SimpleMovingAverageOptions = {
   period: 2,
-}
-
-export function createSmaFp18({ period }: { period: number }) {
-  assert(Number.isInteger(period) && period >= 1, new RangeError(`Expected period to be a positive integer, got ${period}`))
-  const buffer: bigint[] = Array.from({ length: period })
-  let head = 0
-  let count = 0
-  let runningSum = fp18.ZERO
-
-  return (value: bigint): bigint => {
-    if (count < period) {
-      buffer[count] = value
-      runningSum += value
-      count++
-    }
-    else {
-      runningSum = runningSum - buffer[head] + value
-      buffer[head] = value
-      head = (head + 1) % period
-    }
-    return runningSum / BigInt(count)
-  }
 }
 
 /**
@@ -51,7 +30,7 @@ export function createSmaFp18({ period }: { period: number }) {
  */
 export const sma = createSignal(
   ({ period }) => {
-    const proc = createSmaFp18({ period })
+    const proc = prim.sma(period)
     return (value: Numberish) => fp18.toDnum(proc(fp18.toFp18(value)))
   },
   defaultSMAOptions,

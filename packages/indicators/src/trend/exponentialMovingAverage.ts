@@ -1,5 +1,6 @@
 import type { Numberish } from 'dnum'
 import { assert, createSignal, fp18 } from '@vulcan-js/core'
+import * as prim from '../primitives'
 
 export interface ExponentialMovingAverageOptions {
   period: number
@@ -18,7 +19,7 @@ export const defaultExponentialMovingAverageOptions: ExponentialMovingAverageOpt
 export const ema = createSignal(
   ({ period }) => {
     assert(Number.isInteger(period) && period >= 1, new RangeError(`Expected period to be a positive integer, got ${period}`))
-    const proc = fp18.ewma(fp18.ewma.k(period))
+    const proc = prim.ewma(prim.ewma.k(period))
     return (value: Numberish) => fp18.toDnum(proc(fp18.toFp18(value)))
   },
   defaultExponentialMovingAverageOptions,

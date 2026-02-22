@@ -1,9 +1,7 @@
 import type { CandleData, RequiredProperties } from '@vulcan-js/core'
 import type { Dnum } from 'dnum'
 import { assert, createSignal, fp18 } from '@vulcan-js/core'
-import { createMmaxFp18 } from '../trend/movingMax'
-import { createMminFp18 } from '../trend/movingMin'
-import { createSmaFp18 } from '../trend/simpleMovingAverage'
+import * as prim from '../primitives'
 
 export interface StochasticOscillatorOptions {
   /** The %k period */
@@ -36,10 +34,10 @@ export const stoch = createSignal(
     assert(Number.isInteger(kPeriod) && kPeriod >= 1, new RangeError(`Expected kPeriod to be a positive integer, got ${kPeriod}`))
     assert(Number.isInteger(slowingPeriod) && slowingPeriod >= 1, new RangeError(`Expected slowingPeriod to be a positive integer, got ${slowingPeriod}`))
     assert(Number.isInteger(dPeriod) && dPeriod >= 1, new RangeError(`Expected dPeriod to be a positive integer, got ${dPeriod}`))
-    const mmaxProc = createMmaxFp18({ period: kPeriod })
-    const mminProc = createMminFp18({ period: kPeriod })
-    const slowingProc = slowingPeriod > 1 ? createSmaFp18({ period: slowingPeriod }) : null
-    const dProc = createSmaFp18({ period: dPeriod })
+    const mmaxProc = prim.mmax(kPeriod)
+    const mminProc = prim.mmin(kPeriod)
+    const slowingProc = slowingPeriod > 1 ? prim.sma(slowingPeriod) : null
+    const dProc = prim.sma(dPeriod)
     return (bar: RequiredProperties<CandleData, 'h' | 'l' | 'c'>) => {
       const h = fp18.toFp18(bar.h)
       const l = fp18.toFp18(bar.l)

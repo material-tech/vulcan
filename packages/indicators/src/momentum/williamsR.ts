@@ -1,7 +1,6 @@
 import type { CandleData, RequiredProperties } from '@vulcan-js/core'
 import { assert, createSignal, fp18 } from '@vulcan-js/core'
-import { createMmaxFp18 } from '../trend/movingMax'
-import { createMminFp18 } from '../trend/movingMin'
+import * as prim from '../primitives'
 
 export interface WilliamsROptions {
   /** Lookback period */
@@ -34,8 +33,8 @@ export const defaultWilliamsROptions: WilliamsROptions = {
 export const willr = createSignal(
   ({ period }) => {
     assert(Number.isInteger(period) && period >= 1, new RangeError(`Expected period to be a positive integer, got ${period}`))
-    const mmaxProc = createMmaxFp18({ period })
-    const mminProc = createMminFp18({ period })
+    const mmaxProc = prim.mmax(period)
+    const mminProc = prim.mmin(period)
     return (bar: RequiredProperties<CandleData, 'h' | 'l' | 'c'>) => {
       const h = fp18.toFp18(bar.h)
       const l = fp18.toFp18(bar.l)

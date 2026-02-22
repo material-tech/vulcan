@@ -1,6 +1,6 @@
 import type { CandleData, RequiredProperties } from '@vulcan-js/core'
 import { assert, createSignal, fp18 } from '@vulcan-js/core'
-import { createSmaFp18 } from '../trend/simpleMovingAverage'
+import * as prim from '../primitives'
 
 export interface AwesomeOscillatorOptions {
   fastPeriod: number
@@ -22,8 +22,8 @@ export const ao = createSignal(
   ({ fastPeriod, slowPeriod }) => {
     assert(Number.isInteger(fastPeriod) && fastPeriod >= 1, new RangeError(`Expected fastPeriod to be a positive integer, got ${fastPeriod}`))
     assert(Number.isInteger(slowPeriod) && slowPeriod >= 1, new RangeError(`Expected slowPeriod to be a positive integer, got ${slowPeriod}`))
-    const fastProc = createSmaFp18({ period: fastPeriod })
-    const slowProc = createSmaFp18({ period: slowPeriod })
+    const fastProc = prim.sma(fastPeriod)
+    const slowProc = prim.sma(slowPeriod)
     return (bar: RequiredProperties<CandleData, 'h' | 'l'>) => {
       const median = (fp18.toFp18(bar.h) + fp18.toFp18(bar.l)) / 2n
       return fp18.toDnum(fastProc(median) - slowProc(median))

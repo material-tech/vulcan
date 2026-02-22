@@ -1,6 +1,6 @@
 import type { Numberish } from 'dnum'
 import { assert, createSignal, fp18 } from '@vulcan-js/core'
-import { createSmaFp18 } from './simpleMovingAverage'
+import * as prim from '../primitives'
 
 export interface TriangularMovingAverageOptions {
   period: number
@@ -25,8 +25,8 @@ export const trima = createSignal(
       n2 = n1
     }
 
-    const sma1 = createSmaFp18({ period: n2 })
-    const sma2 = createSmaFp18({ period: n1 })
+    const sma1 = prim.sma(n2)
+    const sma2 = prim.sma(n1)
 
     return (value: Numberish) => {
       const s1 = sma1(fp18.toFp18(value))

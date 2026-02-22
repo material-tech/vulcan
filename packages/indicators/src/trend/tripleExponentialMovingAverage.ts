@@ -1,5 +1,6 @@
 import type { Numberish } from 'dnum'
 import { assert, createSignal, fp18 } from '@vulcan-js/core'
+import * as prim from '../primitives'
 
 export interface TripleExponentialMovingAverageOptions {
   period: number
@@ -23,9 +24,9 @@ export const defaultTripleExponentialMovingAverageOptions: TripleExponentialMovi
 export const tema = createSignal(
   ({ period }) => {
     assert(Number.isInteger(period) && period >= 1, new RangeError(`Expected period to be a positive integer, got ${period}`))
-    const ema1 = fp18.ewma(fp18.ewma.k(period))
-    const ema2 = fp18.ewma(fp18.ewma.k(period))
-    const ema3 = fp18.ewma(fp18.ewma.k(period))
+    const ema1 = prim.ewma(prim.ewma.k(period))
+    const ema2 = prim.ewma(prim.ewma.k(period))
+    const ema3 = prim.ewma(prim.ewma.k(period))
     return (value: Numberish) => {
       const e1 = ema1(fp18.toFp18(value))
       const e2 = ema2(e1)

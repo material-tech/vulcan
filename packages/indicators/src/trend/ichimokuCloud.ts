@@ -1,8 +1,7 @@
 import type { CandleData, RequiredProperties } from '@vulcan-js/core'
 import type { Dnum } from 'dnum'
 import { assert, createSignal, fp18 } from '@vulcan-js/core'
-import { createMmaxFp18 } from './movingMax'
-import { createMminFp18 } from './movingMin'
+import * as prim from '../primitives'
 
 export interface IchimokuCloudOptions {
   /** Conversion line period */
@@ -45,12 +44,12 @@ export const ichimokuCloud = createSignal(
     assert(Number.isInteger(conversionPeriod) && conversionPeriod >= 1, new RangeError(`Expected conversionPeriod to be a positive integer, got ${conversionPeriod}`))
     assert(Number.isInteger(basePeriod) && basePeriod >= 1, new RangeError(`Expected basePeriod to be a positive integer, got ${basePeriod}`))
     assert(Number.isInteger(leadingBPeriod) && leadingBPeriod >= 1, new RangeError(`Expected leadingBPeriod to be a positive integer, got ${leadingBPeriod}`))
-    const convHighProc = createMmaxFp18({ period: conversionPeriod })
-    const convLowProc = createMminFp18({ period: conversionPeriod })
-    const baseHighProc = createMmaxFp18({ period: basePeriod })
-    const baseLowProc = createMminFp18({ period: basePeriod })
-    const leadBHighProc = createMmaxFp18({ period: leadingBPeriod })
-    const leadBLowProc = createMminFp18({ period: leadingBPeriod })
+    const convHighProc = prim.mmax(conversionPeriod)
+    const convLowProc = prim.mmin(conversionPeriod)
+    const baseHighProc = prim.mmax(basePeriod)
+    const baseLowProc = prim.mmin(basePeriod)
+    const leadBHighProc = prim.mmax(leadingBPeriod)
+    const leadBLowProc = prim.mmin(leadingBPeriod)
 
     return (bar: RequiredProperties<CandleData, 'h' | 'l' | 'c'>) => {
       const h = fp18.toFp18(bar.h)

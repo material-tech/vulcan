@@ -29,27 +29,4 @@ export namespace fp18 {
   export function toDnum(value: bigint): Dnum {
     return [value, DECIMALS]
   }
-
-  /**
-   * Create an exponentially weighted moving average (EWMA) processor.
-   *
-   * new = value * k + prev * (1 - k)
-   *
-   * @param k - Smoothing factor as fp18 bigint
-   */
-  export function ewma(k: bigint): (value: bigint) => bigint {
-    const m = ONE - k
-    let prev: bigint | undefined
-    return (value: bigint): bigint => {
-      if (prev === undefined) {
-        prev = value
-        return prev
-      }
-      prev = (value * k + prev * m) / SCALE
-      return prev
-    }
-  }
-
-  /** Compute EMA smoothing factor: k = 2 / (period + 1) */
-  ewma.k = (period: number): bigint => div(TWO, BigInt(1 + period) * SCALE)
 }

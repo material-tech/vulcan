@@ -1,6 +1,6 @@
 import type { Numberish } from 'dnum'
 import { assert, createSignal, fp18 } from '@vulcan-js/core'
-import { createRmaFp18 } from '../trend/rollingMovingAverage'
+import * as prim from '../primitives'
 
 export interface RSIOptions {
   period: number
@@ -22,8 +22,8 @@ export const defaultRSIOptions: RSIOptions = {
 export const rsi = createSignal(
   ({ period }) => {
     assert(Number.isInteger(period) && period >= 1, new RangeError(`Expected period to be a positive integer, got ${period}`))
-    const gainProc = createRmaFp18({ period })
-    const lossProc = createRmaFp18({ period })
+    const gainProc = prim.rma(period)
+    const lossProc = prim.rma(period)
     let prev: bigint | undefined
 
     return (value: Numberish) => {

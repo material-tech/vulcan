@@ -1,8 +1,7 @@
 import type { CandleData, RequiredProperties } from '@vulcan-js/core'
 import type { Dnum } from 'dnum'
 import { assert, createSignal, fp18 } from '@vulcan-js/core'
-import { createMmaxFp18 } from '../trend/movingMax'
-import { createMminFp18 } from '../trend/movingMin'
+import * as prim from '../primitives'
 
 export interface RandomIndexOptions {
   /**
@@ -65,8 +64,8 @@ export const kdj = createSignal(
     assert(Number.isInteger(kPeriod) && kPeriod >= 1, new RangeError(`Expected kPeriod to be a positive integer, got ${kPeriod}`))
     assert(Number.isInteger(dPeriod) && dPeriod >= 1, new RangeError(`Expected dPeriod to be a positive integer, got ${dPeriod}`))
 
-    const mmaxProc = createMmaxFp18({ period })
-    const mminProc = createMminFp18({ period })
+    const mmaxProc = prim.mmax(period)
+    const mminProc = prim.mmin(period)
 
     const INITIAL = 50n * fp18.SCALE
     const kPeriodBig = BigInt(kPeriod)
