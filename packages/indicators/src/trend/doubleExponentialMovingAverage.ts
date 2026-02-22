@@ -1,7 +1,6 @@
 import type { Numberish } from 'dnum'
-import { assert, createSignal } from '@vulcan-js/core'
-import { mul, sub } from 'dnum'
-import { ema } from './exponentialMovingAverage'
+import { assert, createSignal, fp18 } from '@vulcan-js/core'
+import * as prim from '../primitives'
 
 export interface DoubleExponentialMovingAverageOptions {
   period: number
@@ -25,12 +24,12 @@ export const defaultDoubleExponentialMovingAverageOptions: DoubleExponentialMovi
 export const dema = createSignal(
   ({ period }) => {
     assert(Number.isInteger(period) && period >= 1, new RangeError(`Expected period to be a positive integer, got ${period}`))
-    const ema1 = ema.create({ period })
-    const ema2 = ema.create({ period })
+    const ema1 = prim.ewma(prim.ewma.k(period))
+    const ema2 = prim.ewma(prim.ewma.k(period))
     return (value: Numberish) => {
-      const e1 = ema1(value)
+      const e1 = ema1(fp18.toFp18(value))
       const e2 = ema2(e1)
-      return sub(mul(e1, 2, 18), e2)
+      return fp18.toDnum(e1 * 2n - e2)
     }
   },
   defaultDoubleExponentialMovingAverageOptions,

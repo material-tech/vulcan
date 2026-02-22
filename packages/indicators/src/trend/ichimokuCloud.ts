@@ -1,9 +1,7 @@
 import type { CandleData, RequiredProperties } from '@vulcan-js/core'
 import type { Dnum } from 'dnum'
-import { assert, createSignal } from '@vulcan-js/core'
-import { add, div, from } from 'dnum'
-import { mmax } from './movingMax'
-import { mmin } from './movingMin'
+import { assert, createSignal, fp18 } from '@vulcan-js/core'
+import * as prim from '../primitives'
 
 export interface IchimokuCloudOptions {
   /** Conversion line period */
@@ -46,23 +44,29 @@ export const ichimokuCloud = createSignal(
     assert(Number.isInteger(conversionPeriod) && conversionPeriod >= 1, new RangeError(`Expected conversionPeriod to be a positive integer, got ${conversionPeriod}`))
     assert(Number.isInteger(basePeriod) && basePeriod >= 1, new RangeError(`Expected basePeriod to be a positive integer, got ${basePeriod}`))
     assert(Number.isInteger(leadingBPeriod) && leadingBPeriod >= 1, new RangeError(`Expected leadingBPeriod to be a positive integer, got ${leadingBPeriod}`))
-    const convHighProc = mmax.create({ period: conversionPeriod })
-    const convLowProc = mmin.create({ period: conversionPeriod })
-    const baseHighProc = mmax.create({ period: basePeriod })
-    const baseLowProc = mmin.create({ period: basePeriod })
-    const leadBHighProc = mmax.create({ period: leadingBPeriod })
-    const leadBLowProc = mmin.create({ period: leadingBPeriod })
+    const convHighProc = prim.mmax(conversionPeriod)
+    const convLowProc = prim.mmin(conversionPeriod)
+    const baseHighProc = prim.mmax(basePeriod)
+    const baseLowProc = prim.mmin(basePeriod)
+    const leadBHighProc = prim.mmax(leadingBPeriod)
+    const leadBLowProc = prim.mmin(leadingBPeriod)
 
     return (bar: RequiredProperties<CandleData, 'h' | 'l' | 'c'>) => {
-      const h = from(bar.h, 18)
-      const l = from(bar.l, 18)
+      const h = fp18.toFp18(bar.h)
+      const l = fp18.toFp18(bar.l)
 
-      const conversion = div(add(convHighProc(h), convLowProc(l)), 2, 18)
-      const base = div(add(baseHighProc(h), baseLowProc(l)), 2, 18)
-      const leadingA = div(add(conversion, base), 2, 18)
-      const leadingB = div(add(leadBHighProc(h), leadBLowProc(l)), 2, 18)
+      const conversion = (convHighProc(h) + convLowProc(l)) / 2n
+      const base = (baseHighProc(h) + baseLowProc(l)) / 2n
+      const leadingA = (conversion + base) / 2n
+      const leadingB = (leadBHighProc(h) + leadBLowProc(l)) / 2n
 
-      return { conversion, base, leadingA, leadingB, lagging: from(bar.c, 18) }
+      return {
+        conversion: fp18.toDnum(conversion),
+        base: fp18.toDnum(base),
+        leadingA: fp18.toDnum(leadingA),
+        leadingB: fp18.toDnum(leadingB),
+        lagging: fp18.toDnum(fp18.toFp18(bar.c)),
+      }
     }
   },
   defaultIchimokuCloudOptions,

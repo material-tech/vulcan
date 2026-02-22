@@ -1,6 +1,6 @@
-import type { Dnum, Numberish } from 'dnum'
-import { assert, constants, createSignal, toDnum } from '@vulcan-js/core'
-import { add, divide, mul, subtract } from 'dnum'
+import type { Numberish } from 'dnum'
+import { assert, createSignal, fp18 } from '@vulcan-js/core'
+import * as prim from '../primitives'
 
 export interface ExponentialMovingAverageOptions {
   period: number
@@ -19,20 +19,8 @@ export const defaultExponentialMovingAverageOptions: ExponentialMovingAverageOpt
 export const ema = createSignal(
   ({ period }) => {
     assert(Number.isInteger(period) && period >= 1, new RangeError(`Expected period to be a positive integer, got ${period}`))
-    const k = divide(constants.TWO, toDnum(1 + period), constants.DECIMALS)
-    const m = subtract(constants.ONE, k)
-    let prev: Dnum | undefined
-    return (value: Numberish) => {
-      if (prev === undefined) {
-        prev = toDnum(value)
-        return prev
-      }
-      prev = add(
-        mul(value, k, constants.DECIMALS),
-        mul(prev, m, constants.DECIMALS),
-      )
-      return prev
-    }
+    const proc = prim.ewma(prim.ewma.k(period))
+    return (value: Numberish) => fp18.toDnum(proc(fp18.toFp18(value)))
   },
   defaultExponentialMovingAverageOptions,
 )

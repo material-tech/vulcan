@@ -1,6 +1,6 @@
-import type { Dnum, Numberish } from 'dnum'
-import { assert, constants, createSignal } from '@vulcan-js/core'
-import { add, div, mul } from 'dnum'
+import type { Numberish } from 'dnum'
+import { createSignal, fp18 } from '@vulcan-js/core'
+import * as prim from '../primitives'
 
 export interface RMAOptions {
   /**
@@ -22,25 +22,8 @@ export const defaultRMAOptions: RMAOptions = {
  */
 export const rma = createSignal(
   ({ period }) => {
-    assert(Number.isInteger(period) && period >= 1, new RangeError(`Expected period to be a positive integer, got ${period}`))
-    let count = 0
-    let sum: Dnum = constants.ZERO
-    let prev: Dnum = constants.ZERO
-
-    return (value: Numberish) => {
-      if (count < period) {
-        sum = add(sum, value)
-        count++
-        prev = div(sum, count, constants.DECIMALS)
-        return prev
-      }
-      prev = div(
-        add(mul(prev, period - 1, constants.DECIMALS), value),
-        period,
-        constants.DECIMALS,
-      )
-      return prev
-    }
+    const proc = prim.rma(period)
+    return (value: Numberish) => fp18.toDnum(proc(fp18.toFp18(value)))
   },
   defaultRMAOptions,
 )

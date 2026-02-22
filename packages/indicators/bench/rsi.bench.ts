@@ -61,7 +61,7 @@ describe('rsi (period=14, 1000 data points)', () => {
     nativeRSI(data, period)
   })
 
-  bench('dnum', () => {
+  bench('fp18 (via dnum API)', () => {
     const process = rsi.create({ period })
     for (const v of data) {
       process(v)

@@ -1,7 +1,5 @@
 import type { CandleData, RequiredProperties } from '@vulcan-js/core'
-import type { Dnum } from 'dnum'
-import { assert, constants, createSignal, toDnum } from '@vulcan-js/core'
-import { add, divide, subtract } from 'dnum'
+import { assert, createSignal, fp18 } from '@vulcan-js/core'
 
 export interface QstickOptions {
   /**
@@ -39,27 +37,26 @@ export const qstick = createSignal(
   ({ period }) => {
     assert(Number.isInteger(period) && period >= 1, new RangeError(`Expected period to be a positive integer, got ${period}`))
 
-    const buffer: Dnum[] = Array.from({ length: period })
+    const buffer: bigint[] = Array.from({ length: period })
     let head = 0
     let count = 0
-    let runningSum: Dnum = constants.ZERO
+    let runningSum = fp18.ZERO
 
     return (bar: RequiredProperties<CandleData, 'o' | 'c'>) => {
-      const diff = subtract(toDnum(bar.c), toDnum(bar.o))
+      const diff = fp18.toFp18(bar.c) - fp18.toFp18(bar.o)
 
       if (count < period) {
         buffer[count] = diff
-        runningSum = add(runningSum, diff)
+        runningSum += diff
         count++
       }
       else {
-        runningSum = subtract(runningSum, buffer[head])
-        runningSum = add(runningSum, diff)
+        runningSum = runningSum - buffer[head] + diff
         buffer[head] = diff
         head = (head + 1) % period
       }
 
-      return divide(runningSum, count, constants.DECIMALS)
+      return fp18.toDnum(runningSum / BigInt(count))
     }
   },
   defaultQstickOptions,

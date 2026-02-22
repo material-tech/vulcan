@@ -1,6 +1,6 @@
-import type { Dnum, Numberish } from 'dnum'
-import { assert, createSignal, toDnum } from '@vulcan-js/core'
-import { lt } from 'dnum'
+import type { Numberish } from 'dnum'
+import { createSignal, fp18 } from '@vulcan-js/core'
+import * as prim from '../primitives'
 
 export interface MovingMinOptions {
   /**
@@ -18,14 +18,8 @@ export const defaultMovingMinOptions: MovingMinOptions = {
  */
 export const mmin = createSignal(
   ({ period }) => {
-    assert(Number.isInteger(period) && period >= 1, new RangeError(`Expected period to be a positive integer, got ${period}`))
-    const buffer: Dnum[] = []
-    return (value: Numberish) => {
-      buffer.push(toDnum(value))
-      if (buffer.length > period)
-        buffer.shift()
-      return buffer.reduce((min, cur) => lt(min, cur) ? min : cur)
-    }
+    const proc = prim.mmin(period)
+    return (value: Numberish) => fp18.toDnum(proc(fp18.toFp18(value)))
   },
   defaultMovingMinOptions,
 )

@@ -1,7 +1,6 @@
 import type { CandleData, RequiredProperties } from '@vulcan-js/core'
 import type { Dnum } from 'dnum'
-import { assert, constants, createSignal, toDnum } from '@vulcan-js/core'
-import { divide, gt, lt, multiply, subtract } from 'dnum'
+import { assert, createSignal, fp18 } from '@vulcan-js/core'
 
 export interface AroonOptions {
   period: number
@@ -27,12 +26,13 @@ export interface AroonPoint {
 export const aroon = createSignal(
   ({ period }) => {
     assert(Number.isInteger(period) && period >= 1, new RangeError(`Expected period to be a positive integer, got ${period}`))
-    const highBuffer: Dnum[] = []
-    const lowBuffer: Dnum[] = []
+    const highBuffer: bigint[] = []
+    const lowBuffer: bigint[] = []
+    const periodBig = BigInt(period)
 
     return (bar: RequiredProperties<CandleData, 'h' | 'l'>) => {
-      const h = toDnum(bar.h)
-      const l = toDnum(bar.l)
+      const h = fp18.toFp18(bar.h)
+      const l = fp18.toFp18(bar.l)
 
       highBuffer.push(h)
       lowBuffer.push(l)
@@ -44,23 +44,22 @@ export const aroon = createSignal(
       let highestIdx = 0
       let lowestIdx = 0
       for (let j = 1; j < highBuffer.length; j++) {
-        if (!gt(highBuffer[highestIdx], highBuffer[j]))
+        if (highBuffer[j] >= highBuffer[highestIdx])
           highestIdx = j
-        if (!lt(lowBuffer[lowestIdx], lowBuffer[j]))
+        if (lowBuffer[j] <= lowBuffer[lowestIdx])
           lowestIdx = j
       }
 
       const daysSinceHigh = highBuffer.length - 1 - highestIdx
       const daysSinceLow = lowBuffer.length - 1 - lowestIdx
 
-      const periodDnum = toDnum(period)
-      const up = divide(multiply(toDnum(period - daysSinceHigh), 100, constants.DECIMALS), periodDnum, constants.DECIMALS)
-      const down = divide(multiply(toDnum(period - daysSinceLow), 100, constants.DECIMALS), periodDnum, constants.DECIMALS)
+      const up = BigInt(period - daysSinceHigh) * fp18.HUNDRED / periodBig
+      const down = BigInt(period - daysSinceLow) * fp18.HUNDRED / periodBig
 
       return {
-        up,
-        down,
-        oscillator: subtract(up, down),
+        up: fp18.toDnum(up),
+        down: fp18.toDnum(down),
+        oscillator: fp18.toDnum(up - down),
       }
     }
   },

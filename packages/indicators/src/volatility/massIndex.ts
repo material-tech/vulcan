@@ -1,8 +1,6 @@
 import type { CandleData, RequiredProperties } from '@vulcan-js/core'
-import { assert, createSignal } from '@vulcan-js/core'
-import { divide, from, subtract } from 'dnum'
-import { ema } from '../trend/exponentialMovingAverage'
-import { msum } from '../trend/movingSum'
+import { assert, createSignal, fp18 } from '@vulcan-js/core'
+import * as prim from '../primitives'
 
 export interface MassIndexOptions {
   /**
@@ -46,16 +44,16 @@ export const mi = createSignal(
   ({ emaPeriod, miPeriod }) => {
     assert(Number.isInteger(emaPeriod) && emaPeriod >= 1, new RangeError(`Expected emaPeriod to be a positive integer, got ${emaPeriod}`))
     assert(Number.isInteger(miPeriod) && miPeriod >= 1, new RangeError(`Expected miPeriod to be a positive integer, got ${miPeriod}`))
-    const ema1Proc = ema.create({ period: emaPeriod })
-    const ema2Proc = ema.create({ period: emaPeriod })
-    const msumProc = msum.create({ period: miPeriod })
+    const ema1Proc = prim.ewma(prim.ewma.k(emaPeriod))
+    const ema2Proc = prim.ewma(prim.ewma.k(emaPeriod))
+    const msumProc = prim.msum(miPeriod)
 
     return (bar: RequiredProperties<CandleData, 'h' | 'l'>) => {
-      const range = subtract(from(bar.h, 18), from(bar.l, 18))
+      const range = fp18.toFp18(bar.h) - fp18.toFp18(bar.l)
       const e1 = ema1Proc(range)
       const e2 = ema2Proc(e1)
-      const ratio = divide(e1, e2, 18)
-      return msumProc(ratio)
+      const ratio = fp18.div(e1, e2)
+      return fp18.toDnum(msumProc(ratio))
     }
   },
   defaultMassIndexOptions,

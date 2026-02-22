@@ -1,7 +1,6 @@
-import type { Dnum, Numberish } from 'dnum'
-import { assert, constants, createSignal, toDnum } from '@vulcan-js/core'
-import { add, div, eq, gt, mul, sub } from 'dnum'
-import { rma } from '../trend/rollingMovingAverage'
+import type { Numberish } from 'dnum'
+import { assert, createSignal, fp18 } from '@vulcan-js/core'
+import * as prim from '../primitives'
 
 export interface RSIOptions {
   period: number
@@ -23,35 +22,35 @@ export const defaultRSIOptions: RSIOptions = {
 export const rsi = createSignal(
   ({ period }) => {
     assert(Number.isInteger(period) && period >= 1, new RangeError(`Expected period to be a positive integer, got ${period}`))
-    const gainProc = rma.create({ period })
-    const lossProc = rma.create({ period })
-    let prev: Dnum | undefined
+    const gainProc = prim.rma(period)
+    const lossProc = prim.rma(period)
+    let prev: bigint | undefined
 
     return (value: Numberish) => {
-      const price = toDnum(value)
+      const price = fp18.toFp18(value)
 
       if (prev === undefined) {
         prev = price
-        gainProc(constants.ZERO)
-        lossProc(constants.ZERO)
-        return constants.ZERO
+        gainProc(fp18.ZERO)
+        lossProc(fp18.ZERO)
+        return fp18.toDnum(fp18.ZERO)
       }
 
-      const change = sub(price, prev)
+      const change = price - prev
       prev = price
 
-      const gain = gt(change, 0) ? change : constants.ZERO
-      const loss = gt(change, 0) ? constants.ZERO : mul(change, -1, constants.DECIMALS)
+      const gain = change > fp18.ZERO ? change : fp18.ZERO
+      const loss = change > fp18.ZERO ? fp18.ZERO : -change
 
       const avgGain = gainProc(gain)
       const avgLoss = lossProc(loss)
 
-      if (eq(avgLoss, 0)) {
-        return constants.HUNDRED
+      if (avgLoss === fp18.ZERO) {
+        return fp18.toDnum(fp18.HUNDRED)
       }
 
-      const rs = div(avgGain, avgLoss, constants.DECIMALS)
-      return sub(100, div(100, add(1, rs), constants.DECIMALS))
+      const rs = fp18.div(avgGain, avgLoss)
+      return fp18.toDnum(fp18.HUNDRED - fp18.div(fp18.HUNDRED, fp18.ONE + rs))
     }
   },
   defaultRSIOptions,

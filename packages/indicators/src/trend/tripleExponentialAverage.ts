@@ -1,7 +1,6 @@
-import type { Dnum, Numberish } from 'dnum'
-import { assert, constants, createSignal } from '@vulcan-js/core'
-import { divide, multiply, subtract } from 'dnum'
-import { ema } from './exponentialMovingAverage'
+import type { Numberish } from 'dnum'
+import { assert, createSignal, fp18 } from '@vulcan-js/core'
+import * as prim from '../primitives'
 
 export interface TripleExponentialAverageOptions {
   period: number
@@ -30,21 +29,21 @@ export const defaultTripleExponentialAverageOptions: TripleExponentialAverageOpt
 export const trix = createSignal(
   ({ period }) => {
     assert(Number.isInteger(period) && period >= 1, new RangeError(`Expected period to be a positive integer, got ${period}`))
-    const ema1 = ema.create({ period })
-    const ema2 = ema.create({ period })
-    const ema3 = ema.create({ period })
-    let prevEma3: Dnum | null = null
+    const ema1 = prim.ewma(prim.ewma.k(period))
+    const ema2 = prim.ewma(prim.ewma.k(period))
+    const ema3 = prim.ewma(prim.ewma.k(period))
+    let prevEma3: bigint | null = null
     return (value: Numberish) => {
-      const e1 = ema1(value)
+      const e1 = ema1(fp18.toFp18(value))
       const e2 = ema2(e1)
       const e3 = ema3(e2)
       if (prevEma3 === null) {
         prevEma3 = e3
-        return constants.ZERO
+        return fp18.toDnum(fp18.ZERO)
       }
-      const result = multiply(divide(subtract(e3, prevEma3), prevEma3, constants.DECIMALS), 100, constants.DECIMALS)
+      const result = fp18.div((e3 - prevEma3) * 100n, prevEma3)
       prevEma3 = e3
-      return result
+      return fp18.toDnum(result)
     }
   },
   defaultTripleExponentialAverageOptions,

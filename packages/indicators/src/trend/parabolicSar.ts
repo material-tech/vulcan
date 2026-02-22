@@ -1,7 +1,6 @@
 import type { CandleData, RequiredProperties } from '@vulcan-js/core'
 import type { Dnum } from 'dnum'
-import { assert, constants, createSignal, toDnum } from '@vulcan-js/core'
-import { add, gt, lt, mul, sub } from 'dnum'
+import { assert, createSignal, fp18 } from '@vulcan-js/core'
 
 export interface ParabolicSarOptions {
   start: number
@@ -54,21 +53,21 @@ export const psar = createSignal(
 
     let count = 0
     let isUptrend = true
-    let sar: Dnum
-    let ep: Dnum
-    let af: Dnum
-    let prevHigh: Dnum
-    let prevLow: Dnum
-    let prevPrevHigh: Dnum
-    let prevPrevLow: Dnum
+    let sar: bigint
+    let ep: bigint
+    let af: bigint
+    let prevHigh: bigint
+    let prevLow: bigint
+    let prevPrevHigh: bigint
+    let prevPrevLow: bigint
 
-    const afStart = toDnum(start)
-    const afIncrement = toDnum(increment)
-    const afMax = toDnum(max)
+    const afStart = fp18.toFp18(start)
+    const afIncrement = fp18.toFp18(increment)
+    const afMax = fp18.toFp18(max)
 
     return (bar: RequiredProperties<CandleData, 'h' | 'l'>) => {
-      const h = toDnum(bar.h)
-      const l = toDnum(bar.l)
+      const h = fp18.toFp18(bar.h)
+      const l = fp18.toFp18(bar.l)
       count++
 
       // Bar 1: initialization
@@ -81,12 +80,12 @@ export const psar = createSignal(
         prevLow = l
         prevPrevHigh = h
         prevPrevLow = l
-        return { psar: sar, isUptrend }
+        return { psar: fp18.toDnum(sar), isUptrend }
       }
 
       // Bar 2: determine initial trend
       if (count === 2) {
-        if (gt(h, prevHigh)) {
+        if (h > prevHigh) {
           isUptrend = true
           sar = prevLow
           ep = h
@@ -101,24 +100,24 @@ export const psar = createSignal(
         prevPrevLow = prevLow
         prevHigh = h
         prevLow = l
-        return { psar: sar, isUptrend }
+        return { psar: fp18.toDnum(sar), isUptrend }
       }
 
       // Bar 3+: standard computation
       // Step A: calculate next SAR
-      let nextSar = add(sar, mul(af, sub(ep, sar), constants.DECIMALS))
+      let nextSar = sar + fp18.mul(af, ep - sar)
 
       // Step B: clamp SAR
       if (isUptrend) {
-        if (gt(nextSar, prevLow))
+        if (nextSar > prevLow)
           nextSar = prevLow
-        if (gt(nextSar, prevPrevLow))
+        if (nextSar > prevPrevLow)
           nextSar = prevPrevLow
       }
       else {
-        if (lt(nextSar, prevHigh))
+        if (nextSar < prevHigh)
           nextSar = prevHigh
-        if (lt(nextSar, prevPrevHigh))
+        if (nextSar < prevPrevHigh)
           nextSar = prevPrevHigh
       }
 
@@ -126,14 +125,14 @@ export const psar = createSignal(
 
       // Step C: check for reversal
       let reversed = false
-      if (isUptrend && lt(l, sar)) {
+      if (isUptrend && l < sar) {
         isUptrend = false
         sar = ep
         ep = l
         af = afStart
         reversed = true
       }
-      else if (!isUptrend && gt(h, sar)) {
+      else if (!isUptrend && h > sar) {
         isUptrend = true
         sar = ep
         ep = h
@@ -143,15 +142,15 @@ export const psar = createSignal(
 
       // Step D: update EP and AF (only if no reversal)
       if (!reversed) {
-        if (isUptrend && gt(h, ep)) {
+        if (isUptrend && h > ep) {
           ep = h
-          const newAf = add(af, afIncrement)
-          af = gt(newAf, afMax) ? afMax : newAf
+          const newAf = af + afIncrement
+          af = newAf > afMax ? afMax : newAf
         }
-        else if (!isUptrend && lt(l, ep)) {
+        else if (!isUptrend && l < ep) {
           ep = l
-          const newAf = add(af, afIncrement)
-          af = gt(newAf, afMax) ? afMax : newAf
+          const newAf = af + afIncrement
+          af = newAf > afMax ? afMax : newAf
         }
       }
 
@@ -161,7 +160,7 @@ export const psar = createSignal(
       prevHigh = h
       prevLow = l
 
-      return { psar: sar, isUptrend }
+      return { psar: fp18.toDnum(sar), isUptrend }
     }
   },
   defaultParabolicSarOptions,

@@ -1,7 +1,6 @@
 import type { CandleData, RequiredProperties } from '@vulcan-js/core'
 import type { Dnum } from 'dnum'
-import { assert, constants, createSignal, toDnum } from '@vulcan-js/core'
-import { abs, add, divide, gt, subtract } from 'dnum'
+import { assert, createSignal, fp18 } from '@vulcan-js/core'
 
 export interface VortexOptions {
   period: number
@@ -31,63 +30,60 @@ export const vortex = createSignal(
   ({ period }) => {
     assert(Number.isInteger(period) && period >= 1, new RangeError(`Expected period to be a positive integer, got ${period}`))
 
-    const vmPlusBuffer: Dnum[] = Array.from({ length: period })
-    const vmMinusBuffer: Dnum[] = Array.from({ length: period })
-    const trBuffer: Dnum[] = Array.from({ length: period })
+    const vmPlusBuffer: bigint[] = Array.from({ length: period })
+    const vmMinusBuffer: bigint[] = Array.from({ length: period })
+    const trBuffer: bigint[] = Array.from({ length: period })
 
     let head = 0
     let count = 0
-    let sumVmPlus: Dnum = constants.ZERO
-    let sumVmMinus: Dnum = constants.ZERO
-    let sumTr: Dnum = constants.ZERO
+    let sumVmPlus = fp18.ZERO
+    let sumVmMinus = fp18.ZERO
+    let sumTr = fp18.ZERO
 
-    let prevHigh: Dnum | null = null
-    let prevLow: Dnum | null = null
-    let prevClose: Dnum | null = null
+    let prevHigh: bigint | null = null
+    let prevLow: bigint | null = null
+    let prevClose: bigint | null = null
 
     return (bar: RequiredProperties<CandleData, 'h' | 'l' | 'c'>) => {
-      const h = toDnum(bar.h)
-      const l = toDnum(bar.l)
-      const c = toDnum(bar.c)
+      const h = fp18.toFp18(bar.h)
+      const l = fp18.toFp18(bar.l)
+      const c = fp18.toFp18(bar.c)
 
       if (prevHigh === null || prevLow === null || prevClose === null) {
         prevHigh = h
         prevLow = l
         prevClose = c
-        return { plus: constants.ZERO, minus: constants.ZERO }
+        return { plus: fp18.toDnum(fp18.ZERO), minus: fp18.toDnum(fp18.ZERO) }
       }
 
-      const vmPlus = abs(subtract(h, prevLow))
-      const vmMinus = abs(subtract(l, prevHigh))
+      const vmPlus = fp18.abs(h - prevLow)
+      const vmMinus = fp18.abs(l - prevHigh)
 
-      const hl = subtract(h, l)
-      const hpc = abs(subtract(h, prevClose))
-      const lpc = abs(subtract(l, prevClose))
+      const hl = h - l
+      const hpc = fp18.abs(h - prevClose)
+      const lpc = fp18.abs(l - prevClose)
       let tr = hl
-      if (gt(hpc, tr))
+      if (hpc > tr)
         tr = hpc
-      if (gt(lpc, tr))
+      if (lpc > tr)
         tr = lpc
 
       if (count < period) {
         vmPlusBuffer[count] = vmPlus
         vmMinusBuffer[count] = vmMinus
         trBuffer[count] = tr
-        sumVmPlus = add(sumVmPlus, vmPlus)
-        sumVmMinus = add(sumVmMinus, vmMinus)
-        sumTr = add(sumTr, tr)
+        sumVmPlus += vmPlus
+        sumVmMinus += vmMinus
+        sumTr += tr
         count++
       }
       else {
-        sumVmPlus = subtract(sumVmPlus, vmPlusBuffer[head])
-        sumVmMinus = subtract(sumVmMinus, vmMinusBuffer[head])
-        sumTr = subtract(sumTr, trBuffer[head])
+        sumVmPlus = sumVmPlus - vmPlusBuffer[head] + vmPlus
+        sumVmMinus = sumVmMinus - vmMinusBuffer[head] + vmMinus
+        sumTr = sumTr - trBuffer[head] + tr
         vmPlusBuffer[head] = vmPlus
         vmMinusBuffer[head] = vmMinus
         trBuffer[head] = tr
-        sumVmPlus = add(sumVmPlus, vmPlus)
-        sumVmMinus = add(sumVmMinus, vmMinus)
-        sumTr = add(sumTr, tr)
         head = (head + 1) % period
       }
 
@@ -96,8 +92,8 @@ export const vortex = createSignal(
       prevClose = c
 
       return {
-        plus: divide(sumVmPlus, sumTr, constants.DECIMALS),
-        minus: divide(sumVmMinus, sumTr, constants.DECIMALS),
+        plus: fp18.toDnum(fp18.div(sumVmPlus, sumTr)),
+        minus: fp18.toDnum(fp18.div(sumVmMinus, sumTr)),
       }
     }
   },

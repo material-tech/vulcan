@@ -1,19 +1,18 @@
 import type { CandleData, RequiredProperties } from '@vulcan-js/core'
-import { constants, createSignal, toDnum } from '@vulcan-js/core'
-import { divide, equal, subtract } from 'dnum'
+import { createSignal, fp18 } from '@vulcan-js/core'
 
 export const bop = createSignal(
   () => {
     return (bar: RequiredProperties<CandleData, 'o' | 'h' | 'l' | 'c'>) => {
-      const o = toDnum(bar.o)
-      const h = toDnum(bar.h)
-      const l = toDnum(bar.l)
-      const c = toDnum(bar.c)
-      const range = subtract(h, l)
-      if (equal(range, 0)) {
-        return constants.ZERO
+      const o = fp18.toFp18(bar.o)
+      const h = fp18.toFp18(bar.h)
+      const l = fp18.toFp18(bar.l)
+      const c = fp18.toFp18(bar.c)
+      const range = h - l
+      if (range === fp18.ZERO) {
+        return fp18.toDnum(fp18.ZERO)
       }
-      return divide(subtract(c, o), range, constants.DECIMALS)
+      return fp18.toDnum(fp18.div(c - o, range))
     }
   },
 )

@@ -6,5 +6,5 @@
       "@vulcan-js/indicators": ["./src/index.ts"]
     }
   },
-  "include": ["src/**/*.ts", "tests/**/*.spec.ts", "tests/ohlcv.json"]
+  "include": ["src/**/*.ts", "tests/**/*.spec.ts", "tests/ohlcv.json", "bench/**/*.bench.ts"]
 }

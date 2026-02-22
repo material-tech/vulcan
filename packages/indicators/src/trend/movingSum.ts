@@ -1,6 +1,6 @@
-import type { Dnum, Numberish } from 'dnum'
-import { assert, constants, createSignal, toDnum } from '@vulcan-js/core'
-import { add, subtract } from 'dnum'
+import type { Numberish } from 'dnum'
+import { createSignal, fp18 } from '@vulcan-js/core'
+import * as prim from '../primitives'
 
 export interface MovingSumOptions {
   period: number
@@ -17,27 +17,8 @@ export const defaultMovingSumOptions: MovingSumOptions = {
  */
 export const msum = createSignal(
   ({ period }) => {
-    assert(Number.isInteger(period) && period >= 1, new RangeError(`Expected period to be a positive integer, got ${period}`))
-    const buffer: Dnum[] = Array.from({ length: period })
-    let head = 0
-    let count = 0
-    let runningSum: Dnum = constants.ZERO
-
-    return (value: Numberish) => {
-      const v = toDnum(value)
-      if (count < period) {
-        buffer[count] = v
-        runningSum = add(runningSum, v)
-        count++
-      }
-      else {
-        runningSum = subtract(runningSum, buffer[head])
-        runningSum = add(runningSum, v)
-        buffer[head] = v
-        head = (head + 1) % period
-      }
-      return runningSum
-    }
+    const proc = prim.msum(period)
+    return (value: Numberish) => fp18.toDnum(proc(fp18.toFp18(value)))
   },
   defaultMovingSumOptions,
 )

@@ -1,7 +1,6 @@
 import type { Dnum, Numberish } from 'dnum'
-import { assert, constants, createSignal, toDnum } from '@vulcan-js/core'
-import { div, eq, mul, sub } from 'dnum'
-import { ema } from '../trend/exponentialMovingAverage'
+import { assert, createSignal, fp18 } from '@vulcan-js/core'
+import * as prim from '../primitives'
 
 export interface PercentageVolumeOscillatorOptions {
   fastPeriod: number
@@ -51,15 +50,16 @@ export const pvo = createSignal(
     assert(Number.isInteger(fastPeriod) && fastPeriod >= 1, new RangeError(`Expected fastPeriod to be a positive integer, got ${fastPeriod}`))
     assert(Number.isInteger(slowPeriod) && slowPeriod >= 1, new RangeError(`Expected slowPeriod to be a positive integer, got ${slowPeriod}`))
     assert(Number.isInteger(signalPeriod) && signalPeriod >= 1, new RangeError(`Expected signalPeriod to be a positive integer, got ${signalPeriod}`))
-    const fastProc = ema.create({ period: fastPeriod })
-    const slowProc = ema.create({ period: slowPeriod })
-    const signalProc = ema.create({ period: signalPeriod })
+    const fastProc = prim.ewma(prim.ewma.k(fastPeriod))
+    const slowProc = prim.ewma(prim.ewma.k(slowPeriod))
+    const signalProc = prim.ewma(prim.ewma.k(signalPeriod))
     return (value: Numberish) => {
-      const fast = fastProc(toDnum(value))
-      const slow = slowProc(toDnum(value))
-      const pvoVal = eq(slow, 0) ? constants.ZERO : mul(div(sub(fast, slow), slow, constants.DECIMALS), 100, constants.DECIMALS)
+      const v = fp18.toFp18(value)
+      const fast = fastProc(v)
+      const slow = slowProc(v)
+      const pvoVal = slow === fp18.ZERO ? fp18.ZERO : fp18.div((fast - slow) * 100n, slow)
       const sig = signalProc(pvoVal)
-      return { pvo: pvoVal, signal: sig, histogram: sub(pvoVal, sig) }
+      return { pvo: fp18.toDnum(pvoVal), signal: fp18.toDnum(sig), histogram: fp18.toDnum(pvoVal - sig) }
     }
   },
   defaultPercentageVolumeOscillatorOptions,
