@@ -95,7 +95,7 @@ const result3 = process(98)
 - [x] ADX/DMI
 - [x] SuperTrend
 - [x] ALMA
-- [ ] ZigZag
+- [x] ZigZag
 
 ### Momentum
 
