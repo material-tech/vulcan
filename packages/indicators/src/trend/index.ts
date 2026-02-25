@@ -1,4 +1,5 @@
 export * from './adx'
+export * from './alma'
 export * from './aroon'
 export * from './balanceOfPower'
 export * from './chandeForecastOscillator'

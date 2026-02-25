@@ -68,7 +68,7 @@ process(98)
 | Vortex Indicator | `vortex` | `vortexIndicator` |
 | ADX/DMI | `adx` | `averageDirectionalIndex` |
 | SuperTrend | `superTrend` | `superTrendIndicator` |
-| ALMA | — | _TODO_ |
+| ALMA | `alma` | `arnaudLegouxMovingAverage` |
 | ZigZag | — | _TODO_ |
 
 ### Momentum

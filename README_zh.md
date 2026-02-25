@@ -94,7 +94,7 @@ const result3 = process(98)
 - [x] Vortex Indicator
 - [x] ADX/DMI
 - [x] SuperTrend
-- [ ] ALMA
+- [x] ALMA
 - [ ] ZigZag
 
 ### 动量指标
