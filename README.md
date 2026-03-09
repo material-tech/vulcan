@@ -117,8 +117,8 @@ const result3 = process(98)
 ### Volatility
 
 - [x] Mass Index (MI)
-- [ ] Average True Range (ATR)
-- [ ] Bollinger Bands
+- [x] Average True Range (ATR)
+- [x] Bollinger Bands
 - [ ] Keltner Channels
 - [ ] Donchian Channels
 - [ ] Standard Deviation

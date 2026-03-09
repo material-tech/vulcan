@@ -97,7 +97,7 @@ process(98)
 | Mass Index | `mi` | `massIndex` |
 | Standard Deviation | `stdDev` | `standardDeviation` |
 | Average True Range | `atr` | `averageTrueRange` |
-| Bollinger Bands | — | _TODO_ |
+| Bollinger Bands | `bb` | `bollingerBands` |
 | Keltner Channels | — | _TODO_ |
 | Donchian Channels | — | _TODO_ |
 
