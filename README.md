@@ -110,7 +110,7 @@ const result3 = process(98)
 - [x] Relative Strength Index (RSI)
 - [x] Stochastic Oscillator (STOCH)
 - [x] Williams R (WILLR)
-- [ ] Money Flow Index (MFI)
+- [x] Money Flow Index (MFI)
 - [ ] Ultimate Oscillator
 - [ ] True Strength Index (TSI)
 
