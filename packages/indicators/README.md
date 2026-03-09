@@ -99,7 +99,7 @@ process(98)
 | Bollinger Bands | — | _TODO_ |
 | Keltner Channels | — | _TODO_ |
 | Donchian Channels | — | _TODO_ |
-| Standard Deviation | — | _TODO_ |
+| Standard Deviation | `stdDev` | `standardDeviation` |
 
 ### Volume
 
