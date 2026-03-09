@@ -1,0 +1,39 @@
+{
+  "name": "@vulcan-js/pyrite",
+  "type": "module",
+  "version": "0.2.0",
+  "description": "Synthetic market data generator with GBM and jump diffusion models",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/material-tech/vulcan",
+    "directory": "packages/pyrite"
+  },
+  "keywords": [
+    "synthetic-data",
+    "market-data",
+    "gbm",
+    "geometric-brownian-motion",
+    "ohlcv",
+    "backtesting",
+    "trading"
+  ],
+  "exports": {
+    ".": "./dist/index.js",
+    "./package.json": "./package.json"
+  },
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@vulcan-js/core": "workspace:^",
+    "dnum": "catalog:runtime"
+  },
+  "devDependencies": {
+    "vitest": "catalog:test"
+  }
+}
