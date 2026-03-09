@@ -17,26 +17,25 @@ export const defaultStandardDeviationOptions: StandardDeviationOptions = {
 /**
  * Standard Deviation (StdDev)
  *
- * Measures the amount of variation or dispersion of a set of values.
- * A low standard deviation indicates that the values tend to be close to the mean,
- * while a high standard deviation indicates that the values are spread out over a wider range.
+ * Measures the dispersion of a dataset relative to its mean.
+ * In trading, it's used to quantify volatility - higher standard deviation
+ * indicates higher volatility.
  *
- * Formula: σ = sqrt(Σ(xi - μ)² / n)
+ * Formula (Population Standard Deviation):
+ *   StdDev = sqrt( sum((x - mean)^2) / N )
+ *
  * Where:
- *   σ = Standard Deviation
- *   xi = Individual data points
- *   μ = Mean (average)
- *   n = Number of data points (period)
+ *   x = individual price values
+ *   mean = average of prices over the period
+ *   N = period (number of values)
  *
- * Common use cases:
- * - Bollinger Bands (middle band ± 2 standard deviations)
- * - Volatility measurement
- * - Risk assessment in finance
+ * Note: This uses population standard deviation (divides by N), not sample
+ * standard deviation (which would divide by N-1), as is standard for technical indicators.
  *
  * @param source - Iterable of price values
  * @param options - Configuration options
- * @param options.period - The period for calculating the standard deviation (default: 20)
- * @returns Generator yielding Standard Deviation values
+ * @param options.period - The period for calculating standard deviation (default: 20)
+ * @returns Generator yielding standard deviation values
  */
 export const stdDev = createSignal(
   ({ period }) => {

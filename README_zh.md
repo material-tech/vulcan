@@ -117,11 +117,11 @@ const result3 = process(98)
 ### 波动率指标
 
 - [x] Mass Index (MI)
-- [ ] Average True Range (ATR)
+- [x] Average True Range (ATR)
 - [ ] Bollinger Bands
 - [ ] Keltner Channels
 - [ ] Donchian Channels
-- [ ] Standard Deviation
+- [x] Standard Deviation
 
 ### 成交量指标
 

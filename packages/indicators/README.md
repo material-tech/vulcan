@@ -95,11 +95,11 @@ process(98)
 | Indicator | Function | Alias |
 | --- | --- | --- |
 | Mass Index | `mi` | `massIndex` |
-| Average True Range | — | _TODO_ |
+| Standard Deviation | `stdDev` | `standardDeviation` |
+| Average True Range | `atr` | `averageTrueRange` |
 | Bollinger Bands | — | _TODO_ |
 | Keltner Channels | — | _TODO_ |
 | Donchian Channels | — | _TODO_ |
-| Standard Deviation | `stdDev` | `standardDeviation` |
 
 ### Volume
 
