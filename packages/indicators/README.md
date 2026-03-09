@@ -86,7 +86,7 @@ process(98)
 | Relative Strength Index | `rsi` | `relativeStrengthIndex` |
 | Stochastic Oscillator | `stoch` | `stochasticOscillator` |
 | Williams %R | `willr` | `williamsR` |
-| Money Flow Index | — | _TODO_ |
+| Money Flow Index | `mfi` | `moneyFlowIndex` |
 | Ultimate Oscillator | — | _TODO_ |
 | True Strength Index | — | _TODO_ |
 
