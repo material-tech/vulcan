@@ -69,7 +69,7 @@ process(98)
 | ADX/DMI | `adx` | `averageDirectionalIndex` |
 | SuperTrend | `superTrend` | `superTrendIndicator` |
 | ALMA | `alma` | `arnaudLegouxMovingAverage` |
-| ZigZag | — | _TODO_ |
+| ZigZag | `zigZag` | `zigZagIndicator` |
 
 ### Momentum
 
