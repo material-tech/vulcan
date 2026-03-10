@@ -121,7 +121,7 @@ const result3 = process(98)
 - [x] Bollinger Bands
 - [x] Keltner Channels
 - [x] Donchian Channels
-- [ ] Standard Deviation
+- [x] Standard Deviation
 
 ### Volume
 
