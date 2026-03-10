@@ -1,4 +1,5 @@
 export * from './averageTrueRange'
 export * from './bollingerBands'
+export * from './donchianChannels'
 export * from './massIndex'
 export * from './standardDeviation'
