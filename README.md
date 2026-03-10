@@ -129,7 +129,7 @@ const result3 = process(98)
 - [ ] On-Balance Volume (OBV)
 - [ ] Volume Weighted Average Price (VWAP)
 - [ ] Force Index
-- [ ] Ease of Movement (EOM)
+- [x] Ease of Movement (EOM)
 
 ## License
 
