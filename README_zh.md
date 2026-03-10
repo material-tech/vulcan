@@ -120,7 +120,7 @@ const result3 = process(98)
 - [x] Average True Range (ATR)
 - [x] Bollinger Bands
 - [x] Keltner Channels
-- [ ] Donchian Channels
+- [x] Donchian Channels
 - [ ] Standard Deviation
 
 ### 成交量指标

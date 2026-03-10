@@ -4,33 +4,33 @@ import * as prim from '../primitives'
 
 export interface KeltnerChannelsOptions {
   /**
-   * The EMA period for the middle line (typically 20).
+   * The period for calculating the EMA (middle line)
    * @default 20
    */
-  emaPeriod: number
+  period: number
   /**
-   * The ATR period for channel width (typically 10).
+   * The multiplier for ATR (determines channel width)
+   * @default 2.0
+   */
+  multiplier: number
+  /**
+   * The period for calculating ATR
    * @default 10
    */
   atrPeriod: number
-  /**
-   * The multiplier for ATR to determine channel width (typically 2).
-   * @default 2
-   */
-  multiplier: number
 }
 
 export const defaultKeltnerChannelsOptions: KeltnerChannelsOptions = {
-  emaPeriod: 20,
+  period: 20,
+  multiplier: 2.0,
   atrPeriod: 10,
-  multiplier: 2,
 }
 
 export interface KeltnerChannelsResult {
+  /** Middle line (EMA of close prices) */
+  middle: readonly [bigint, number]
   /** Upper channel line */
   upper: readonly [bigint, number]
-  /** Middle line (EMA of typical price) */
-  middle: readonly [bigint, number]
   /** Lower channel line */
   lower: readonly [bigint, number]
 }
@@ -38,76 +38,73 @@ export interface KeltnerChannelsResult {
 /**
  * Keltner Channels
  *
- * A volatility-based technical indicator that uses an exponential moving average
- * (EMA) as the middle line and Average True Range (ATR) to set the channel width.
- * The channels expand and contract based on market volatility.
+ * A volatility-based envelope indicator developed by Chester Keltner.
+ * Consists of an EMA (middle line) with an envelope based on ATR above and below.
  *
  * Formula:
- *   Typical Price = (High + Low + Close) / 3
- *   Middle Line = EMA(Typical Price, emaPeriod)
- *   Upper = Middle + (ATR × multiplier)
- *   Lower = Middle - (ATR × multiplier)
+ *   Middle Line = EMA(Close, period)
+ *   Upper Line = Middle Line + (multiplier × ATR)
+ *   Lower Line = Middle Line - (multiplier × ATR)
  *
- * @param source - Iterable of OHLCV candle data
+ * @param source - Iterable of OHLC candle data
  * @param options - Configuration options
- * @param options.emaPeriod - The EMA period for middle line (default: 20)
- * @param options.atrPeriod - The ATR period for channel width (default: 10)
- * @param options.multiplier - The ATR multiplier for channel width (default: 2)
+ * @param options.period - EMA period for middle line (default: 20)
+ * @param options.multiplier - ATR multiplier for channel width (default: 2.0)
+ * @param options.atrPeriod - ATR calculation period (default: 10)
  * @returns Generator yielding KeltnerChannelsResult objects
  *
  * @example
  * ```ts
  * const channels = collect(keltnerChannels(candles))
- * // Each result contains upper, middle, lower lines
+ * // Each result: { middle: [bigint, number], upper: [bigint, number], lower: [bigint, number] }
  * ```
  */
 export const keltnerChannels = createSignal(
-  ({ emaPeriod, atrPeriod, multiplier }) => {
-    assert(Number.isInteger(emaPeriod) && emaPeriod > 0, new RangeError(`Expected emaPeriod to be a positive integer, got ${emaPeriod}`))
-    assert(Number.isInteger(atrPeriod) && atrPeriod > 0, new RangeError(`Expected atrPeriod to be a positive integer, got ${atrPeriod}`))
+  ({ period, multiplier, atrPeriod }) => {
+    assert(Number.isInteger(period) && period > 0, new RangeError(`Expected period to be a positive integer, got ${period}`))
     assert(multiplier > 0, new RangeError(`Expected multiplier to be positive, got ${multiplier}`))
+    assert(Number.isInteger(atrPeriod) && atrPeriod > 0, new RangeError(`Expected atrPeriod to be a positive integer, got ${atrPeriod}`))
 
-    const ema = prim.ema({ period: emaPeriod })
-    const atrRma = prim.rma({ period: atrPeriod })
-
-    const multFp = fp18.from(multiplier)
-
-    let prevClose: bigint | undefined
+    const emaProc = prim.ema({ period })
+    const rmaProc = prim.rma(atrPeriod)
+    let prevClose: bigint | null = null
 
     return (bar: RequiredProperties<CandleData, 'h' | 'l' | 'c'>): KeltnerChannelsResult => {
-      const h = fp18.toFp18(bar.h)
-      const l = fp18.toFp18(bar.l)
-      const c = fp18.toFp18(bar.c)
-
-      // Typical Price = (High + Low + Close) / 3
-      const typicalPrice = fp18.div(h + l + c, fp18.from(3))
-
-      // Middle line = EMA of typical price
-      const middle = ema(typicalPrice)
+      const high = fp18.toFp18(bar.h)
+      const low = fp18.toFp18(bar.l)
+      const close = fp18.toFp18(bar.c)
 
       // Calculate True Range
-      // TR = max(High - Low, |High - PrevClose|, |Low - PrevClose|)
-      let tr = h - l // High - Low
-      if (prevClose !== undefined) {
-        const highMinusPrevClose = h > prevClose ? h - prevClose : prevClose - h
-        const lowMinusPrevClose = l > prevClose ? l - prevClose : prevClose - l
-        tr = tr > highMinusPrevClose ? tr : highMinusPrevClose
-        tr = tr > lowMinusPrevClose ? tr : lowMinusPrevClose
+      const range1 = high - low
+      let tr: bigint
+
+      if (prevClose === null) {
+        tr = range1
       }
-      prevClose = c
+      else {
+        const range2 = high > prevClose ? high - prevClose : prevClose - high
+        const range3 = low > prevClose ? low - prevClose : prevClose - low
+        tr = range1 > range2 ? (range1 > range3 ? range1 : range3) : (range2 > range3 ? range2 : range3)
+      }
 
-      // ATR = RMA of TR
-      const atrValue = atrRma(tr)
+      prevClose = close
 
-      // Upper = Middle + (ATR × multiplier)
-      const upper = middle + fp18.mul(atrValue, multFp)
+      // Calculate ATR (using RMA)
+      const atr = rmaProc(tr)
 
-      // Lower = Middle - (ATR × multiplier)
-      const lower = middle - fp18.mul(atrValue, multFp)
+      // Calculate Middle Line (EMA of close)
+      const middle = emaProc(close)
+
+      // Calculate channel offset
+      const offset = fp18.mul(atr, fp18.from(multiplier))
+
+      // Upper and Lower bands
+      const upper = middle + offset
+      const lower = middle - offset
 
       return {
-        upper: fp18.toDnum(upper),
         middle: fp18.toDnum(middle),
+        upper: fp18.toDnum(upper),
         lower: fp18.toDnum(lower),
       }
     }
