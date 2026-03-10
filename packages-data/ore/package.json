@@ -1,0 +1,44 @@
+{
+  "name": "@vulcan-js/ore",
+  "type": "module",
+  "version": "0.2.0",
+  "description": "Unified exchange data infrastructure for fetching, transforming, and streaming market data from multiple cryptocurrency exchanges",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/material-tech/vulcan",
+    "directory": "packages-data/ore"
+  },
+  "keywords": [
+    "cryptocurrency",
+    "exchange",
+    "market-data",
+    "websocket",
+    "binance",
+    "okx",
+    "hyperliquid",
+    "alpaca",
+    "trading",
+    "ohlcv"
+  ],
+  "exports": {
+    ".": "./dist/index.js",
+    "./package.json": "./package.json"
+  },
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@vulcan-js/core": "workspace:^",
+    "defu": "catalog:runtime",
+    "dnum": "catalog:runtime"
+  },
+  "devDependencies": {
+    "vite-tsconfig-paths": "catalog:test",
+    "vitest": "catalog:test"
+  }
+}

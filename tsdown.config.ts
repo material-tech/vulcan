@@ -1,7 +1,7 @@
 import { defineConfig } from 'tsdown'
 
 export default defineConfig({
-  workspace: ['packages/*'],
+  workspace: ['packages/*', 'packages-data/*'],
   entry: ['./src/index.ts'],
   target: 'es2020',
   clean: true,

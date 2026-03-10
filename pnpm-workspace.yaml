@@ -4,6 +4,7 @@ trustPolicy: no-downgrade
 
 packages:
   - 'packages/*'
+  - 'packages-data/*'
   - example
 
 catalogs:
