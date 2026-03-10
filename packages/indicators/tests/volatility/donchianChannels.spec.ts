@@ -77,9 +77,9 @@ describe('donchian channels (DC)', () => {
     const lower2 = Number(result[2].lower[0]) / 10 ** result[2].lower[1]
     expect(lower2).toBe(8)
 
-    // At index 6 (7th candle), lower should be 10 (lowest of 10, 11, 12)
+    // At index 6 (7th candle), lower should be 9 (lowest of 9, 10, 11 from candles[4], [5], [6])
     const lower6 = Number(result[6].lower[0]) / 10 ** result[6].lower[1]
-    expect(lower6).toBe(10)
+    expect(lower6).toBe(9)
   })
 
   it('should have wider channels with higher volatility', () => {
