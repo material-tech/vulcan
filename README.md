@@ -119,7 +119,7 @@ const result3 = process(98)
 - [x] Mass Index (MI)
 - [x] Average True Range (ATR)
 - [x] Bollinger Bands
-- [ ] Keltner Channels
+- [x] Keltner Channels
 - [ ] Donchian Channels
 - [ ] Standard Deviation
 
