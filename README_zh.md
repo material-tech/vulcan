@@ -126,7 +126,7 @@ const result3 = process(98)
 ### 成交量指标
 
 - [x] Accumulation/Distribution (AD)
-- [ ] On-Balance Volume (OBV)
+- [x] On-Balance Volume (OBV)
 - [ ] Volume Weighted Average Price (VWAP)
 - [ ] Force Index
 - [x] Ease of Movement (EOM)
