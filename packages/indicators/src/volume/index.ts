@@ -1,5 +1,6 @@
 export * from './accumulationDistribution'
 export * from './easeOfMovement'
+export * from './force-index'
 export * from './mfi'
 export * from './on-balance-volume'
 export * from './vwap'

@@ -128,7 +128,7 @@ const result3 = process(98)
 - [x] Accumulation/Distribution (AD)
 - [x] On-Balance Volume (OBV)
 - [x] Volume Weighted Average Price (VWAP)
-- [ ] Force Index
+- [x] Force Index
 - [x] Ease of Movement (EOM)
 
 ## License
