@@ -111,7 +111,7 @@ const result3 = process(98)
 - [x] Stochastic Oscillator (STOCH)
 - [x] Williams R (WILLR)
 - [x] Money Flow Index (MFI)
-- [ ] Ultimate Oscillator
+- [x] Ultimate Oscillator
 - [ ] True Strength Index (TSI)
 
 ### Volatility
