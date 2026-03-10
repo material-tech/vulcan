@@ -112,7 +112,7 @@ const result3 = process(98)
 - [x] Williams R (WILLR)
 - [x] Money Flow Index (MFI)
 - [x] Ultimate Oscillator
-- [ ] True Strength Index (TSI)
+- [x] True Strength Index (TSI)
 
 ### Volatility
 
