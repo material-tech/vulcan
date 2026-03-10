@@ -89,6 +89,7 @@ export const ultimateOscillator = createSignal(
     const totalWeight = weight1Fp + weight2Fp + weight3Fp
 
     let prevClose: bigint | null = null
+    let count = 0
 
     return (bar: RequiredProperties<CandleData, 'h' | 'l' | 'c'>) => {
       const high = fp18.toFp18(bar.h)
@@ -112,6 +113,7 @@ export const ultimateOscillator = createSignal(
       }
 
       prevClose = close
+      count++
 
       // Calculate average BP and TR for each period
       const avgBpShort = bpShortProc(bp)
@@ -122,8 +124,9 @@ export const ultimateOscillator = createSignal(
       const avgTrLong = trLongProc(tr)
 
       // Check if we have enough data for all periods
-      // Return 0 during warm-up period
-      if (avgTrShort === fp18.ZERO || avgTrMedium === fp18.ZERO || avgTrLong === fp18.ZERO) {
+      // Return 0 during warm-up period (until we have at least longPeriod data points)
+      // Note: count starts at 1 after first bar, so we need count <= longPeriod for warm-up
+      if (count <= longPeriod) {
         return fp18.toDnum(fp18.ZERO)
       }
 

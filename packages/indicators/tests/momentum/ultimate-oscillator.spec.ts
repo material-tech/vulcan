@@ -149,44 +149,44 @@ describe('ultimateOscillator', () => {
   })
 
   it('should identify oversold conditions in strong downtrend', () => {
-    // Strong downtrend data
+    // Strong downtrend data - closing near lows indicates selling pressure
     const downtrendData = [
-      { h: 200, l: 192, c: 198 },
-      { h: 195, l: 187, c: 193 },
-      { h: 190, l: 182, c: 188 },
-      { h: 185, l: 177, c: 183 },
-      { h: 180, l: 172, c: 178 },
-      { h: 175, l: 167, c: 173 },
-      { h: 170, l: 162, c: 168 },
-      { h: 165, l: 157, c: 163 },
-      { h: 160, l: 152, c: 158 },
-      { h: 155, l: 147, c: 153 },
-      { h: 150, l: 142, c: 148 },
-      { h: 145, l: 137, c: 143 },
-      { h: 140, l: 132, c: 138 },
-      { h: 135, l: 127, c: 133 },
-      { h: 130, l: 122, c: 128 },
-      { h: 125, l: 117, c: 123 },
-      { h: 120, l: 112, c: 118 },
-      { h: 115, l: 107, c: 113 },
-      { h: 110, l: 102, c: 108 },
-      { h: 105, l: 97, c: 103 },
-      { h: 100, l: 92, c: 98 },
-      { h: 95, l: 87, c: 93 },
-      { h: 90, l: 82, c: 88 },
-      { h: 85, l: 77, c: 83 },
-      { h: 80, l: 72, c: 78 },
-      { h: 75, l: 67, c: 73 },
-      { h: 70, l: 62, c: 68 },
-      { h: 65, l: 57, c: 63 },
-      { h: 60, l: 52, c: 58 },
-      { h: 55, l: 47, c: 53 },
+      { h: 100, l: 95, c: 96 },
+      { h: 96, l: 90, c: 91 },
+      { h: 92, l: 85, c: 86 },
+      { h: 88, l: 80, c: 81 },
+      { h: 84, l: 75, c: 76 },
+      { h: 80, l: 70, c: 71 },
+      { h: 76, l: 65, c: 66 },
+      { h: 72, l: 60, c: 61 },
+      { h: 68, l: 55, c: 56 },
+      { h: 64, l: 50, c: 51 },
+      { h: 60, l: 45, c: 46 },
+      { h: 56, l: 40, c: 41 },
+      { h: 52, l: 35, c: 36 },
+      { h: 48, l: 30, c: 31 },
+      { h: 44, l: 25, c: 26 },
+      { h: 40, l: 20, c: 21 },
+      { h: 36, l: 15, c: 16 },
+      { h: 32, l: 10, c: 11 },
+      { h: 30, l: 8, c: 9 },
+      { h: 28, l: 6, c: 7 },
+      { h: 26, l: 5, c: 6 },
+      { h: 24, l: 4, c: 5 },
+      { h: 22, l: 3, c: 4 },
+      { h: 20, l: 2, c: 3 },
+      { h: 18, l: 1, c: 2 },
+      { h: 16, l: 1, c: 2 },
+      { h: 14, l: 1, c: 2 },
+      { h: 12, l: 1, c: 2 },
+      { h: 10, l: 1, c: 2 },
+      { h: 8, l: 1, c: 2 },
     ]
 
     const result = collect(ultimateOscillator(downtrendData))
     const lastValue = result[result.length - 1]
 
-    // In a strong downtrend, UO should be in oversold territory (<30)
+    // In a strong downtrend with closes near lows, UO should be in oversold territory (<30)
     expect(lastValue[0]).toBeLessThan(30n * 10n ** 18n)
   })
 
