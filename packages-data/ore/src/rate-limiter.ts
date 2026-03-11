@@ -14,7 +14,7 @@ export interface RateLimiterConfig {
 
 /**
  * Token bucket rate limiter
- * 
+ *
  * Implements the token bucket algorithm for smooth rate limiting
  * with optional burst capacity.
  */
@@ -35,7 +35,7 @@ export class RateLimiter {
 
   /**
    * Try to acquire a token for making a request
-   * 
+   *
    * @returns Promise that resolves when a token is available
    * @throws RateLimitError if rate limit is exceeded and cannot wait
    */
@@ -53,7 +53,7 @@ export class RateLimiter {
 
     // Wait for token to become available
     await sleep(waitTime)
-    
+
     // Try again after waiting
     this.refill()
     if (this.tokens >= 1) {
@@ -64,7 +64,7 @@ export class RateLimiter {
     throw new RateLimitError(
       `Rate limit exceeded. Retry after ${waitTime}ms`,
       waitTime,
-      'generic'
+      'generic',
     )
   }
 
@@ -96,7 +96,7 @@ export class RateLimiter {
 
 /**
  * Rate limiter manager for multiple endpoints
- * 
+ *
  * Manages separate rate limiters for different endpoints
  * with different limits (e.g., REST vs WebSocket).
  */
@@ -105,7 +105,7 @@ export class RateLimiterManager {
 
   /**
    * Register a rate limiter for an endpoint
-   * 
+   *
    * @param name - Endpoint identifier
    * @param config - Rate limiter configuration
    */
@@ -115,7 +115,7 @@ export class RateLimiterManager {
 
   /**
    * Acquire a token from a specific limiter
-   * 
+   *
    * @param name - Endpoint identifier
    */
   async acquire(name: string): Promise<void> {
@@ -128,23 +128,25 @@ export class RateLimiterManager {
 
   /**
    * Check if a request can be made without waiting
-   * 
+   *
    * @param name - Endpoint identifier
    */
   canAcquire(name: string): boolean {
     const limiter = this.limiters.get(name)
-    if (!limiter) return true
+    if (!limiter)
+      return true
     return limiter.canAcquire()
   }
 
   /**
    * Get token count for a limiter
-   * 
+   *
    * @param name - Endpoint identifier
    */
   getTokens(name: string): number {
     const limiter = this.limiters.get(name)
-    if (!limiter) return 0
+    if (!limiter)
+      return 0
     return limiter.getTokens()
   }
 }
@@ -193,13 +195,13 @@ export const ExchangeRateLimits: Record<string, RateLimiterConfig> = {
 
 /**
  * Create a rate limiter for a specific exchange
- * 
+ *
  * @param exchange - Exchange name
  * @param customConfig - Optional custom configuration override
  */
 export function createExchangeRateLimiter(
   exchange: string,
-  customConfig?: Partial<RateLimiterConfig>
+  customConfig?: Partial<RateLimiterConfig>,
 ): RateLimiter {
   const config = ExchangeRateLimits[exchange] ?? ExchangeRateLimits.default
   return new RateLimiter({

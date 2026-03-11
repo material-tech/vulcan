@@ -1,22 +1,12 @@
-// Core types and errors
+// Adapters
 export {
-  // Types
-  type Timeframe,
-  type MarketType,
-  type TickerData,
-  type TradeData,
-  type OrderBookEntry,
-  type OrderBookData,
-  type FetchCandlesOptions,
-  type SubscribeOptions,
-  type ExchangeAdapterConfig,
-  type ExchangeAdapter,
-  type CacheConfig,
-  // Error classes
-  ExchangeError,
-  RateLimitError,
-  WebSocketError,
-} from './types.ts'
+  AlpacaAdapter,
+  BaseAdapter,
+  BinanceAdapter,
+  defaultAdapterConfig,
+  HyperliquidAdapter,
+  OKXAdapter,
+} from './adapters/index.ts'
 
 // Cache
 export {
@@ -28,19 +18,29 @@ export {
 
 // Rate limiter
 export {
-  RateLimiter,
-  RateLimiterManager,
-  ExchangeRateLimits,
   createExchangeRateLimiter,
+  ExchangeRateLimits,
+  RateLimiter,
   type RateLimiterConfig,
+  RateLimiterManager,
 } from './rate-limiter.ts'
 
-// Adapters
+// Core types and errors
 export {
-  BaseAdapter,
-  defaultAdapterConfig,
-  BinanceAdapter,
-  OKXAdapter,
-  HyperliquidAdapter,
-  AlpacaAdapter,
-} from './adapters/index.ts'
+  type CacheConfig,
+  type ExchangeAdapter,
+  type ExchangeAdapterConfig,
+  // Error classes
+  ExchangeError,
+  type FetchCandlesOptions,
+  type MarketType,
+  type OrderBookData,
+  type OrderBookEntry,
+  RateLimitError,
+  type SubscribeOptions,
+  type TickerData,
+  // Types
+  type Timeframe,
+  type TradeData,
+  WebSocketError,
+} from './types.ts'

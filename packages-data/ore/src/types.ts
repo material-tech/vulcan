@@ -3,11 +3,11 @@ import type { CandleData } from '@vulcan-js/core'
 /**
  * Timeframe intervals supported by exchanges
  */
-export type Timeframe =
-  | '1s' | '5s' | '15s' | '30s'
-  | '1m' | '3m' | '5m' | '15m' | '30m'
-  | '1h' | '2h' | '4h' | '6h' | '8h' | '12h'
-  | '1d' | '3d' | '1w' | '1M'
+export type Timeframe
+  = | '1s' | '5s' | '15s' | '30s'
+    | '1m' | '3m' | '5m' | '15m' | '30m'
+    | '1h' | '2h' | '4h' | '6h' | '8h' | '12h'
+    | '1d' | '3d' | '1w' | '1M'
 
 /**
  * Market type for exchanges that support different market types
@@ -136,109 +136,109 @@ export interface ExchangeAdapterConfig {
 
 /**
  * Exchange adapter interface
- * 
+ *
  * Implement this interface to add support for a new exchange.
  */
 export interface ExchangeAdapter {
   /** Exchange identifier */
   readonly name: string
-  
+
   /** Adapter configuration */
   readonly config: ExchangeAdapterConfig
-  
+
   /**
    * Check if the adapter is connected (WebSocket)
    */
   readonly isConnected: boolean
-  
+
   /**
    * Fetch historical candlestick (OHLCV) data
-   * 
+   *
    * @param options - Fetch options
    * @returns Promise resolving to array of CandleData
    */
-  fetchCandles(options: FetchCandlesOptions): Promise<CandleData[]>
-  
+  fetchCandles: (options: FetchCandlesOptions) => Promise<CandleData[]>
+
   /**
    * Fetch available trading pairs/symbols
-   * 
+   *
    * @param marketType - Optional market type filter
    * @returns Promise resolving to array of symbols
    */
-  fetchSymbols(marketType?: MarketType): Promise<string[]>
-  
+  fetchSymbols: (marketType?: MarketType) => Promise<string[]>
+
   /**
    * Fetch current ticker data for a symbol
-   * 
+   *
    * @param symbol - Trading pair symbol
    * @param marketType - Optional market type
    * @returns Promise resolving to TickerData
    */
-  fetchTicker(symbol: string, marketType?: MarketType): Promise<TickerData>
-  
+  fetchTicker: (symbol: string, marketType?: MarketType) => Promise<TickerData>
+
   /**
    * Connect to WebSocket for real-time data
-   * 
+   *
    * @returns Promise that resolves when connected
    */
-  connect(): Promise<void>
-  
+  connect: () => Promise<void>
+
   /**
    * Disconnect from WebSocket
-   * 
+   *
    * @returns Promise that resolves when disconnected
    */
-  disconnect(): Promise<void>
-  
+  disconnect: () => Promise<void>
+
   /**
    * Subscribe to real-time candle updates
-   * 
+   *
    * @param options - Subscribe options
    * @param callback - Callback function for new candles
    * @returns Unsubscribe function
    */
-  subscribeCandles(
+  subscribeCandles: (
     options: SubscribeOptions & { timeframe: Timeframe },
-    callback: (candle: CandleData) => void
-  ): Promise<() => void>
-  
+    callback: (candle: CandleData) => void,
+  ) => Promise<() => void>
+
   /**
    * Subscribe to real-time ticker updates
-   * 
+   *
    * @param options - Subscribe options
    * @param callback - Callback function for ticker updates
    * @returns Unsubscribe function
    */
-  subscribeTicker(
+  subscribeTicker: (
     options: SubscribeOptions,
-    callback: (ticker: TickerData) => void
-  ): Promise<() => void>
-  
+    callback: (ticker: TickerData) => void,
+  ) => Promise<() => void>
+
   /**
    * Subscribe to real-time trade updates
-   * 
+   *
    * @param options - Subscribe options
    * @param callback - Callback function for trade updates
    * @returns Unsubscribe function
    */
-  subscribeTrades(
+  subscribeTrades: (
     options: SubscribeOptions,
-    callback: (trade: TradeData) => void
-  ): Promise<() => void>
-  
+    callback: (trade: TradeData) => void,
+  ) => Promise<() => void>
+
   /**
    * Subscribe to real-time order book updates
-   * 
+   *
    * @param options - Subscribe options
    * @param callback - Callback function for order book updates
    * @param depth - Order book depth (number of levels)
    * @returns Unsubscribe function
    */
-  subscribeOrderBook(
+  subscribeOrderBook: (
     options: SubscribeOptions,
     callback: (orderBook: OrderBookData) => void,
-    depth?: number
-  ): Promise<() => void>
+    depth?: number,
+  ) => Promise<() => void>
 }
 
 /**
@@ -262,7 +262,7 @@ export class ExchangeError extends Error {
   constructor(
     message: string,
     public readonly code?: string,
-    public readonly exchange?: string
+    public readonly exchange?: string,
   ) {
     super(message)
     this.name = 'ExchangeError'
@@ -276,7 +276,7 @@ export class RateLimitError extends ExchangeError {
   constructor(
     message: string,
     public readonly retryAfter: number,
-    exchange?: string
+    exchange?: string,
   ) {
     super(message, 'RATE_LIMIT', exchange)
     this.name = 'RateLimitError'

@@ -1,6 +1,4 @@
 import type { CandleData } from '@vulcan-js/core'
-import { BaseAdapter } from './base.ts'
-import { ExchangeError } from '../types.ts'
 import type {
   FetchCandlesOptions,
   MarketType,
@@ -11,13 +9,15 @@ import type {
   Timeframe,
   TradeData,
 } from '../types.ts'
+import { ExchangeError } from '../types.ts'
+import { BaseAdapter } from './base.ts'
 
 /**
  * Hyperliquid timeframe mapping
  * Note: Hyperliquid only supports specific timeframes
  */
 const HYPERLIQUID_TIMEFRAMES: Record<Timeframe, string | null> = {
-  '1s': null,   // Not supported
+  '1s': null, // Not supported
   '5s': null,
   '15s': null,
   '30s': null,
@@ -40,9 +40,9 @@ const HYPERLIQUID_TIMEFRAMES: Record<Timeframe, string | null> = {
 
 /**
  * Hyperliquid exchange adapter
- * 
+ *
  * Hyperliquid is a decentralized perpetual futures exchange.
- * 
+ *
  * REST API: https://api.hyperliquid.xyz
  * WebSocket: wss://api.hyperliquid.xyz/ws
  */
@@ -63,7 +63,7 @@ export class HyperliquidAdapter extends BaseAdapter {
       throw new ExchangeError(
         `Timeframe ${timeframe} not supported by Hyperliquid. Supported: 1m, 5m, 15m, 1h, 4h, 1d`,
         'UNSUPPORTED_TIMEFRAME',
-        this.name
+        this.name,
       )
     }
     return tf
@@ -71,14 +71,14 @@ export class HyperliquidAdapter extends BaseAdapter {
 
   protected normalizeCandle(data: unknown): CandleData {
     const c = data as {
-      t: number      // Open time (ms)
-      T: number      // Close time (ms)
-      o: string      // Open
-      h: string      // High
-      l: string      // Low
-      c: string      // Close
-      v: string      // Volume
-      n: number      // Number of trades
+      t: number // Open time (ms)
+      T: number // Close time (ms)
+      o: string // Open
+      h: string // High
+      l: string // Low
+      c: string // Close
+      v: string // Volume
+      n: number // Number of trades
     }
 
     return {
@@ -139,13 +139,13 @@ export class HyperliquidAdapter extends BaseAdapter {
     const ob = data as {
       coin: string
       levels: [
-        Array<{ px: string; sz: string }>,  // Bids
-        Array<{ px: string; sz: string }>,  // Asks
+        Array<{ px: string, sz: string }>, // Bids
+        Array<{ px: string, sz: string }>, // Asks
       ]
       time: number
     }
 
-    const parseEntry = (entry: { px: string; sz: string }): OrderBookEntry => ({
+    const parseEntry = (entry: { px: string, sz: string }): OrderBookEntry => ({
       price: Number.parseFloat(entry.px),
       amount: Number.parseFloat(entry.sz),
     })
@@ -182,7 +182,7 @@ export class HyperliquidAdapter extends BaseAdapter {
 
     try {
       const timeframe = this.parseTimeframe(options.timeframe)
-      
+
       const response = await fetch(`${this.getRestUrl()}/info`, {
         method: 'POST',
         headers: this.getHeaders(),
@@ -205,10 +205,11 @@ export class HyperliquidAdapter extends BaseAdapter {
 
       const data = await response.json() as unknown[]
       const candles = data.map(c => this.normalizeCandle(c))
-      
+
       this.cache.set(options.symbol, options.timeframe, candles)
       return candles
-    } catch (error) {
+    }
+    catch (error) {
       throw this.wrapError(error)
     }
   }
@@ -232,7 +233,8 @@ export class HyperliquidAdapter extends BaseAdapter {
 
       const data = await response.json() as { universe: Array<{ name: string }> }
       return data.universe.map(u => u.name)
-    } catch (error) {
+    }
+    catch (error) {
       throw this.wrapError(error)
     }
   }
@@ -266,7 +268,8 @@ export class HyperliquidAdapter extends BaseAdapter {
         lastPrice: Number.parseFloat(markPrice),
         timestamp: Date.now(),
       }
-    } catch (error) {
+    }
+    catch (error) {
       throw this.wrapError(error)
     }
   }
@@ -281,27 +284,28 @@ export class HyperliquidAdapter extends BaseAdapter {
   }
 
   protected handleWsMessage(data: unknown): void {
-    const msg = data as { channel?: string; data?: unknown; coin?: string }
-    
-    if (!msg.channel) return
+    const msg = data as { channel?: string, data?: unknown, coin?: string }
+
+    if (!msg.channel)
+      return
 
     switch (msg.channel) {
       case 'candle':
-        this.handleCandleMessage(msg.data as { coin: string; interval: string; t: number; o: string; h: string; l: string; c: string; v: string })
+        this.handleCandleMessage(msg.data as { coin: string, interval: string, t: number, o: string, h: string, l: string, c: string, v: string })
         break
       case 'allMids':
         // Ticker updates for all markets
         break
       case 'trades':
-        this.handleTradeMessage(msg.data as { coin: string; trades: unknown[] })
+        this.handleTradeMessage(msg.data as { coin: string, trades: unknown[] })
         break
       case 'l2Book':
-        this.handleOrderBookMessage(msg.data as { coin: string; levels: [Array<{ px: string; sz: string }>, Array<{ px: string; sz: string }>]; time: number })
+        this.handleOrderBookMessage(msg.data as { coin: string, levels: [Array<{ px: string, sz: string }>, Array<{ px: string, sz: string }>], time: number })
         break
     }
   }
 
-  private handleCandleMessage(data: { coin: string; interval: string; t: number; o: string; h: string; l: string; c: string; v: string }): void {
+  private handleCandleMessage(data: { coin: string, interval: string, t: number, o: string, h: string, l: string, c: string, v: string }): void {
     const candle: CandleData = {
       o: this.normalizePrice(data.o),
       h: this.normalizePrice(data.h),
@@ -314,20 +318,21 @@ export class HyperliquidAdapter extends BaseAdapter {
     this.emit('candle', data.coin, data.interval, candle)
   }
 
-  private handleTradeMessage(data: { coin: string; trades: unknown[] }): void {
+  private handleTradeMessage(data: { coin: string, trades: unknown[] }): void {
     for (const trade of data.trades) {
       const normalized = this.normalizeTrade(trade)
       this.emit('trade', data.coin, normalized)
     }
   }
 
-  private handleOrderBookMessage(data: { coin: string; levels: [Array<{ px: string; sz: string }>, Array<{ px: string; sz: string }>]; time: number }): void {
+  private handleOrderBookMessage(data: { coin: string, levels: [Array<{ px: string, sz: string }>, Array<{ px: string, sz: string }>], time: number }): void {
     const orderBook = this.normalizeOrderBook(data, data.coin)
     this.emit('orderbook', data.coin, orderBook)
   }
 
   protected sendSubscribe(channel: string, options: SubscribeOptions, _depth?: number): void {
-    if (!this.ws) return
+    if (!this.ws)
+      return
 
     const coin = options.symbol
     let subscription: Record<string, unknown>
@@ -354,7 +359,8 @@ export class HyperliquidAdapter extends BaseAdapter {
   }
 
   protected sendUnsubscribe(channel: string, options: SubscribeOptions, _depth?: number): void {
-    if (!this.ws) return
+    if (!this.ws)
+      return
 
     const coin = options.symbol
     let subscription: Record<string, unknown>
@@ -380,7 +386,7 @@ export class HyperliquidAdapter extends BaseAdapter {
     this.ws.send(JSON.stringify(subscription))
   }
 
-  private emit(event: string, symbol: string, ...args: unknown[]): void {
+  private emit(event: string, symbol: string, ..._args: unknown[]): void {
     const subscriptionId = this.generateSubscriptionId(event, symbol)
     const unsubscribe = this.subscriptions.get(subscriptionId)
     if (unsubscribe) {

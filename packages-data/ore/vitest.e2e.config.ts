@@ -1,3 +1,4 @@
+import process from 'node:process'
 import tsconfigPaths from 'vite-tsconfig-paths'
 import { defineConfig } from 'vitest/config'
 

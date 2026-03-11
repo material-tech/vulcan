@@ -1,6 +1,4 @@
 import type { CandleData } from '@vulcan-js/core'
-import { BaseAdapter } from './base.ts'
-import { ExchangeError } from '../types.ts'
 import type {
   FetchCandlesOptions,
   MarketType,
@@ -11,6 +9,8 @@ import type {
   Timeframe,
   TradeData,
 } from '../types.ts'
+import { ExchangeError } from '../types.ts'
+import { BaseAdapter } from './base.ts'
 
 /**
  * Binance timeframe mapping
@@ -39,7 +39,7 @@ const BINANCE_TIMEFRAMES: Record<Timeframe, string> = {
 
 /**
  * Binance exchange adapter
- * 
+ *
  * Supports:
  * - Spot market: https://api.binance.com
  * - Futures: https://fapi.binance.com
@@ -68,18 +68,18 @@ export class BinanceAdapter extends BaseAdapter {
 
   protected normalizeCandle(data: unknown): CandleData {
     const c = data as [
-      number,      // Open time
-      string,      // Open
-      string,      // High
-      string,      // Low
-      string,      // Close
-      string,      // Volume
-      number,      // Close time
-      string,      // Quote volume
-      number,      // Number of trades
-      string,      // Taker buy base volume
-      string,      // Taker buy quote volume
-      string,      // Ignore
+      number, // Open time
+      string, // Open
+      string, // High
+      string, // Low
+      string, // Close
+      string, // Volume
+      number, // Close time
+      string, // Quote volume
+      number, // Number of trades
+      string, // Taker buy base volume
+      string, // Taker buy quote volume
+      string, // Ignore
     ]
 
     return {
@@ -123,12 +123,12 @@ export class BinanceAdapter extends BaseAdapter {
 
   protected normalizeTrade(data: unknown): TradeData {
     const t = data as {
-      t: number      // Trade ID
-      s: string      // Symbol
-      p: string      // Price
-      q: string      // Quantity
-      T: number      // Trade time
-      m: boolean     // Is buyer maker
+      t: number // Trade ID
+      s: string // Symbol
+      p: string // Price
+      q: string // Quantity
+      T: number // Trade time
+      m: boolean // Is buyer maker
     }
 
     return {
@@ -165,9 +165,9 @@ export class BinanceAdapter extends BaseAdapter {
   protected buildCandlesEndpoint(options: FetchCandlesOptions): string {
     const interval = this.parseTimeframe(options.timeframe)
     const symbol = options.symbol.replace('-', '').replace('/', '')
-    
+
     let url = `/api/v3/klines?symbol=${symbol}&interval=${interval}`
-    
+
     if (options.limit) {
       url += `&limit=${options.limit}`
     }
@@ -177,7 +177,7 @@ export class BinanceAdapter extends BaseAdapter {
     if (options.endTime) {
       url += `&endTime=${options.endTime}`
     }
-    
+
     return url
   }
 
@@ -202,9 +202,10 @@ export class BinanceAdapter extends BaseAdapter {
   }
 
   protected handleWsMessage(data: unknown): void {
-    const msg = data as { e?: string; s?: string }
-    
-    if (!msg.e) return
+    const msg = data as { e?: string, s?: string }
+
+    if (!msg.e)
+      return
 
     // Route to appropriate handler based on event type
     switch (msg.e) {
@@ -255,15 +256,15 @@ export class BinanceAdapter extends BaseAdapter {
   private handleTickerMessage(data: unknown): void {
     const t = data as {
       s: string
-      c: string      // Last price
-      P: string      // Price change percent
-      v: string      // Volume
-      q: string      // Quote volume
-      h: string      // High
-      l: string      // Low
-      b: string      // Bid
-      a: string      // Ask
-      E: number      // Event time
+      c: string // Last price
+      P: string // Price change percent
+      v: string // Volume
+      q: string // Quote volume
+      h: string // High
+      l: string // Low
+      b: string // Bid
+      a: string // Ask
+      E: number // Event time
     }
 
     const ticker: TickerData = {
@@ -313,7 +314,8 @@ export class BinanceAdapter extends BaseAdapter {
   }
 
   protected sendSubscribe(channel: string, options: SubscribeOptions, _depth?: number): void {
-    if (!this.ws) return
+    if (!this.ws)
+      return
 
     const symbol = options.symbol.toLowerCase().replace('-', '').replace('/', '')
     let streamName: string
@@ -346,7 +348,8 @@ export class BinanceAdapter extends BaseAdapter {
   }
 
   protected sendUnsubscribe(channel: string, options: SubscribeOptions, _depth?: number): void {
-    if (!this.ws) return
+    if (!this.ws)
+      return
 
     const symbol = options.symbol.toLowerCase().replace('-', '').replace('/', '')
     let streamName: string
@@ -381,7 +384,7 @@ export class BinanceAdapter extends BaseAdapter {
   /**
    * Emit event to subscribers
    */
-  private emit(event: string, symbol: string, ...args: unknown[]): void {
+  private emit(event: string, symbol: string, ..._args: unknown[]): void {
     // This would be connected to the subscription callbacks in a full implementation
     // For now, it's a placeholder for the event routing system
     const subscriptionId = this.generateSubscriptionId(event, symbol)
@@ -397,10 +400,13 @@ export class BinanceAdapter extends BaseAdapter {
     let message = text
 
     try {
-      const error = JSON.parse(text) as { code?: number; msg?: string }
-      if (error.code) code = String(error.code)
-      if (error.msg) message = error.msg
-    } catch {
+      const error = JSON.parse(text) as { code?: number, msg?: string }
+      if (error.code)
+        code = String(error.code)
+      if (error.msg)
+        message = error.msg
+    }
+    catch {
       // Use raw text if not JSON
     }
 

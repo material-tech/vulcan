@@ -1,6 +1,4 @@
 import type { CandleData } from '@vulcan-js/core'
-import { BaseAdapter } from './base.ts'
-import { ExchangeError } from '../types.ts'
 import type {
   FetchCandlesOptions,
   MarketType,
@@ -11,6 +9,8 @@ import type {
   Timeframe,
   TradeData,
 } from '../types.ts'
+import { ExchangeError } from '../types.ts'
+import { BaseAdapter } from './base.ts'
 
 /**
  * OKX timeframe mapping
@@ -39,7 +39,7 @@ const OKX_TIMEFRAMES: Record<Timeframe, string> = {
 
 /**
  * OKX exchange adapter
- * 
+ *
  * Supports:
  * - REST API: https://www.okx.com
  * - WebSocket: wss://ws.okx.com:8443/ws/v5/public
@@ -62,15 +62,15 @@ export class OKXAdapter extends BaseAdapter {
 
   protected normalizeCandle(data: unknown): CandleData {
     const c = data as [
-      string,      // Timestamp
-      string,      // Open
-      string,      // High
-      string,      // Low
-      string,      // Close
-      string,      // Volume
-      string,      // VolCcy (quote volume)
-      string,      // VolCcyQuote
-      string,      // Confirm
+      string, // Timestamp
+      string, // Open
+      string, // High
+      string, // Low
+      string, // Close
+      string, // Volume
+      string, // VolCcy (quote volume)
+      string, // VolCcyQuote
+      string, // Confirm
     ]
 
     return {
@@ -99,8 +99,8 @@ export class OKXAdapter extends BaseAdapter {
 
     const lastPrice = Number.parseFloat(t.last)
     const openPrice = Number.parseFloat(t.open24h)
-    const changePercent24h = openPrice > 0 
-      ? ((lastPrice - openPrice) / openPrice) * 100 
+    const changePercent24h = openPrice > 0
+      ? ((lastPrice - openPrice) / openPrice) * 100
       : 0
 
     return {
@@ -162,9 +162,9 @@ export class OKXAdapter extends BaseAdapter {
   protected buildCandlesEndpoint(options: FetchCandlesOptions): string {
     const interval = this.parseTimeframe(options.timeframe)
     const symbol = options.symbol.replace('/', '-')
-    
+
     let url = `/api/v5/market/history-candles?instId=${symbol}&bar=${interval}`
-    
+
     if (options.limit) {
       url += `&limit=${options.limit}`
     }
@@ -174,7 +174,7 @@ export class OKXAdapter extends BaseAdapter {
     if (options.endTime) {
       url += `&after=${options.endTime}`
     }
-    
+
     return url
   }
 
@@ -183,7 +183,7 @@ export class OKXAdapter extends BaseAdapter {
     return `/api/v5/public/instruments?instType=${instType}`
   }
 
-  protected buildTickerEndpoint(symbol: string, marketType?: MarketType): string {
+  protected buildTickerEndpoint(symbol: string, _marketType?: MarketType): string {
     const formattedSymbol = symbol.replace('/', '-')
     return `/api/v5/public/ticker?instId=${formattedSymbol}`
   }
@@ -194,21 +194,22 @@ export class OKXAdapter extends BaseAdapter {
   }
 
   protected parseSymbolsResponse(data: unknown, _marketType?: MarketType): string[] {
-    const response = data as { data: Array<{ instId: string; state: string }> }
+    const response = data as { data: Array<{ instId: string, state: string }> }
     return (response.data ?? [])
       .filter(s => s.state === 'live')
       .map(s => s.instId)
   }
 
   protected handleWsMessage(data: unknown): void {
-    const msg = data as { event?: string; arg?: { channel: string; instId: string }; data?: unknown }
-    
+    const msg = data as { event?: string, arg?: { channel: string, instId: string }, data?: unknown }
+
     // Handle connection events
     if (msg.event === 'subscribe' || msg.event === 'unsubscribe' || msg.event === 'error') {
       return
     }
 
-    if (!msg.arg?.channel || !msg.data) return
+    if (!msg.arg?.channel || !msg.data)
+      return
 
     const channel = msg.arg.channel
     const instId = msg.arg.instId
@@ -245,9 +246,10 @@ export class OKXAdapter extends BaseAdapter {
   }
 
   private handleCandleMessage(data: unknown[], instId: string): void {
-    if (data.length === 0) return
-    
-    const c = (data[0] as string[])
+    if (data.length === 0)
+      return
+
+    const c = data[0] as string[]
     const candle: CandleData = {
       o: this.normalizePrice(c[1]),
       h: this.normalizePrice(c[2]),
@@ -262,8 +264,9 @@ export class OKXAdapter extends BaseAdapter {
   }
 
   private handleTickerMessage(data: unknown[], instId: string): void {
-    if (data.length === 0) return
-    
+    if (data.length === 0)
+      return
+
     const ticker = this.normalizeTicker(data[0], instId)
     this.emit('ticker', instId, ticker)
   }
@@ -276,14 +279,16 @@ export class OKXAdapter extends BaseAdapter {
   }
 
   private handleOrderBookMessage(data: unknown[], instId: string): void {
-    if (data.length === 0) return
-    
+    if (data.length === 0)
+      return
+
     const ob = this.normalizeOrderBook(data[0], instId)
     this.emit('orderbook', instId, ob)
   }
 
   protected sendSubscribe(channel: string, options: SubscribeOptions, depth?: number): void {
-    if (!this.ws) return
+    if (!this.ws)
+      return
 
     const instId = options.symbol.replace('/', '-')
     let channelName: string
@@ -318,7 +323,8 @@ export class OKXAdapter extends BaseAdapter {
   }
 
   protected sendUnsubscribe(channel: string, options: SubscribeOptions, depth?: number): void {
-    if (!this.ws) return
+    if (!this.ws)
+      return
 
     const instId = options.symbol.replace('/', '-')
     let channelName: string
@@ -366,7 +372,7 @@ export class OKXAdapter extends BaseAdapter {
     }
   }
 
-  private emit(event: string, symbol: string, ...args: unknown[]): void {
+  private emit(event: string, symbol: string, ..._args: unknown[]): void {
     const subscriptionId = this.generateSubscriptionId(event, symbol)
     const unsubscribe = this.subscriptions.get(subscriptionId)
     if (unsubscribe) {
@@ -380,10 +386,11 @@ export class OKXAdapter extends BaseAdapter {
     let message = text
 
     try {
-      const error = JSON.parse(text) as { code: string; msg: string; data?: unknown }
+      const error = JSON.parse(text) as { code: string, msg: string, data?: unknown }
       code = error.code
       message = error.msg
-    } catch {
+    }
+    catch {
       // Use raw text if not JSON
     }
 

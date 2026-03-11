@@ -1,13 +1,13 @@
 import {
+  createExchangeRateLimiter,
+  ExchangeRateLimits,
   RateLimiter,
   RateLimiterManager,
-  ExchangeRateLimits,
-  createExchangeRateLimiter,
   RateLimitError,
 } from '@vulcan-js/ore'
 import { describe, expect, it } from 'vitest'
 
-describe('RateLimiter', () => {
+describe('rateLimiter', () => {
   it('should allow requests within rate limit', async () => {
     const limiter = new RateLimiter({
       maxRequests: 10,
@@ -43,7 +43,7 @@ describe('RateLimiter', () => {
   })
 })
 
-describe('RateLimiterManager', () => {
+describe('rateLimiterManager', () => {
   it('should register and use rate limiters', async () => {
     const manager = new RateLimiterManager()
 
@@ -90,7 +90,7 @@ describe('RateLimiterManager', () => {
   })
 })
 
-describe('ExchangeRateLimits', () => {
+describe('exchangeRateLimits', () => {
   it('should have predefined rate limits for major exchanges', () => {
     expect(ExchangeRateLimits.binance).toBeDefined()
     expect(ExchangeRateLimits.okx).toBeDefined()
@@ -139,7 +139,7 @@ describe('createExchangeRateLimiter', () => {
   })
 })
 
-describe('RateLimitError', () => {
+describe('rateLimitError', () => {
   it('should create RateLimitError with retryAfter', () => {
     const error = new RateLimitError('Rate limited', 5000, 'binance')
 

@@ -5,7 +5,7 @@ import {
 } from '@vulcan-js/ore'
 import { describe, expect, it } from 'vitest'
 
-describe('ExchangeError', () => {
+describe('exchangeError', () => {
   it('should create ExchangeError with message only', () => {
     const error = new ExchangeError('Something went wrong')
 
@@ -37,7 +37,7 @@ describe('ExchangeError', () => {
   })
 })
 
-describe('RateLimitError', () => {
+describe('rateLimitError', () => {
   it('should create RateLimitError with required fields', () => {
     const error = new RateLimitError('Too many requests', 5000)
 
@@ -66,7 +66,7 @@ describe('RateLimitError', () => {
   })
 })
 
-describe('WebSocketError', () => {
+describe('webSocketError', () => {
   it('should create WebSocketError with message only', () => {
     const error = new WebSocketError('Connection failed')
 

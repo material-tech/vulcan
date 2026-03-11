@@ -1,8 +1,5 @@
-import { fp18 } from '@vulcan-js/core'
 import type { CandleData } from '@vulcan-js/core'
-import { defu } from 'defu'
-import { CandleCache } from '../cache.ts'
-import { createExchangeRateLimiter, RateLimiter } from '../rate-limiter.ts'
+import type { RateLimiter } from '../rate-limiter.ts'
 import type {
   ExchangeAdapter,
   ExchangeAdapterConfig,
@@ -15,6 +12,10 @@ import type {
   Timeframe,
   TradeData,
 } from '../types.ts'
+import { fp18 } from '@vulcan-js/core'
+import { defu } from 'defu'
+import { CandleCache } from '../cache.ts'
+import { createExchangeRateLimiter } from '../rate-limiter.ts'
 
 /**
  * Default adapter configuration
@@ -27,7 +28,7 @@ export const defaultAdapterConfig: ExchangeAdapterConfig = {
 
 /**
  * Abstract base class for exchange adapters
- * 
+ *
  * Provides common functionality for:
  * - Configuration management
  * - Rate limiting
@@ -37,13 +38,13 @@ export const defaultAdapterConfig: ExchangeAdapterConfig = {
  */
 export abstract class BaseAdapter implements ExchangeAdapter {
   abstract readonly name: string
-  
+
   readonly config: ExchangeAdapterConfig
   protected cache: CandleCache
   protected rateLimiter: RateLimiter
   protected ws: WebSocket | null = null
   protected subscriptions: Map<string, () => void> = new Map()
-  
+
   private _isConnected = false
   private reconnectAttempts = 0
   private readonly maxReconnectAttempts = 5
@@ -133,7 +134,7 @@ export abstract class BaseAdapter implements ExchangeAdapter {
     try {
       const endpoint = this.buildCandlesEndpoint(options)
       const url = `${this.getRestUrl()}${endpoint}`
-      
+
       const response = await fetch(url, {
         method: 'GET',
         headers: this.getHeaders(),
@@ -146,13 +147,14 @@ export abstract class BaseAdapter implements ExchangeAdapter {
 
       const data = await response.json()
       const candles = this.parseCandlesResponse(data)
-      
+
       // Normalize and cache
       const normalized = candles.map(c => this.normalizeCandle(c))
       this.cache.set(options.symbol, options.timeframe, normalized)
-      
+
       return normalized
-    } catch (error) {
+    }
+    catch (error) {
       throw this.wrapError(error)
     }
   }
@@ -179,7 +181,8 @@ export abstract class BaseAdapter implements ExchangeAdapter {
 
       const data = await response.json()
       return this.parseSymbolsResponse(data, marketType)
-    } catch (error) {
+    }
+    catch (error) {
       throw this.wrapError(error)
     }
   }
@@ -206,7 +209,8 @@ export abstract class BaseAdapter implements ExchangeAdapter {
 
       const data = await response.json()
       return this.normalizeTicker(data, symbol)
-    } catch (error) {
+    }
+    catch (error) {
       throw this.wrapError(error)
     }
   }
@@ -215,7 +219,8 @@ export abstract class BaseAdapter implements ExchangeAdapter {
    * Connect to WebSocket
    */
   async connect(): Promise<void> {
-    if (this._isConnected) return
+    if (this._isConnected)
+      return
 
     return new Promise((resolve, reject) => {
       try {
@@ -242,11 +247,13 @@ export abstract class BaseAdapter implements ExchangeAdapter {
           try {
             const data = JSON.parse(event.data)
             this.handleWsMessage(data)
-          } catch {
+          }
+          catch {
             // Ignore non-JSON messages
           }
         }
-      } catch (error) {
+      }
+      catch (error) {
         reject(this.wrapError(error))
       }
     })
@@ -257,7 +264,7 @@ export abstract class BaseAdapter implements ExchangeAdapter {
    */
   async disconnect(): Promise<void> {
     this._isConnected = false
-    
+
     if (this.ws) {
       this.ws.close()
       this.ws = null
@@ -272,12 +279,12 @@ export abstract class BaseAdapter implements ExchangeAdapter {
    */
   async subscribeCandles(
     options: SubscribeOptions & { timeframe: Timeframe },
-    callback: (candle: CandleData) => void
+    _callback: (candle: CandleData) => void,
   ): Promise<() => void> {
     await this.ensureConnected()
-    
+
     const subscriptionId = this.generateSubscriptionId('candles', options.symbol, options.timeframe)
-    
+
     const unsubscribe = () => {
       this.subscriptions.delete(subscriptionId)
       this.sendUnsubscribe('candles', options)
@@ -285,7 +292,7 @@ export abstract class BaseAdapter implements ExchangeAdapter {
 
     this.subscriptions.set(subscriptionId, unsubscribe)
     await this.sendSubscribe('candles', options)
-    
+
     return unsubscribe
   }
 
@@ -294,12 +301,12 @@ export abstract class BaseAdapter implements ExchangeAdapter {
    */
   async subscribeTicker(
     options: SubscribeOptions,
-    callback: (ticker: TickerData) => void
+    _callback: (ticker: TickerData) => void,
   ): Promise<() => void> {
     await this.ensureConnected()
-    
+
     const subscriptionId = this.generateSubscriptionId('ticker', options.symbol)
-    
+
     const unsubscribe = () => {
       this.subscriptions.delete(subscriptionId)
       this.sendUnsubscribe('ticker', options)
@@ -307,7 +314,7 @@ export abstract class BaseAdapter implements ExchangeAdapter {
 
     this.subscriptions.set(subscriptionId, unsubscribe)
     await this.sendSubscribe('ticker', options)
-    
+
     return unsubscribe
   }
 
@@ -316,12 +323,12 @@ export abstract class BaseAdapter implements ExchangeAdapter {
    */
   async subscribeTrades(
     options: SubscribeOptions,
-    callback: (trade: TradeData) => void
+    _callback: (trade: TradeData) => void,
   ): Promise<() => void> {
     await this.ensureConnected()
-    
+
     const subscriptionId = this.generateSubscriptionId('trades', options.symbol)
-    
+
     const unsubscribe = () => {
       this.subscriptions.delete(subscriptionId)
       this.sendUnsubscribe('trades', options)
@@ -329,7 +336,7 @@ export abstract class BaseAdapter implements ExchangeAdapter {
 
     this.subscriptions.set(subscriptionId, unsubscribe)
     await this.sendSubscribe('trades', options)
-    
+
     return unsubscribe
   }
 
@@ -339,12 +346,12 @@ export abstract class BaseAdapter implements ExchangeAdapter {
   async subscribeOrderBook(
     options: SubscribeOptions,
     callback: (orderBook: OrderBookData) => void,
-    depth?: number
+    depth?: number,
   ): Promise<() => void> {
     await this.ensureConnected()
-    
+
     const subscriptionId = this.generateSubscriptionId('orderbook', options.symbol, String(depth ?? 10))
-    
+
     const unsubscribe = () => {
       this.subscriptions.delete(subscriptionId)
       this.sendUnsubscribe('orderbook', options, depth)
@@ -352,7 +359,7 @@ export abstract class BaseAdapter implements ExchangeAdapter {
 
     this.subscriptions.set(subscriptionId, unsubscribe)
     await this.sendSubscribe('orderbook', options, depth)
-    
+
     return unsubscribe
   }
 
@@ -456,7 +463,7 @@ export abstract class BaseAdapter implements ExchangeAdapter {
     }
 
     this.reconnectAttempts++
-    const delay = this.reconnectDelay * Math.pow(2, this.reconnectAttempts - 1)
+    const delay = this.reconnectDelay * 2 ** (this.reconnectAttempts - 1)
 
     setTimeout(() => {
       this.connect().catch(() => {

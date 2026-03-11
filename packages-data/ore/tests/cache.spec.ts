@@ -1,6 +1,6 @@
-import { CandleCache, defaultCacheConfig, getGlobalCache, resetGlobalCache } from '@vulcan-js/ore'
 import { fp18 } from '@vulcan-js/core'
-import { describe, expect, it, beforeEach } from 'vitest'
+import { CandleCache, defaultCacheConfig, getGlobalCache, resetGlobalCache } from '@vulcan-js/ore'
+import { beforeEach, describe, expect, it } from 'vitest'
 
 // Helper to create a test candle
 function createCandle(timestamp: number) {
@@ -14,7 +14,7 @@ function createCandle(timestamp: number) {
   }
 }
 
-describe('CandleCache', () => {
+describe('candleCache', () => {
   beforeEach(() => {
     resetGlobalCache()
   })

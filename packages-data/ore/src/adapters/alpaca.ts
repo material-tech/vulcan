@@ -1,6 +1,4 @@
 import type { CandleData } from '@vulcan-js/core'
-import { BaseAdapter } from './base.ts'
-import { ExchangeError, WebSocketError } from '../types.ts'
 import type {
   FetchCandlesOptions,
   MarketType,
@@ -11,12 +9,14 @@ import type {
   Timeframe,
   TradeData,
 } from '../types.ts'
+import { ExchangeError, WebSocketError } from '../types.ts'
+import { BaseAdapter } from './base.ts'
 
 /**
  * Alpaca timeframe mapping
  * Note: Alpaca has different timeframe limitations for crypto vs stocks
  */
-const ALPACA_TIMEFRAMES: Record<Timeframe, { supported: boolean; apiFormat: string }> = {
+const ALPACA_TIMEFRAMES: Record<Timeframe, { supported: boolean, apiFormat: string }> = {
   '1s': { supported: false, apiFormat: '' },
   '5s': { supported: false, apiFormat: '' },
   '15s': { supported: false, apiFormat: '' },
@@ -40,10 +40,10 @@ const ALPACA_TIMEFRAMES: Record<Timeframe, { supported: boolean; apiFormat: stri
 
 /**
  * Alpaca Markets adapter
- * 
+ *
  * Supports both stock and crypto markets.
  * Note: This adapter focuses on crypto functionality.
- * 
+ *
  * REST API: https://data.alpaca.markets/v1beta3/crypto
  * WebSocket: wss://stream.data.alpaca.markets/v1beta3/crypto
  */
@@ -64,7 +64,7 @@ export class AlpacaAdapter extends BaseAdapter {
       throw new ExchangeError(
         `Timeframe ${timeframe} not supported by Alpaca. Supported: 1m, 5m, 15m, 30m, 1h, 1d, 1w, 1M`,
         'UNSUPPORTED_TIMEFRAME',
-        this.name
+        this.name,
       )
     }
     return tf.apiFormat
@@ -72,14 +72,14 @@ export class AlpacaAdapter extends BaseAdapter {
 
   protected normalizeCandle(data: unknown): CandleData {
     const c = data as {
-      t: string      // ISO timestamp
-      o: number      // Open
-      h: number      // High
-      l: number      // Low
-      c: number      // Close
-      v: number      // Volume
-      n: number      // Number of trades
-      vw: number     // VWAP
+      t: string // ISO timestamp
+      o: number // Open
+      h: number // High
+      l: number // Low
+      c: number // Close
+      v: number // Volume
+      n: number // Number of trades
+      vw: number // VWAP
     }
 
     return {
@@ -95,11 +95,11 @@ export class AlpacaAdapter extends BaseAdapter {
   protected normalizeTicker(data: unknown, symbol: string): TickerData {
     const t = data as {
       symbol: string
-      bp: number     // Bid price
-      ap: number     // Ask price
-      lp?: number    // Last price
-      as: number     // Ask size
-      bs: number     // Bid size
+      bp: number // Bid price
+      ap: number // Ask price
+      lp?: number // Last price
+      as: number // Ask size
+      bs: number // Bid size
     }
 
     return {
@@ -114,11 +114,11 @@ export class AlpacaAdapter extends BaseAdapter {
   protected normalizeTrade(data: unknown): TradeData {
     const t = data as {
       symbol: string
-      p: number      // Price
-      s: number      // Size
-      t: string      // Timestamp (RFC-3339)
-      tks: string    // Taker side: 'B' (buy) or 'S' (sell)
-      i: number      // Trade ID
+      p: number // Price
+      s: number // Size
+      t: string // Timestamp (RFC-3339)
+      tks: string // Taker side: 'B' (buy) or 'S' (sell)
+      i: number // Trade ID
     }
 
     return {
@@ -134,12 +134,12 @@ export class AlpacaAdapter extends BaseAdapter {
   protected normalizeOrderBook(data: unknown, symbol: string): OrderBookData {
     const ob = data as {
       symbol: string
-      b: Array<{ p: number; s: number }>  // Bids
-      a: Array<{ p: number; s: number }>  // Asks
-      t: string  // Timestamp
+      b: Array<{ p: number, s: number }> // Bids
+      a: Array<{ p: number, s: number }> // Asks
+      t: string // Timestamp
     }
 
-    const parseEntry = (entry: { p: number; s: number }): OrderBookEntry => ({
+    const parseEntry = (entry: { p: number, s: number }): OrderBookEntry => ({
       price: entry.p,
       amount: entry.s,
     })
@@ -155,12 +155,12 @@ export class AlpacaAdapter extends BaseAdapter {
   protected buildCandlesEndpoint(options: FetchCandlesOptions): string {
     const timeframe = this.parseTimeframe(options.timeframe)
     const symbol = options.symbol.replace('-', '/')
-    
+
     // Build query parameters
     const params = new URLSearchParams()
     params.append('symbols', symbol)
     params.append('timeframe', timeframe)
-    
+
     if (options.startTime) {
       params.append('start', new Date(options.startTime).toISOString())
     }
@@ -211,10 +211,11 @@ export class AlpacaAdapter extends BaseAdapter {
       const data = await response.json() as { bars: Record<string, unknown[]> }
       const symbol = options.symbol.replace('-', '/')
       const candles = (data.bars[symbol] ?? []).map(c => this.normalizeCandle(c))
-      
+
       this.cache.set(options.symbol, options.timeframe, candles)
       return candles
-    } catch (error) {
+    }
+    catch (error) {
       throw this.wrapError(error)
     }
   }
@@ -253,7 +254,7 @@ export class AlpacaAdapter extends BaseAdapter {
         throw await this.handleError(response)
       }
 
-      const data = await response.json() as { trades: Record<string, { p: number; t: string }> }
+      const data = await response.json() as { trades: Record<string, { p: number, t: string }> }
       const formattedSymbol = symbol.replace('-', '/')
       const trade = data.trades[formattedSymbol]
 
@@ -266,7 +267,8 @@ export class AlpacaAdapter extends BaseAdapter {
         lastPrice: trade.p,
         timestamp: new Date(trade.t).getTime(),
       }
-    } catch (error) {
+    }
+    catch (error) {
       throw this.wrapError(error)
     }
   }
@@ -283,27 +285,28 @@ export class AlpacaAdapter extends BaseAdapter {
   }
 
   protected handleWsMessage(data: unknown): void {
-    const msg = data as { T?: string; S?: string; [key: string]: unknown }
-    
-    if (!msg.T) return
+    const msg = data as { T?: string, S?: string, [key: string]: unknown }
+
+    if (!msg.T)
+      return
 
     switch (msg.T) {
-      case 'b':  // Bar (candle)
-        this.handleBarMessage(data as { S: string; o: number; h: number; l: number; c: number; v: number; t: string })
+      case 'b': // Bar (candle)
+        this.handleBarMessage(data as { S: string, o: number, h: number, l: number, c: number, v: number, t: string })
         break
-      case 't':  // Trade
-        this.handleTradeMessage(data as { S: string; p: number; s: number; t: string; i: number; tks: string })
+      case 't': // Trade
+        this.handleTradeMessage(data as { S: string, p: number, s: number, t: string, i: number, tks: string })
         break
-      case 'q':  // Quote (ticker)
-        this.handleQuoteMessage(data as { S: string; bp: number; ap: number; bs: number; as: number; t: string })
+      case 'q': // Quote (ticker)
+        this.handleQuoteMessage(data as { S: string, bp: number, ap: number, bs: number, as: number, t: string })
         break
       case 'error':
-        this.handleErrorMessage(data as { code: number; msg: string })
+        this.handleErrorMessage(data as { code: number, msg: string })
         break
     }
   }
 
-  private handleBarMessage(data: { S: string; o: number; h: number; l: number; c: number; v: number; t: string }): void {
+  private handleBarMessage(data: { S: string, o: number, h: number, l: number, c: number, v: number, t: string }): void {
     const candle: CandleData = {
       o: this.normalizePrice(data.o),
       h: this.normalizePrice(data.h),
@@ -316,7 +319,7 @@ export class AlpacaAdapter extends BaseAdapter {
     this.emit('candle', data.S, '1m', candle) // Default to 1m for WebSocket bars
   }
 
-  private handleTradeMessage(data: { S: string; p: number; s: number; t: string; i: number; tks: string }): void {
+  private handleTradeMessage(data: { S: string, p: number, s: number, t: string, i: number, tks: string }): void {
     const trade: TradeData = {
       id: String(data.i),
       symbol: data.S,
@@ -329,7 +332,7 @@ export class AlpacaAdapter extends BaseAdapter {
     this.emit('trade', data.S, trade)
   }
 
-  private handleQuoteMessage(data: { S: string; bp: number; ap: number; bs: number; as: number; t: string }): void {
+  private handleQuoteMessage(data: { S: string, bp: number, ap: number, bs: number, as: number, t: string }): void {
     const ticker: TickerData = {
       symbol: data.S,
       lastPrice: (data.bp + data.ap) / 2,
@@ -341,12 +344,13 @@ export class AlpacaAdapter extends BaseAdapter {
     this.emit('ticker', data.S, ticker)
   }
 
-  private handleErrorMessage(data: { code: number; msg: string }): void {
+  private handleErrorMessage(data: { code: number, msg: string }): void {
     throw new WebSocketError(`Alpaca WebSocket error ${data.code}: ${data.msg}`, this.name)
   }
 
   protected sendSubscribe(channel: string, options: SubscribeOptions, _depth?: number): void {
-    if (!this.ws) return
+    if (!this.ws)
+      return
 
     const symbol = options.symbol.replace('-', '/')
     let action: string
@@ -374,7 +378,8 @@ export class AlpacaAdapter extends BaseAdapter {
   }
 
   protected sendUnsubscribe(channel: string, options: SubscribeOptions, _depth?: number): void {
-    if (!this.ws) return
+    if (!this.ws)
+      return
 
     const symbol = options.symbol.replace('-', '/')
     let action: string
@@ -401,7 +406,7 @@ export class AlpacaAdapter extends BaseAdapter {
     this.ws.send(JSON.stringify(msg))
   }
 
-  private emit(event: string, symbol: string, ...args: unknown[]): void {
+  private emit(event: string, symbol: string, ..._args: unknown[]): void {
     const subscriptionId = this.generateSubscriptionId(event, symbol)
     const unsubscribe = this.subscriptions.get(subscriptionId)
     if (unsubscribe) {
@@ -415,10 +420,13 @@ export class AlpacaAdapter extends BaseAdapter {
     let message = text
 
     try {
-      const error = JSON.parse(text) as { code?: number; message?: string }
-      if (error.code) code = String(error.code)
-      if (error.message) message = error.message
-    } catch {
+      const error = JSON.parse(text) as { code?: number, message?: string }
+      if (error.code)
+        code = String(error.code)
+      if (error.message)
+        message = error.message
+    }
+    catch {
       // Use raw text if not JSON
     }
 

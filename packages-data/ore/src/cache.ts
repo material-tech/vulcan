@@ -1,6 +1,6 @@
 import type { CandleData } from '@vulcan-js/core'
-import { defu } from 'defu'
 import type { CacheConfig, Timeframe } from './types.ts'
+import { defu } from 'defu'
 
 /**
  * Default cache configuration
@@ -31,7 +31,7 @@ interface CacheEntry {
 
 /**
  * In-memory cache for candle data
- * 
+ *
  * Provides a simple LRU (Least Recently Used) cache for historical
  * candle data to reduce API calls and improve performance.
  */
@@ -46,7 +46,7 @@ export class CandleCache {
 
   /**
    * Get cached candles for a symbol/timeframe
-   * 
+   *
    * @param symbol - Trading pair symbol
    * @param timeframe - Candle timeframe
    * @param startTime - Optional start time filter (timestamp in ms)
@@ -57,14 +57,16 @@ export class CandleCache {
     symbol: string,
     timeframe: Timeframe,
     startTime?: number,
-    endTime?: number
+    endTime?: number,
   ): CandleData[] | null {
-    if (!this.config.enabled) return null
+    if (!this.config.enabled)
+      return null
 
     const key = getCacheKey(symbol, timeframe)
     const entry = this.cache.get(key)
 
-    if (!entry) return null
+    if (!entry)
+      return null
 
     // Check TTL
     const now = Date.now()
@@ -80,11 +82,13 @@ export class CandleCache {
     let candles = entry.candles
     if (startTime || endTime) {
       candles = candles.filter((candle) => {
-        const ts = typeof candle.timestamp === 'number' 
-          ? candle.timestamp 
+        const ts = typeof candle.timestamp === 'number'
+          ? candle.timestamp
           : new Date(candle.timestamp!).getTime()
-        if (startTime && ts < startTime) return false
-        if (endTime && ts > endTime) return false
+        if (startTime && ts < startTime)
+          return false
+        if (endTime && ts > endTime)
+          return false
         return true
       })
     }
@@ -94,13 +98,14 @@ export class CandleCache {
 
   /**
    * Store candles in cache
-   * 
+   *
    * @param symbol - Trading pair symbol
    * @param timeframe - Candle timeframe
    * @param candles - Array of candle data to cache
    */
   set(symbol: string, timeframe: Timeframe, candles: CandleData[]): void {
-    if (!this.config.enabled || candles.length === 0) return
+    if (!this.config.enabled || candles.length === 0)
+      return
 
     const key = getCacheKey(symbol, timeframe)
 
@@ -122,16 +127,17 @@ export class CandleCache {
 
   /**
    * Merge new candles with existing cached data
-   * 
+   *
    * This is useful when incrementally fetching new candles
    * to avoid duplicates and maintain sorted order.
-   * 
+   *
    * @param symbol - Trading pair symbol
    * @param timeframe - Candle timeframe
    * @param newCandles - New candles to merge
    */
   merge(symbol: string, timeframe: Timeframe, newCandles: CandleData[]): void {
-    if (!this.config.enabled || newCandles.length === 0) return
+    if (!this.config.enabled || newCandles.length === 0)
+      return
 
     const key = getCacheKey(symbol, timeframe)
     const existing = this.cache.get(key)
@@ -143,7 +149,7 @@ export class CandleCache {
 
     // Create a map for deduplication by timestamp
     const candleMap = new Map<number | string, CandleData>()
-    
+
     // Add existing candles
     for (const candle of existing.candles) {
       const ts = typeof candle.timestamp === 'number'
@@ -172,7 +178,7 @@ export class CandleCache {
 
   /**
    * Clear all cached data or filter by symbol/timeframe
-   * 
+   *
    * @param symbol - Optional symbol to clear
    * @param timeframe - Optional timeframe to clear
    */
@@ -213,12 +219,14 @@ export class CandleCache {
    * Check if data exists in cache (and not expired)
    */
   has(symbol: string, timeframe: Timeframe): boolean {
-    if (!this.config.enabled) return false
+    if (!this.config.enabled)
+      return false
 
     const key = getCacheKey(symbol, timeframe)
     const entry = this.cache.get(key)
 
-    if (!entry) return false
+    if (!entry)
+      return false
 
     // Check TTL
     const now = Date.now()
@@ -247,7 +255,8 @@ export class CandleCache {
   }
 
   private evictLRU(): void {
-    if (this.accessOrder.length === 0) return
+    if (this.accessOrder.length === 0)
+      return
     const oldestKey = this.accessOrder.shift()
     if (oldestKey) {
       this.cache.delete(oldestKey)

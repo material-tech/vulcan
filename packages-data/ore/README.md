@@ -249,7 +249,7 @@ The E2E tests connect to real exchange APIs. To run them:
    \`\`\`bash
    # All E2E tests
    pnpm run test:e2e
-   
+
    # Specific exchange
    pnpm run test:e2e:binance
    pnpm run test:e2e:okx
@@ -267,7 +267,5 @@ The E2E tests connect to real exchange APIs. To run them:
 | Alpaca | ❌ | ✅ |
 
 Note: Alpaca requires API credentials for all endpoints. Get keys at [alpaca.markets](https://alpaca.markets/).
-
-
 
 MIT

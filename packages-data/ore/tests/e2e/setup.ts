@@ -1,4 +1,5 @@
 import type { CandleData } from '@vulcan-js/core'
+import process from 'node:process'
 
 /**
  * Environment variable helpers
@@ -27,7 +28,7 @@ export function validateCandle(candle: CandleData): void {
   if (!candle) {
     throw new Error('Candle is null or undefined')
   }
-  
+
   // Check required fields exist
   if (candle.o === undefined || candle.o === null) {
     throw new Error('Candle missing open price (o)')
@@ -44,16 +45,16 @@ export function validateCandle(candle: CandleData): void {
   if (candle.v === undefined || candle.v === null) {
     throw new Error('Candle missing volume (v)')
   }
-  
+
   // Check timestamp exists
   if (!candle.timestamp) {
     throw new Error('Candle missing timestamp')
   }
-  
+
   // Validate OHLC logic (High >= Open, Close, Low)
   const high = Number(candle.h[0]) / 10 ** candle.h[1]
   const low = Number(candle.l[0]) / 10 ** candle.l[1]
-  
+
   if (high < low) {
     throw new Error(`Invalid candle: high (${high}) < low (${low})`)
   }
@@ -72,10 +73,10 @@ export function wait(ms: number): Promise<void> {
 export async function waitFor<T>(
   predicate: () => T | Promise<T>,
   timeoutMs: number = 5000,
-  pollIntervalMs: number = 100
+  pollIntervalMs: number = 100,
 ): Promise<T> {
   const startTime = Date.now()
-  
+
   while (Date.now() - startTime < timeoutMs) {
     const result = await predicate()
     if (result) {
@@ -83,7 +84,7 @@ export async function waitFor<T>(
     }
     await wait(pollIntervalMs)
   }
-  
+
   throw new Error(`Timeout waiting for condition after ${timeoutMs}ms`)
 }
 
@@ -93,18 +94,18 @@ export async function waitFor<T>(
 export async function collectWsMessages<T>(
   subscribeFn: (callback: (data: T) => void) => Promise<() => void>,
   durationMs: number,
-  minMessages: number = 1
+  minMessages: number = 1,
 ): Promise<T[]> {
   const messages: T[] = []
-  
+
   const unsubscribe = await subscribeFn((data) => {
     messages.push(data)
   })
-  
+
   try {
     // Wait for minimum duration
     await wait(durationMs)
-    
+
     // If we need minimum messages, wait a bit longer
     if (minMessages > 1) {
       const startTime = Date.now()
@@ -112,9 +113,10 @@ export async function collectWsMessages<T>(
         await wait(100)
       }
     }
-    
+
     return messages
-  } finally {
+  }
+  finally {
     await unsubscribe()
   }
 }
