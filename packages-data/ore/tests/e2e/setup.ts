@@ -52,8 +52,8 @@ export function validateCandle(candle: CandleData): void {
   }
 
   // Validate OHLC logic (High >= Open, Close, Low)
-  const high = Number(candle.h[0]) / 10 ** candle.h[1]
-  const low = Number(candle.l[0]) / 10 ** candle.l[1]
+  const high = Number((candle.h as [bigint, number])[0]) / 10 ** (candle.h as [bigint, number])[1]
+  const low = Number((candle.l as [bigint, number])[0]) / 10 ** (candle.l as [bigint, number])[1]
 
   if (high < low) {
     throw new Error(`Invalid candle: high (${high}) < low (${low})`)

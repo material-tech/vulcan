@@ -41,7 +41,7 @@ export class CandleCache {
   private accessOrder: string[] = []
 
   constructor(config?: Partial<CacheConfig>) {
-    this.config = defu(config, defaultCacheConfig)
+    this.config = defu(config, defaultCacheConfig) as CacheConfig
   }
 
   /**

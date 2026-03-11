@@ -201,7 +201,7 @@ export class BinanceAdapter extends BaseAdapter {
       .map(s => s.symbol)
   }
 
-  protected handleWsMessage(data: unknown): void {
+  protected override handleWsMessage(data: unknown): void {
     const msg = data as { e?: string, s?: string }
 
     if (!msg.e)
@@ -394,7 +394,7 @@ export class BinanceAdapter extends BaseAdapter {
     }
   }
 
-  protected async handleError(response: Response): Promise<ExchangeError> {
+  protected override async handleError(response: Response): Promise<ExchangeError> {
     const text = await response.text()
     let code: string | undefined
     let message = text

@@ -5,11 +5,11 @@ import { beforeEach, describe, expect, it } from 'vitest'
 // Helper to create a test candle
 function createCandle(timestamp: number) {
   return {
-    o: fp18.toDnum('100'),
-    h: fp18.toDnum('110'),
-    l: fp18.toDnum('90'),
-    c: fp18.toDnum('105'),
-    v: fp18.toDnum('1000'),
+    o: fp18.toDnum(fp18.toFp18('100')),
+    h: fp18.toDnum(fp18.toFp18('110')),
+    l: fp18.toDnum(fp18.toFp18('90')),
+    c: fp18.toDnum(fp18.toFp18('105')),
+    v: fp18.toDnum(fp18.toFp18('1000')),
     timestamp,
   }
 }

@@ -188,12 +188,12 @@ export class OKXAdapter extends BaseAdapter {
     return `/api/v5/public/ticker?instId=${formattedSymbol}`
   }
 
-  protected parseCandlesResponse(data: unknown): unknown[] {
+  protected override parseCandlesResponse(data: unknown): unknown[] {
     const response = data as { data: unknown[] }
     return response.data ?? []
   }
 
-  protected parseSymbolsResponse(data: unknown, _marketType?: MarketType): string[] {
+  protected override parseSymbolsResponse(data: unknown, _marketType?: MarketType): string[] {
     const response = data as { data: Array<{ instId: string, state: string }> }
     return (response.data ?? [])
       .filter(s => s.state === 'live')
@@ -380,7 +380,7 @@ export class OKXAdapter extends BaseAdapter {
     }
   }
 
-  protected async handleError(response: Response): Promise<ExchangeError> {
+  protected override async handleError(response: Response): Promise<ExchangeError> {
     const text = await response.text()
     let code: string | undefined
     let message = text
@@ -397,7 +397,7 @@ export class OKXAdapter extends BaseAdapter {
     return new ExchangeError(message, code, this.name)
   }
 
-  protected getHeaders(): Record<string, string> {
+  protected override getHeaders(): Record<string, string> {
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
     }

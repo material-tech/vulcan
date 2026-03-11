@@ -49,11 +49,11 @@ const HYPERLIQUID_TIMEFRAMES: Record<Timeframe, string | null> = {
 export class HyperliquidAdapter extends BaseAdapter {
   readonly name = 'hyperliquid'
 
-  protected getRestUrl(): string {
+  protected override getRestUrl(): string {
     return this.config.baseUrl ?? 'https://api.hyperliquid.xyz'
   }
 
-  protected getWsUrl(): string {
+  protected override getWsUrl(): string {
     return this.config.wsUrl ?? 'wss://api.hyperliquid.xyz/ws'
   }
 
@@ -158,27 +158,27 @@ export class HyperliquidAdapter extends BaseAdapter {
     }
   }
 
-  protected buildCandlesEndpoint(): string {
+  protected override buildCandlesEndpoint(): string {
     // Hyperliquid uses POST requests for most data queries
     return '/info'
   }
 
-  protected buildSymbolsEndpoint(): string {
+  protected override buildSymbolsEndpoint(): string {
     return '/info'
   }
 
-  protected buildTickerEndpoint(): string {
+  protected override buildTickerEndpoint(): string {
     return '/info'
   }
 
-  async fetchCandles(options: FetchCandlesOptions): Promise<CandleData[]> {
+  override async fetchCandles(options: FetchCandlesOptions): Promise<CandleData[]> {
     // Check cache first
     const cached = this.cache.get(options.symbol, options.timeframe, options.startTime, options.endTime)
     if (cached && cached.length > 0) {
       return cached
     }
 
-    await this.rateLimiter.acquire()
+    await this.getRateLimiter().acquire()
 
     try {
       const timeframe = this.parseTimeframe(options.timeframe)
@@ -214,8 +214,8 @@ export class HyperliquidAdapter extends BaseAdapter {
     }
   }
 
-  async fetchSymbols(_marketType?: MarketType): Promise<string[]> {
-    await this.rateLimiter.acquire()
+  override async fetchSymbols(_marketType?: MarketType): Promise<string[]> {
+    await this.getRateLimiter().acquire()
 
     try {
       const response = await fetch(`${this.getRestUrl()}/info`, {
@@ -239,8 +239,8 @@ export class HyperliquidAdapter extends BaseAdapter {
     }
   }
 
-  async fetchTicker(symbol: string, _marketType?: MarketType): Promise<TickerData> {
-    await this.rateLimiter.acquire()
+  override async fetchTicker(symbol: string, _marketType?: MarketType): Promise<TickerData> {
+    await this.getRateLimiter().acquire()
 
     try {
       const response = await fetch(`${this.getRestUrl()}/info`, {
@@ -274,16 +274,16 @@ export class HyperliquidAdapter extends BaseAdapter {
     }
   }
 
-  protected parseCandlesResponse(data: unknown): unknown[] {
+  protected override parseCandlesResponse(data: unknown): unknown[] {
     return data as unknown[]
   }
 
-  protected parseSymbolsResponse(data: unknown, _marketType?: MarketType): string[] {
+  protected override parseSymbolsResponse(data: unknown, _marketType?: MarketType): string[] {
     const meta = data as { universe: Array<{ name: string }> }
     return meta.universe.map(u => u.name)
   }
 
-  protected handleWsMessage(data: unknown): void {
+  protected override handleWsMessage(data: unknown): void {
     const msg = data as { channel?: string, data?: unknown, coin?: string }
 
     if (!msg.channel)
@@ -394,7 +394,7 @@ export class HyperliquidAdapter extends BaseAdapter {
     }
   }
 
-  protected async handleError(response: Response): Promise<ExchangeError> {
+  protected override async handleError(response: Response): Promise<ExchangeError> {
     const text = await response.text()
     return new ExchangeError(text, String(response.status), this.name)
   }

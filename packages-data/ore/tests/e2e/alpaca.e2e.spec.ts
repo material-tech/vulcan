@@ -124,7 +124,7 @@ describe('alpacaAdapter E2E', () => {
       const candles2 = await adapter.fetchCandles(options)
 
       expect(candles1.length).toBe(candles2.length)
-      expect(adapter.cache.has(options.symbol, options.timeframe)).toBe(true)
+      expect(adapter.getCache().has(options.symbol, options.timeframe)).toBe(true)
     })
   })
 

@@ -185,14 +185,14 @@ export class AlpacaAdapter extends BaseAdapter {
     return `/us/latest/trades?symbols=${formattedSymbol}`
   }
 
-  async fetchCandles(options: FetchCandlesOptions): Promise<CandleData[]> {
+  override async fetchCandles(options: FetchCandlesOptions): Promise<CandleData[]> {
     // Check cache first
     const cached = this.cache.get(options.symbol, options.timeframe, options.startTime, options.endTime)
     if (cached && cached.length > 0) {
       return cached
     }
 
-    await this.rateLimiter.acquire()
+    await this.getRateLimiter().acquire()
 
     try {
       const endpoint = this.buildCandlesEndpoint(options)
@@ -220,7 +220,7 @@ export class AlpacaAdapter extends BaseAdapter {
     }
   }
 
-  async fetchSymbols(_marketType?: MarketType): Promise<string[]> {
+  override async fetchSymbols(_marketType?: MarketType): Promise<string[]> {
     // Alpaca doesn't provide a public endpoint for listing all crypto symbols
     // Return common crypto pairs
     return [
@@ -237,8 +237,8 @@ export class AlpacaAdapter extends BaseAdapter {
     ]
   }
 
-  async fetchTicker(symbol: string, _marketType?: MarketType): Promise<TickerData> {
-    await this.rateLimiter.acquire()
+  override async fetchTicker(symbol: string, _marketType?: MarketType): Promise<TickerData> {
+    await this.getRateLimiter().acquire()
 
     try {
       const endpoint = this.buildTickerEndpoint(symbol)
@@ -273,18 +273,18 @@ export class AlpacaAdapter extends BaseAdapter {
     }
   }
 
-  protected parseCandlesResponse(data: unknown): unknown[] {
+  protected override parseCandlesResponse(data: unknown): unknown[] {
     const response = data as { bars: Record<string, unknown[]> }
     return Object.values(response.bars)[0] ?? []
   }
 
-  protected parseSymbolsResponse(data: unknown, _marketType?: MarketType): string[] {
+  protected override parseSymbolsResponse(data: unknown, _marketType?: MarketType): string[] {
     // Alpaca returns snapshots, extract symbols
     const snapshots = data as Record<string, unknown>
     return Object.keys(snapshots)
   }
 
-  protected handleWsMessage(data: unknown): void {
+  protected override handleWsMessage(data: unknown): void {
     const msg = data as { T?: string, S?: string, [key: string]: unknown }
 
     if (!msg.T)
@@ -414,7 +414,7 @@ export class AlpacaAdapter extends BaseAdapter {
     }
   }
 
-  protected async handleError(response: Response): Promise<ExchangeError> {
+  protected override async handleError(response: Response): Promise<ExchangeError> {
     const text = await response.text()
     let code: string | undefined
     let message = text
@@ -433,7 +433,7 @@ export class AlpacaAdapter extends BaseAdapter {
     return new ExchangeError(message, code, this.name)
   }
 
-  protected getHeaders(): Record<string, string> {
+  protected override getHeaders(): Record<string, string> {
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
     }
@@ -448,7 +448,7 @@ export class AlpacaAdapter extends BaseAdapter {
     return headers
   }
 
-  async connect(): Promise<void> {
+  override async connect(): Promise<void> {
     // First authenticate if credentials are provided
     if (this.config.apiKey && this.config.apiSecret) {
       await this.authenticate()

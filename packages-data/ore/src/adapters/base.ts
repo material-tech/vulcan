@@ -41,7 +41,7 @@ export abstract class BaseAdapter implements ExchangeAdapter {
 
   readonly config: ExchangeAdapterConfig
   protected cache: CandleCache
-  protected rateLimiter: RateLimiter
+  protected rateLimiter?: RateLimiter
   protected ws: WebSocket | null = null
   protected subscriptions: Map<string, () => void> = new Map()
 
@@ -53,10 +53,19 @@ export abstract class BaseAdapter implements ExchangeAdapter {
   constructor(config?: Partial<ExchangeAdapterConfig>) {
     this.config = defu(config, defaultAdapterConfig)
     this.cache = new CandleCache()
-    this.rateLimiter = createExchangeRateLimiter(this.name, {
-      maxRequests: this.config.rateLimitPerSecond ?? 10,
-      intervalMs: 1000,
-    })
+  }
+
+  /**
+   * Get the rate limiter, creating it lazily on first use
+   */
+  protected getRateLimiter(): RateLimiter {
+    if (!this.rateLimiter) {
+      this.rateLimiter = createExchangeRateLimiter(this.name, {
+        maxRequests: this.config.rateLimitPerSecond ?? 10,
+        intervalMs: 1000,
+      })
+    }
+    return this.rateLimiter
   }
 
   get isConnected(): boolean {
@@ -129,7 +138,7 @@ export abstract class BaseAdapter implements ExchangeAdapter {
     }
 
     // Apply rate limiting
-    await this.rateLimiter.acquire()
+    await this.getRateLimiter().acquire()
 
     try {
       const endpoint = this.buildCandlesEndpoint(options)
@@ -163,7 +172,7 @@ export abstract class BaseAdapter implements ExchangeAdapter {
    * Fetch available trading symbols
    */
   async fetchSymbols(marketType?: MarketType): Promise<string[]> {
-    await this.rateLimiter.acquire()
+    await this.getRateLimiter().acquire()
 
     try {
       const endpoint = this.buildSymbolsEndpoint(marketType)
@@ -191,7 +200,7 @@ export abstract class BaseAdapter implements ExchangeAdapter {
    * Fetch current ticker data
    */
   async fetchTicker(symbol: string, marketType?: MarketType): Promise<TickerData> {
-    await this.rateLimiter.acquire()
+    await this.getRateLimiter().acquire()
 
     try {
       const endpoint = this.buildTickerEndpoint(symbol, marketType)
@@ -473,16 +482,23 @@ export abstract class BaseAdapter implements ExchangeAdapter {
   }
 
   /**
+   * Get the cache instance
+   */
+  getCache(): CandleCache {
+    return this.cache
+  }
+
+  /**
    * Normalize a price value to dnum format
    */
   protected normalizePrice(price: number | string): ReturnType<typeof fp18.toDnum> {
-    return fp18.toDnum(String(price))
+    return fp18.toDnum(fp18.toFp18(price))
   }
 
   /**
    * Normalize an amount/volume value to dnum format
    */
   protected normalizeAmount(amount: number | string): ReturnType<typeof fp18.toDnum> {
-    return fp18.toDnum(String(amount))
+    return fp18.toDnum(fp18.toFp18(amount))
   }
 }
