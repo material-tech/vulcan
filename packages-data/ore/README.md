@@ -234,5 +234,40 @@ Supported timeframes vary by exchange:
 | 1d | ✅ | ✅ | ✅ | ✅ |
 
 ## License
+## E2E Testing
+
+The E2E tests connect to real exchange APIs. To run them:
+
+1. Copy the environment template:
+   \`\`\`bash
+   cp .env.example .env
+   \`\`\`
+
+2. Add your API keys to \`.env\` (most tests work without keys for public endpoints)
+
+3. Run E2E tests:
+   \`\`\`bash
+   # All E2E tests
+   pnpm run test:e2e
+   
+   # Specific exchange
+   pnpm run test:e2e:binance
+   pnpm run test:e2e:okx
+   pnpm run test:e2e:hyperliquid
+   pnpm run test:e2e:alpaca
+   \`\`\`
+
+### API Keys Required
+
+| Exchange | Public Endpoints | API Key Required |
+|----------|------------------|------------------|
+| Binance | ✅ | ❌ (optional) |
+| OKX | ✅ | ❌ (optional) |
+| Hyperliquid | ✅ | ❌ |
+| Alpaca | ❌ | ✅ |
+
+Note: Alpaca requires API credentials for all endpoints. Get keys at [alpaca.markets](https://alpaca.markets/).
+
+
 
 MIT
