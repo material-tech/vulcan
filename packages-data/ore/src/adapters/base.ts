@@ -49,6 +49,7 @@ export abstract class BaseAdapter implements ExchangeAdapter {
   private reconnectAttempts = 0
   private readonly maxReconnectAttempts = 5
   private reconnectDelay = 1000
+  private reconnectTimer: ReturnType<typeof setTimeout> | null = null
 
   constructor(config?: Partial<ExchangeAdapterConfig>) {
     this.config = defu(config, defaultAdapterConfig)
@@ -274,6 +275,12 @@ export abstract class BaseAdapter implements ExchangeAdapter {
   async disconnect(): Promise<void> {
     this._isConnected = false
 
+    // Cancel any pending reconnect
+    if (this.reconnectTimer) {
+      clearTimeout(this.reconnectTimer)
+      this.reconnectTimer = null
+    }
+
     if (this.ws) {
       this.ws.close()
       this.ws = null
@@ -366,7 +373,7 @@ export abstract class BaseAdapter implements ExchangeAdapter {
       this.sendUnsubscribe('orderbook', options, depth)
     }
 
-    this.subscriptions.set(subscriptionId, unsubscribe)
+    this.subscriptions.set(subscriptionId, { unsubscribe, callback })
     await this.sendSubscribe('orderbook', options, depth)
 
     return unsubscribe
@@ -521,7 +528,8 @@ export abstract class BaseAdapter implements ExchangeAdapter {
     this.reconnectAttempts++
     const delay = this.reconnectDelay * 2 ** (this.reconnectAttempts - 1)
 
-    setTimeout(() => {
+    this.reconnectTimer = setTimeout(() => {
+      this.reconnectTimer = null
       this.connect().catch(() => {
         // Reconnection failed, will retry if under max attempts
       })

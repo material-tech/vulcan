@@ -169,10 +169,10 @@ export class OKXAdapter extends BaseAdapter {
       url += `&limit=${options.limit}`
     }
     if (options.startTime) {
-      url += `&before=${options.startTime}`
+      url += `&after=${options.startTime}`
     }
     if (options.endTime) {
-      url += `&after=${options.endTime}`
+      url += `&before=${options.endTime}`
     }
 
     return url
@@ -267,7 +267,8 @@ export class OKXAdapter extends BaseAdapter {
 
   private parseTimeframeFromChannel(data: { arg?: { channel?: string } }): Timeframe {
     const channel = data.arg?.channel || ''
-    const match = channel.match(/candle:(\w+)/)
+    // OKX uses format like "candle1m", "candle5m", "candle1H"
+    const match = channel.match(/candle(\w+)/)
     if (match) {
       return this.parseTimeframeReverse(match[1])
     }

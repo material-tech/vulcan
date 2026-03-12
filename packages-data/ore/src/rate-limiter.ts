@@ -205,8 +205,9 @@ export function createExchangeRateLimiter(
 ): RateLimiter {
   const config = ExchangeRateLimits[exchange] ?? ExchangeRateLimits.default
   return new RateLimiter({
-    ...config,
-    ...customConfig,
+    maxRequests: customConfig?.maxRequests ?? config.maxRequests,
+    intervalMs: customConfig?.intervalMs ?? config.intervalMs,
+    burstCapacity: customConfig?.burstCapacity ?? config.burstCapacity,
   })
 }
 
