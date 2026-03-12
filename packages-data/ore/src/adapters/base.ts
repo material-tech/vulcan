@@ -43,7 +43,8 @@ export abstract class BaseAdapter implements ExchangeAdapter {
   protected cache: CandleCache
   protected rateLimiter?: RateLimiter
   protected ws: WebSocket | null = null
-  protected subscriptions: Map<string, { unsubscribe: () => void, callback: (data: unknown) => void, options?: SubscribeOptions & { depth?: number } }> = new Map()
+  protected subscriptions: Map<string, { unsubscribe: () => void, callback: (data: unknown) => void, options?: SubscribeOptions & { depth?: number, timeframe?: Timeframe } }> = new Map()
+  private subscriptionParams: Map<string, { channel: string, options: SubscribeOptions, depth?: number, timeframe?: Timeframe }> = new Map()
 
   private _isConnected = false
   private reconnectAttempts = 0
@@ -288,6 +289,7 @@ export abstract class BaseAdapter implements ExchangeAdapter {
 
     // Clear all subscriptions
     this.subscriptions.clear()
+    this.subscriptionParams.clear()
   }
 
   /**
@@ -303,10 +305,12 @@ export abstract class BaseAdapter implements ExchangeAdapter {
 
     const unsubscribe = () => {
       this.subscriptions.delete(subscriptionId)
+      this.subscriptionParams.delete(subscriptionId)
       this.sendUnsubscribe('candles', options)
     }
 
-    this.subscriptions.set(subscriptionId, { unsubscribe, callback })
+    this.subscriptions.set(subscriptionId, { unsubscribe, callback, options: { ...options, timeframe: options.timeframe } })
+    this.subscriptionParams.set(subscriptionId, { channel: 'candles', options, timeframe: options.timeframe })
     await this.sendSubscribe('candles', options)
 
     return unsubscribe
@@ -325,10 +329,12 @@ export abstract class BaseAdapter implements ExchangeAdapter {
 
     const unsubscribe = () => {
       this.subscriptions.delete(subscriptionId)
+      this.subscriptionParams.delete(subscriptionId)
       this.sendUnsubscribe('ticker', options)
     }
 
-    this.subscriptions.set(subscriptionId, { unsubscribe, callback })
+    this.subscriptions.set(subscriptionId, { unsubscribe, callback, options })
+    this.subscriptionParams.set(subscriptionId, { channel: 'ticker', options })
     await this.sendSubscribe('ticker', options)
 
     return unsubscribe
@@ -347,10 +353,12 @@ export abstract class BaseAdapter implements ExchangeAdapter {
 
     const unsubscribe = () => {
       this.subscriptions.delete(subscriptionId)
+      this.subscriptionParams.delete(subscriptionId)
       this.sendUnsubscribe('trades', options)
     }
 
-    this.subscriptions.set(subscriptionId, { unsubscribe, callback })
+    this.subscriptions.set(subscriptionId, { unsubscribe, callback, options })
+    this.subscriptionParams.set(subscriptionId, { channel: 'trades', options })
     await this.sendSubscribe('trades', options)
 
     return unsubscribe
@@ -370,10 +378,12 @@ export abstract class BaseAdapter implements ExchangeAdapter {
 
     const unsubscribe = () => {
       this.subscriptions.delete(subscriptionId)
+      this.subscriptionParams.delete(subscriptionId)
       this.sendUnsubscribe('orderbook', options, depth)
     }
 
     this.subscriptions.set(subscriptionId, { unsubscribe, callback, options: { ...options, depth } })
+    this.subscriptionParams.set(subscriptionId, { channel: 'orderbook', options, depth })
     await this.sendSubscribe('orderbook', options, depth)
 
     return unsubscribe
@@ -534,10 +544,29 @@ export abstract class BaseAdapter implements ExchangeAdapter {
 
     this.reconnectTimer = setTimeout(() => {
       this.reconnectTimer = null
-      this.connect().catch(() => {
-        // Reconnection failed, will retry if under max attempts
-      })
+      this.connect()
+        .then(() => {
+          // Restore subscriptions after reconnect
+          this.restoreSubscriptions()
+        })
+        .catch(() => {
+          // Reconnection failed, will retry if under max attempts
+        })
     }, delay)
+  }
+
+  /**
+   * Restore all subscriptions after reconnect
+   */
+  private restoreSubscriptions(): void {
+    for (const [subscriptionId, params] of this.subscriptionParams) {
+      try {
+        this.sendSubscribe(params.channel, params.options, params.depth)
+      }
+      catch (error) {
+        console.error(`Failed to restore subscription ${subscriptionId}:`, error)
+      }
+    }
   }
 
   /**

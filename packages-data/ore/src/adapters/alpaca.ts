@@ -154,7 +154,7 @@ export class AlpacaAdapter extends BaseAdapter {
 
   protected buildCandlesEndpoint(options: FetchCandlesOptions): string {
     const timeframe = this.parseTimeframe(options.timeframe)
-    const symbol = options.symbol.replace('-', '/')
+    const symbol = options.symbol.replace(/-/g, '/')
 
     // Build query parameters
     const params = new URLSearchParams()
@@ -181,7 +181,7 @@ export class AlpacaAdapter extends BaseAdapter {
   }
 
   protected buildTickerEndpoint(symbol: string): string {
-    const formattedSymbol = symbol.replace('-', '/')
+    const formattedSymbol = symbol.replace(/-/g, '/')
     return `/us/latest/trades?symbols=${formattedSymbol}`
   }
 
@@ -209,7 +209,7 @@ export class AlpacaAdapter extends BaseAdapter {
       }
 
       const data = await response.json() as { bars: Record<string, unknown[]> }
-      const symbol = options.symbol.replace('-', '/')
+      const symbol = options.symbol.replace(/-/g, '/')
       const candles = (data.bars[symbol] ?? []).map(c => this.normalizeCandle(c))
 
       this.cache.set(options.symbol, options.timeframe, candles)
@@ -255,7 +255,7 @@ export class AlpacaAdapter extends BaseAdapter {
       }
 
       const data = await response.json() as { trades: Record<string, { p: number, t: string }> }
-      const formattedSymbol = symbol.replace('-', '/')
+      const formattedSymbol = symbol.replace(/-/g, '/')
       const trade = data.trades[formattedSymbol]
 
       if (!trade) {
@@ -352,7 +352,7 @@ export class AlpacaAdapter extends BaseAdapter {
     if (!this.ws)
       return
 
-    const symbol = options.symbol.replace('-', '/')
+    const symbol = options.symbol.replace(/-/g, '/')
     let action: string
 
     switch (channel) {
@@ -381,7 +381,7 @@ export class AlpacaAdapter extends BaseAdapter {
     if (!this.ws)
       return
 
-    const symbol = options.symbol.replace('-', '/')
+    const symbol = options.symbol.replace(/-/g, '/')
     let action: string
 
     switch (channel) {
