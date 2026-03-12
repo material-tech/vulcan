@@ -43,7 +43,7 @@ export abstract class BaseAdapter implements ExchangeAdapter {
   protected cache: CandleCache
   protected rateLimiter?: RateLimiter
   protected ws: WebSocket | null = null
-  protected subscriptions: Map<string, { unsubscribe: () => void, callback: (data: unknown) => void }> = new Map()
+  protected subscriptions: Map<string, { unsubscribe: () => void, callback: (data: unknown) => void, options?: SubscribeOptions & { depth?: number } }> = new Map()
 
   private _isConnected = false
   private reconnectAttempts = 0
@@ -373,7 +373,7 @@ export abstract class BaseAdapter implements ExchangeAdapter {
       this.sendUnsubscribe('orderbook', options, depth)
     }
 
-    this.subscriptions.set(subscriptionId, { unsubscribe, callback })
+    this.subscriptions.set(subscriptionId, { unsubscribe, callback, options: { ...options, depth } })
     await this.sendSubscribe('orderbook', options, depth)
 
     return unsubscribe
@@ -498,9 +498,13 @@ export abstract class BaseAdapter implements ExchangeAdapter {
   /**
    * Emit order book data to all matching subscriptions
    */
-  protected emitOrderBook(symbol: string, depth: number, orderBook: OrderBookData): void {
-    const subscriptionId = this.generateSubscriptionId('orderbook', symbol, String(depth))
-    this.emit(subscriptionId, orderBook)
+  protected emitOrderBook(symbol: string, _depth: number, orderBook: OrderBookData): void {
+    // Find all orderbook subscriptions for this symbol (may have different depths)
+    for (const [subscriptionId, _subscription] of this.subscriptions) {
+      if (subscriptionId.startsWith(`orderbook:${symbol}:`)) {
+        this.emit(subscriptionId, orderBook)
+      }
+    }
   }
 
   /**

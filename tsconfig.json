@@ -7,8 +7,9 @@
       "@vulcan-js/strategies": ["./packages/strategies/src/index.ts"],
       "@vulcan-js/backtest": ["./packages/backtest/src/index.ts"],
       "@vulcan-js/forge": ["./packages/forge/src/index.ts"],
-      "@vulcan-js/forge/*": ["./packages/forge/src/*.ts"]
+      "@vulcan-js/forge/*": ["./packages/forge/src/*.ts"],
+      "@vulcan-js/ore": ["./packages-data/ore/src/index.ts"]
     }
   },
-  "include": ["packages/*/src/**/*.ts"]
+  "include": ["packages/*/src/**/*.ts", "packages-data/*/src/**/*.ts"]
 }
