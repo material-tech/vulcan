@@ -164,7 +164,7 @@ export class BinanceAdapter extends BaseAdapter {
 
   protected buildCandlesEndpoint(options: FetchCandlesOptions): string {
     const interval = this.parseTimeframe(options.timeframe)
-    const symbol = options.symbol.replace('-', '').replace('/', '')
+    const symbol = options.symbol.replace(/[-/]/g, '')
 
     let url = `/api/v3/klines?symbol=${symbol}&interval=${interval}`
 
@@ -186,7 +186,7 @@ export class BinanceAdapter extends BaseAdapter {
   }
 
   protected buildTickerEndpoint(symbol: string, _marketType?: MarketType): string {
-    const formattedSymbol = symbol.replace('-', '').replace('/', '')
+    const formattedSymbol = symbol.replace(/[-/]/g, '')
     return `/api/v3/ticker/24hr?symbol=${formattedSymbol}`
   }
 
@@ -250,7 +250,7 @@ export class BinanceAdapter extends BaseAdapter {
     }
 
     // Emit to subscribers
-    this.emit('candle', k.s, k.k.i, candle)
+    this.emitCandle(k.s, k.k.i as Timeframe, candle)
   }
 
   private handleTickerMessage(data: unknown): void {
@@ -280,12 +280,12 @@ export class BinanceAdapter extends BaseAdapter {
       timestamp: t.E,
     }
 
-    this.emit('ticker', t.s, ticker)
+    this.emitTicker(t.s, ticker)
   }
 
   private handleTradeMessage(data: unknown): void {
     const trade = this.normalizeTrade(data)
-    this.emit('trade', trade.symbol, trade)
+    this.emitTrade(trade.symbol, trade)
   }
 
   private handleDepthMessage(data: unknown): void {
@@ -310,14 +310,14 @@ export class BinanceAdapter extends BaseAdapter {
       sequence: d.u,
     }
 
-    this.emit('orderbook', d.s, orderBook)
+    this.emitOrderBook(d.s, 10, orderBook)
   }
 
   protected sendSubscribe(channel: string, options: SubscribeOptions, _depth?: number): void {
     if (!this.ws)
       return
 
-    const symbol = options.symbol.toLowerCase().replace('-', '').replace('/', '')
+    const symbol = options.symbol.toLowerCase().replace(/[-/]/g, '')
     let streamName: string
 
     switch (channel) {
@@ -351,7 +351,7 @@ export class BinanceAdapter extends BaseAdapter {
     if (!this.ws)
       return
 
-    const symbol = options.symbol.toLowerCase().replace('-', '').replace('/', '')
+    const symbol = options.symbol.toLowerCase().replace(/[-/]/g, '')
     let streamName: string
 
     switch (channel) {
@@ -379,19 +379,6 @@ export class BinanceAdapter extends BaseAdapter {
     }
 
     this.ws.send(JSON.stringify(msg))
-  }
-
-  /**
-   * Emit event to subscribers
-   */
-  private emit(event: string, symbol: string, ..._args: unknown[]): void {
-    // This would be connected to the subscription callbacks in a full implementation
-    // For now, it's a placeholder for the event routing system
-    const subscriptionId = this.generateSubscriptionId(event, symbol)
-    const unsubscribe = this.subscriptions.get(subscriptionId)
-    if (unsubscribe) {
-      // Callback would be invoked here with the data
-    }
   }
 
   protected override async handleError(response: Response): Promise<ExchangeError> {

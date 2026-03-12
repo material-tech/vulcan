@@ -316,7 +316,7 @@ export class AlpacaAdapter extends BaseAdapter {
       timestamp: new Date(data.t).getTime(),
     }
 
-    this.emit('candle', data.S, '1m', candle) // Default to 1m for WebSocket bars
+    this.emitCandle(data.S, '1m', candle) // Default to 1m for WebSocket bars
   }
 
   private handleTradeMessage(data: { S: string, p: number, s: number, t: string, i: number, tks: string }): void {
@@ -329,7 +329,7 @@ export class AlpacaAdapter extends BaseAdapter {
       timestamp: new Date(data.t).getTime(),
     }
 
-    this.emit('trade', data.S, trade)
+    this.emitTrade(data.S, trade)
   }
 
   private handleQuoteMessage(data: { S: string, bp: number, ap: number, bs: number, as: number, t: string }): void {
@@ -341,7 +341,7 @@ export class AlpacaAdapter extends BaseAdapter {
       timestamp: new Date(data.t).getTime(),
     }
 
-    this.emit('ticker', data.S, ticker)
+    this.emitTicker(data.S, ticker)
   }
 
   private handleErrorMessage(data: { code: number, msg: string }): void {
@@ -404,14 +404,6 @@ export class AlpacaAdapter extends BaseAdapter {
     }
 
     this.ws.send(JSON.stringify(msg))
-  }
-
-  private emit(event: string, symbol: string, ..._args: unknown[]): void {
-    const subscriptionId = this.generateSubscriptionId(event, symbol)
-    const unsubscribe = this.subscriptions.get(subscriptionId)
-    if (unsubscribe) {
-      // Callback would be invoked here with the data
-    }
   }
 
   protected override async handleError(response: Response): Promise<ExchangeError> {

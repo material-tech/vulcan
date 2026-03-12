@@ -106,6 +106,25 @@ importers:
         specifier: catalog:build
         version: 5.9.3
 
+  packages-data/ore:
+    dependencies:
+      '@vulcan-js/core':
+        specifier: workspace:^
+        version: link:../../packages/core
+      defu:
+        specifier: catalog:runtime
+        version: 6.1.4
+      dnum:
+        specifier: catalog:runtime
+        version: 2.17.0
+    devDependencies:
+      vite-tsconfig-paths:
+        specifier: catalog:test
+        version: 6.1.1(typescript@5.9.3)(vite@6.3.3(@types/node@25.3.0)(jiti@2.6.1)(tsx@4.21.0)(yaml@2.8.2))
+      vitest:
+        specifier: catalog:test
+        version: 4.0.18(@types/node@25.3.0)(jiti@2.6.1)(tsx@4.21.0)(yaml@2.8.2)
+
   packages/backtest:
     dependencies:
       '@vulcan-js/core':

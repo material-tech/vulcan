@@ -260,7 +260,43 @@ export class OKXAdapter extends BaseAdapter {
     }
 
     // Extract timeframe from the data or use a default
-    this.emit('candle', instId, '1m', candle)
+    // OKX candle data doesn't include timeframe in the message, need to extract from channel
+    const timeframe = this.parseTimeframeFromChannel(data as { arg?: { channel?: string } })
+    this.emitCandle(instId, timeframe, candle)
+  }
+
+  private parseTimeframeFromChannel(data: { arg?: { channel?: string } }): Timeframe {
+    const channel = data.arg?.channel || ''
+    const match = channel.match(/candle:(\w+)/)
+    if (match) {
+      return this.parseTimeframeReverse(match[1])
+    }
+    return '1m'
+  }
+
+  private parseTimeframeReverse(tf: string): Timeframe {
+    const mapping: Record<string, Timeframe> = {
+      '1s': '1s',
+      '5s': '5s',
+      '15s': '15s',
+      '30s': '30s',
+      '1m': '1m',
+      '3m': '3m',
+      '5m': '5m',
+      '15m': '15m',
+      '30m': '30m',
+      '1H': '1h',
+      '2H': '2h',
+      '4H': '4h',
+      '6H': '6h',
+      '8H': '8h',
+      '12H': '12h',
+      '1D': '1d',
+      '3D': '3d',
+      '1W': '1w',
+      '1M': '1M',
+    }
+    return mapping[tf] || '1m'
   }
 
   private handleTickerMessage(data: unknown[], instId: string): void {
@@ -268,13 +304,13 @@ export class OKXAdapter extends BaseAdapter {
       return
 
     const ticker = this.normalizeTicker(data[0], instId)
-    this.emit('ticker', instId, ticker)
+    this.emitTicker(instId, ticker)
   }
 
   private handleTradeMessage(data: unknown[], _instId: string): void {
     for (const trade of data) {
       const normalized = this.normalizeTrade(trade)
-      this.emit('trade', normalized.symbol, normalized)
+      this.emitTrade(normalized.symbol, normalized)
     }
   }
 
@@ -283,7 +319,7 @@ export class OKXAdapter extends BaseAdapter {
       return
 
     const ob = this.normalizeOrderBook(data[0], instId)
-    this.emit('orderbook', instId, ob)
+    this.emitOrderBook(instId, 10, ob)
   }
 
   protected sendSubscribe(channel: string, options: SubscribeOptions, depth?: number): void {
@@ -369,14 +405,6 @@ export class OKXAdapter extends BaseAdapter {
         return 'MARGIN'
       default:
         return 'SPOT'
-    }
-  }
-
-  private emit(event: string, symbol: string, ..._args: unknown[]): void {
-    const subscriptionId = this.generateSubscriptionId(event, symbol)
-    const unsubscribe = this.subscriptions.get(subscriptionId)
-    if (unsubscribe) {
-      // Callback would be invoked here with the data
     }
   }
 

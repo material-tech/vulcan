@@ -43,7 +43,7 @@ export abstract class BaseAdapter implements ExchangeAdapter {
   protected cache: CandleCache
   protected rateLimiter?: RateLimiter
   protected ws: WebSocket | null = null
-  protected subscriptions: Map<string, () => void> = new Map()
+  protected subscriptions: Map<string, { unsubscribe: () => void, callback: (data: unknown) => void }> = new Map()
 
   private _isConnected = false
   private reconnectAttempts = 0
@@ -288,7 +288,7 @@ export abstract class BaseAdapter implements ExchangeAdapter {
    */
   async subscribeCandles(
     options: SubscribeOptions & { timeframe: Timeframe },
-    _callback: (candle: CandleData) => void,
+    callback: (candle: CandleData) => void,
   ): Promise<() => void> {
     await this.ensureConnected()
 
@@ -299,7 +299,7 @@ export abstract class BaseAdapter implements ExchangeAdapter {
       this.sendUnsubscribe('candles', options)
     }
 
-    this.subscriptions.set(subscriptionId, unsubscribe)
+    this.subscriptions.set(subscriptionId, { unsubscribe, callback })
     await this.sendSubscribe('candles', options)
 
     return unsubscribe
@@ -310,7 +310,7 @@ export abstract class BaseAdapter implements ExchangeAdapter {
    */
   async subscribeTicker(
     options: SubscribeOptions,
-    _callback: (ticker: TickerData) => void,
+    callback: (ticker: TickerData) => void,
   ): Promise<() => void> {
     await this.ensureConnected()
 
@@ -321,7 +321,7 @@ export abstract class BaseAdapter implements ExchangeAdapter {
       this.sendUnsubscribe('ticker', options)
     }
 
-    this.subscriptions.set(subscriptionId, unsubscribe)
+    this.subscriptions.set(subscriptionId, { unsubscribe, callback })
     await this.sendSubscribe('ticker', options)
 
     return unsubscribe
@@ -332,7 +332,7 @@ export abstract class BaseAdapter implements ExchangeAdapter {
    */
   async subscribeTrades(
     options: SubscribeOptions,
-    _callback: (trade: TradeData) => void,
+    callback: (trade: TradeData) => void,
   ): Promise<() => void> {
     await this.ensureConnected()
 
@@ -343,7 +343,7 @@ export abstract class BaseAdapter implements ExchangeAdapter {
       this.sendUnsubscribe('trades', options)
     }
 
-    this.subscriptions.set(subscriptionId, unsubscribe)
+    this.subscriptions.set(subscriptionId, { unsubscribe, callback })
     await this.sendSubscribe('trades', options)
 
     return unsubscribe
@@ -447,6 +447,53 @@ export abstract class BaseAdapter implements ExchangeAdapter {
    */
   protected generateSubscriptionId(...parts: string[]): string {
     return parts.join(':')
+  }
+
+  /**
+   * Emit data to subscription callbacks
+   */
+  protected emit(subscriptionId: string, data: unknown): void {
+    const subscription = this.subscriptions.get(subscriptionId)
+    if (subscription) {
+      try {
+        subscription.callback(data)
+      }
+      catch (error) {
+        console.error(`Error in subscription callback for ${subscriptionId}:`, error)
+      }
+    }
+  }
+
+  /**
+   * Emit candle data to all matching subscriptions
+   */
+  protected emitCandle(symbol: string, timeframe: Timeframe, candle: CandleData): void {
+    const subscriptionId = this.generateSubscriptionId('candles', symbol, timeframe)
+    this.emit(subscriptionId, candle)
+  }
+
+  /**
+   * Emit ticker data to all matching subscriptions
+   */
+  protected emitTicker(symbol: string, ticker: TickerData): void {
+    const subscriptionId = this.generateSubscriptionId('ticker', symbol)
+    this.emit(subscriptionId, ticker)
+  }
+
+  /**
+   * Emit trade data to all matching subscriptions
+   */
+  protected emitTrade(symbol: string, trade: TradeData): void {
+    const subscriptionId = this.generateSubscriptionId('trades', symbol)
+    this.emit(subscriptionId, trade)
+  }
+
+  /**
+   * Emit order book data to all matching subscriptions
+   */
+  protected emitOrderBook(symbol: string, depth: number, orderBook: OrderBookData): void {
+    const subscriptionId = this.generateSubscriptionId('orderbook', symbol, String(depth))
+    this.emit(subscriptionId, orderBook)
   }
 
   /**

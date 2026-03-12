@@ -31,11 +31,11 @@
   ],
   "scripts": {
     "test": "vitest run",
-    "test:e2e": "vitest run tests/e2e/",
-    "test:e2e:binance": "vitest run tests/e2e/binance.e2e.spec.ts",
-    "test:e2e:okx": "vitest run tests/e2e/okx.e2e.spec.ts",
-    "test:e2e:hyperliquid": "vitest run tests/e2e/hyperliquid.e2e.spec.ts",
-    "test:e2e:alpaca": "vitest run tests/e2e/alpaca.e2e.spec.ts"
+    "test:e2e": "vitest run --config vitest.e2e.config.ts tests/e2e/",
+    "test:e2e:binance": "vitest run --config vitest.e2e.config.ts tests/e2e/binance.e2e.spec.ts",
+    "test:e2e:okx": "vitest run --config vitest.e2e.config.ts tests/e2e/okx.e2e.spec.ts",
+    "test:e2e:hyperliquid": "vitest run --config vitest.e2e.config.ts tests/e2e/hyperliquid.e2e.spec.ts",
+    "test:e2e:alpaca": "vitest run --config vitest.e2e.config.ts tests/e2e/alpaca.e2e.spec.ts"
   },
   "dependencies": {
     "@vulcan-js/core": "workspace:^",
